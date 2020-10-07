@@ -1,0 +1,18 @@
+{
+  "projects": [
+    {
+      "name": "Test Project",
+      "id": "test-project",
+      "users": [
+        "987sf8sdf98sdf7s98f7"
+      ]
+    },
+    {
+      "name": "Test Project 2",
+      "id": "test-project-2",
+      "users": [
+        "987sf8sdf98sdf7s98f7"
+      ]
+    }
+  ]
+}
