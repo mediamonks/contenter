@@ -64,6 +64,8 @@ h6 {
 .subtitle {
   font-size: 2.5rem;
   line-height: 3rem;
+  font-weight: 400;
+  color: $colorGrey600;
 }
 
 h1 {
