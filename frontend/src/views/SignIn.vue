@@ -28,7 +28,7 @@
 import { defineComponent, ref } from 'vue';
 import router from '@/router';
 import { signIn } from '@/store/user';
-import Button from '@/components/general/Button.vue';
+import Button from '@/components/Button.vue';
 
 export default defineComponent({
   name: 'SignIn',

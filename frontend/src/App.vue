@@ -98,6 +98,28 @@ h5 {
   font-weight: 500;
 }
 
+p {
+  font-size: 2rem;
+  line-height: 3rem;
+}
+
+.body- {
+  &.large {
+    font-size: 2.25rem;
+    line-height: 3rem;
+  }
+
+  &.normal {
+    font-size: 2rem;
+    line-height: 3rem;
+  }
+
+  &.small {
+    font-size: 1.75rem;
+    line-height: 2rem;
+  }
+}
+
 ul,
 ol {
   margin: 0;

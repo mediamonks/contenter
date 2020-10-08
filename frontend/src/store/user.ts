@@ -8,31 +8,39 @@ interface User {
   email: string;
   photoURL: string;
   projects?: string[];
+  role?: 'editor' | 'developer' | 'admin';
 }
 
 interface UserState {
   currentUser: User | null;
+  fetchedFromDB: boolean;
 }
 
 const user = reactive<UserState>({
   currentUser: null,
+  fetchedFromDB: false,
 });
 
-const setUser = async (properties: User) => {
+const setUser = async (properties: User): Promise<User> => {
   user.currentUser = properties;
   const database = await loadFirebaseDatabase();
-  database
+  const snapshot = await database
     .ref(`users/${properties.uid}`)
-    .on('value', (snapshot) => {
-      user.currentUser = snapshot.val() as User;
-    });
+    .once('value');
+
+  user.currentUser = snapshot.val() as User;
+
+  return snapshot.val();
 };
 
 const createNewUser = async (properties: User) => {
   const database = await loadFirebaseDatabase();
   await database
     .ref(`users/${properties.uid}`)
-    .set(properties);
+    .set({
+      ...properties,
+      role: 'editor',
+    } as User);
 };
 
 const signIn = async () => {
@@ -64,7 +72,7 @@ const signIn = async () => {
     await createNewUser(userData);
   }
 
-  await setUser(userData);
+  return setUser(userData);
 };
 
 const signOut = async () => {
@@ -78,10 +86,19 @@ const signOut = async () => {
   user.currentUser = null;
 };
 
+const fetchUser = async (uid: string): Promise<User> => {
+  const database = await loadFirebaseDatabase();
+
+  const snapshot = await database.ref(`users/${uid}`).once('value');
+
+  return snapshot.val();
+};
+
 export {
   user,
   signOut,
   signIn,
+  fetchUser,
   User,
   UserState,
 };

@@ -1,0 +1,77 @@
+<template>
+  <div
+    class="avatar"
+    :class="{ inverted: inverted }"
+  >
+    <img
+      :src="image"
+      :alt="name"
+    >
+    <main>
+      <h4 v-if="name">
+        {{ name }}
+      </h4>
+      <p v-if="role">
+        {{ role }}
+      </p>
+    </main>
+  </div>
+</template>
+
+<script lang="ts">
+import { defineComponent } from 'vue';
+
+export default defineComponent({
+  props: {
+    inverted: {
+      type: Boolean,
+      default: false,
+    },
+    image: {
+      type: String,
+      required: true,
+    },
+    name: {
+      type: String,
+      default: null,
+    },
+    role: {
+      type: String,
+      default: null,
+    },
+  },
+});
+</script>
+
+<style lang="scss" scoped>
+  @import "~@/assets/scss/variables";
+
+  .avatar {
+    display: flex;
+    align-items: center;
+    width: fit-content;
+
+    img {
+      width: 6rem;
+      height: 6rem;
+      border-radius: 100%;
+      object-fit: cover;
+      margin-right: 1rem;
+      border: $colorGrey100 solid 1px;
+    }
+
+    p {
+      text-transform: capitalize;
+    }
+
+    &.inverted {
+      flex-direction: row-reverse;
+      text-align: right;
+
+      img {
+        margin-right: 0;
+        margin-left: 1rem;
+      }
+    }
+  }
+</style>
