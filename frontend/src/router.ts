@@ -1,6 +1,6 @@
 import { createRouter, createWebHistory, RouteRecordRaw } from 'vue-router';
-import { user } from '@/store/user';
-import Home from './views/Home.vue';
+import { checkIfUserIsSignedIn } from '@/store/user';
+import Home from '@/views/Home.vue';
 
 const routes: Array<RouteRecordRaw> = [
   {
@@ -12,9 +12,6 @@ const routes: Array<RouteRecordRaw> = [
   {
     path: '/about',
     name: 'About',
-    // route level code-splitting
-    // this generates a separate chunk (about.[hash].js) for this route
-    // which is lazy-loaded when the route is visited.
     component: () => import(/* webpackChunkName: "about" */ './views/About.vue'),
     meta: { requiresAuth: true },
   },
@@ -23,13 +20,7 @@ const routes: Array<RouteRecordRaw> = [
     name: 'SignIn',
     component: () => import(/* webpackChunkName: "signIn" */ './views/SignIn.vue'),
     beforeEnter: (to, from, next) => {
-      if (user.currentUser) {
-        next({
-          path: '/',
-        });
-      } else {
-        next();
-      }
+      checkIfUserIsSignedIn().then(() => next({ path: '/' })).catch(() => next());
     },
   },
 ];
@@ -41,14 +32,7 @@ const router = createRouter({
 
 router.beforeEach((to, from, next) => {
   if (to.matched.some((record) => record.meta.requiresAuth)) {
-    if (user.currentUser) {
-      next();
-      return;
-    }
-
-    next({
-      path: '/sign-in',
-    });
+    checkIfUserIsSignedIn().then(() => next()).catch(() => next({ path: '/sign-in' }));
   } else {
     next();
   }

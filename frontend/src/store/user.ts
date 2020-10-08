@@ -13,12 +13,10 @@ interface User {
 
 interface UserState {
   currentUser: User | null;
-  fetchedFromDB: boolean;
 }
 
 const user = reactive<UserState>({
   currentUser: null,
-  fetchedFromDB: false,
 });
 
 const setUser = async (properties: User): Promise<User> => {
@@ -43,20 +41,16 @@ const createNewUser = async (properties: User) => {
     } as User);
 };
 
-const signIn = async () => {
-  const auth = await loadFirebaseAuth();
-  const provider = new firebase.auth.GoogleAuthProvider();
-  const authUser = await auth.signInWithPopup(provider);
-
-  if (!authUser.user) throw new Error('No user is defined');
+const parseUser = async (authUser: firebase.User, isNewUser = false) => {
   const {
     displayName,
     email,
     photoURL,
     uid,
-  } = authUser.user;
+  } = authUser;
 
   if (!displayName || !email || !photoURL) {
+    const auth = await loadFirebaseAuth();
     await auth.signOut();
     throw new Error('Some user information is missing');
   }
@@ -68,11 +62,20 @@ const signIn = async () => {
     uid,
   };
 
-  if (authUser.additionalUserInfo?.isNewUser) {
+  if (isNewUser) {
     await createNewUser(userData);
   }
 
   return setUser(userData);
+};
+
+const signIn = async () => {
+  const auth = await loadFirebaseAuth();
+  const provider = new firebase.auth.GoogleAuthProvider();
+  const authUser = await auth.signInWithPopup(provider);
+  if (!authUser.user) throw new Error('No user defined');
+
+  return parseUser(authUser.user);
 };
 
 const signOut = async () => {
@@ -94,11 +97,27 @@ const fetchUser = async (uid: string): Promise<User> => {
   return snapshot.val();
 };
 
+const checkIfUserIsSignedIn = async () => {
+  const auth = await loadFirebaseAuth();
+  return new Promise<User>(((resolve, reject) => {
+    auth.onAuthStateChanged((state) => {
+      if (state) {
+        parseUser(state)
+          .then((result) => resolve(result))
+          .catch((err) => reject(err));
+      } else {
+        reject(new Error('Not allowed: not signed in'));
+      }
+    });
+  }));
+};
+
 export {
   user,
   signOut,
   signIn,
   fetchUser,
+  checkIfUserIsSignedIn,
   User,
   UserState,
 };
