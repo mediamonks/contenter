@@ -2,13 +2,21 @@
   <div class="home">
     <header>
       <h3>MM Content Editor</h3>
-      <Avatar
-        v-if="user.currentUser"
-        inverted
-        :image="user.currentUser.photoURL"
-        :name="user.currentUser.displayName"
-        :role="user.currentUser.role"
-      />
+      <aside>
+        <Button
+          flat
+          @click="handleSignOut"
+        >
+          Sign Out
+        </Button>
+        <Avatar
+          v-if="user.currentUser"
+          inverted
+          :image="user.currentUser.photoURL"
+          :name="user.currentUser.displayName"
+          :role="user.currentUser.role"
+        />
+      </aside>
     </header>
     <main>
       <h1 class="title">
@@ -39,25 +47,35 @@
 
 <script lang="ts">
 import { defineComponent } from 'vue';
-import { user } from '@/store/user';
+import { signOut, user } from '@/store/user';
 import Avatar from '@/components/Avatar.vue';
 import ProjectCard from '@/components/ProjectCard.vue';
 import { projects, syncProjects } from '@/store/projects';
+import Button from '@/components/Button.vue';
+// eslint-disable-next-line import/no-cycle
+import router from '@/router';
 
 export default defineComponent({
   name: 'Home',
   components: {
     Avatar,
     ProjectCard,
+    Button,
   },
   setup() {
     syncProjects().catch((err) => {
       console.error(err);
     });
 
+    async function handleSignOut() {
+      await signOut();
+      await router.push('/sign-in');
+    }
+
     return {
       user,
       projects,
+      handleSignOut,
     };
   },
 });
@@ -73,6 +91,15 @@ export default defineComponent({
       justify-content: space-between;
       align-items: center;
       padding: 4rem;
+
+      aside {
+        display: flex;
+        align-items: center;
+
+        > * {
+          margin-left: 1rem;
+        }
+      }
     }
 
     main {

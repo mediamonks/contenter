@@ -1,6 +1,7 @@
 <template>
   <button
     class="button"
+    :class="{ flat: flat }"
     :disabled="loading"
   >
     <template v-if="loading">
@@ -16,6 +17,10 @@ import { defineComponent } from 'vue';
 export default defineComponent({
   props: {
     loading: {
+      type: Boolean,
+      default: false,
+    },
+    flat: {
       type: Boolean,
       default: false,
     },
@@ -36,6 +41,7 @@ export default defineComponent({
     padding: 1.5rem 4rem;
     border: none;
     border-radius: 0.5rem;
+    height: fit-content;
     cursor: pointer;
     transition: 0.2s ease-out;
 
@@ -51,6 +57,15 @@ export default defineComponent({
       &:hover {
         background: $colorGrey100;
         color: $colorGrey300;
+      }
+    }
+
+    &.flat {
+      background: transparent;
+      color: $colorBlue400;
+
+      &:hover {
+        background: $colorBlue050;
       }
     }
   }

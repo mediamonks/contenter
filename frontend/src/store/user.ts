@@ -83,7 +83,7 @@ const signOut = async () => {
   if (!auth.currentUser) throw new Error('No user defined');
   await auth.signOut();
 
-  const database = firebase.database();
+  const database = await loadFirebaseDatabase();
   database.ref(`users/${user.currentUser?.uid}`).off();
 
   user.currentUser = null;
