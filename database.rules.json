@@ -9,6 +9,9 @@
       "$uid": {
         ".write": "auth.uid == $uid"
       }
+    },
+    "projectIds": {
+      ".write": "auth != null"
     }
   }
 }

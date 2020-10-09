@@ -36,9 +36,12 @@
           </router-link>
         </li>
         <li>
-          <button class="add-project">
+          <router-link
+            to="/create-project"
+            class="add-project"
+          >
             <h2>Add Project</h2>
-          </button>
+          </router-link>
         </li>
       </ul>
     </main>
@@ -119,7 +122,10 @@ export default defineComponent({
         }
 
         .add-project {
-          display: block;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          text-align: center;
           height: 30rem;
           width: 100%;
           border: dashed 2px $colorGrey100;

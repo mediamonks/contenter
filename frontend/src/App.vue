@@ -104,17 +104,17 @@ p {
 }
 
 .body- {
-  &.large {
+  &large {
     font-size: 2.25rem;
     line-height: 3rem;
   }
 
-  &.normal {
+  &normal {
     font-size: 2rem;
     line-height: 3rem;
   }
 
-  &.small {
+  &small {
     font-size: 1.75rem;
     line-height: 2rem;
   }

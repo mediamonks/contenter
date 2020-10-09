@@ -10,15 +10,15 @@ const routes: Array<RouteRecordRaw> = [
     meta: { requiresAuth: true },
   },
   {
-    path: '/about',
-    name: 'About',
-    component: () => import(/* webpackChunkName: "about" */ './views/About.vue'),
+    path: '/create-project',
+    name: 'CreateProject',
+    component: () => import(/* webpackChunkName: "createProject" */ '@/views/CreateProject.vue'),
     meta: { requiresAuth: true },
   },
   {
     path: '/sign-in',
     name: 'SignIn',
-    component: () => import(/* webpackChunkName: "signIn" */ './views/SignIn.vue'),
+    component: () => import(/* webpackChunkName: "signIn" */ '@/views/SignIn.vue'),
     beforeEnter: (to, from, next) => {
       checkIfUserIsSignedIn().then(() => next({ path: '/' })).catch(() => next());
     },

@@ -1,5 +1,14 @@
 <template>
+  <router-link
+    v-if="to"
+    :to="to"
+    class="button"
+    :class="{ flat: flat }"
+  >
+    <slot />
+  </router-link>
   <button
+    v-else
     class="button"
     :class="{ flat: flat }"
     :disabled="loading"
@@ -24,6 +33,10 @@ export default defineComponent({
       type: Boolean,
       default: false,
     },
+    to: {
+      type: Object && String,
+      default: () => null,
+    },
   },
 });
 </script>
@@ -44,6 +57,7 @@ export default defineComponent({
     height: fit-content;
     cursor: pointer;
     transition: 0.2s ease-out;
+    text-decoration: none;
 
     &:hover {
       background: $colorBlue300;

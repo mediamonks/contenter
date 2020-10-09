@@ -21,7 +21,6 @@ const userState = reactive<UserState>({
 });
 
 const setUser = async (properties: User): Promise<User> => {
-  userState.currentUser = properties;
   const database = await loadFirebaseDatabase();
   const snapshot = await database
     .ref(`users/${properties.uid}`)
@@ -104,14 +103,27 @@ const checkIfUserIsSignedIn = async () => {
   return new Promise<User>(((resolve, reject) => {
     auth.onAuthStateChanged((state) => {
       if (state) {
-        parseUser(state)
-          .then((result) => resolve(result))
-          .catch((err) => reject(err));
+        if (!userState.currentUser) {
+          parseUser(state)
+            .then((result) => resolve(result))
+            .catch((err) => reject(err));
+          return;
+        }
+        resolve(userState.currentUser);
       } else {
         reject(new Error('Not allowed: not signed in'));
       }
     });
   }));
+};
+
+const updateUser = async (properties: User) => {
+  const database = await loadFirebaseDatabase();
+
+  await database.ref(`users/${properties.uid}`).update(properties);
+  await setUser(properties);
+
+  return properties;
 };
 
 export {
@@ -120,6 +132,7 @@ export {
   signIn,
   fetchUser,
   checkIfUserIsSignedIn,
+  updateUser,
   User,
   UserState,
 };

@@ -1,5 +1,10 @@
 import { ref } from 'vue';
-import { userState, User, fetchUser } from '@/store/user';
+import {
+  userState,
+  User,
+  fetchUser,
+  updateUser,
+} from '@/store/user';
 import { loadFirebaseDatabase } from '@/firebase';
 import firebase from 'firebase/app';
 
@@ -17,6 +22,8 @@ interface Project {
 
 const projectsState = ref<Project[]>([]);
 
+const projectIds = ref<string[]>([]);
+
 const getRawUserProjects = async (ids: string[]): Promise<ProjectData[]> => {
   const database = await loadFirebaseDatabase();
 
@@ -29,8 +36,8 @@ const getRawUserProjects = async (ids: string[]): Promise<ProjectData[]> => {
   )];
 };
 
-const getFormattedProjects = async (projectIds: string[]): Promise<Project[]> => {
-  const rawProjects = await getRawUserProjects(projectIds);
+const getFormattedProjects = async (ids: string[]): Promise<Project[]> => {
+  const rawProjects = await getRawUserProjects(ids);
   const userIds: string[] = rawProjects.map((rawProject) => rawProject.user).flat();
 
   const userPromises: Promise<User>[] = userIds.map((uid) => fetchUser(uid));
@@ -49,14 +56,53 @@ const getFormattedProjects = async (projectIds: string[]): Promise<Project[]> =>
   });
 };
 
+const getAllProjectIds = async (): Promise<string[]> => {
+  const database = await loadFirebaseDatabase();
+  const snapshot = await database.ref('projectIds').once('value');
+
+  return snapshot.val();
+};
+
 const syncProjects = async (): Promise<Project[]> => {
   if (!userState.currentUser) throw new Error('No user defined');
-  if (!userState.currentUser.projects) return [];
+  projectIds.value = await getAllProjectIds();
 
+  if (!userState.currentUser.projects) return [];
   const formattedProjects = await getFormattedProjects(userState.currentUser.projects);
   projectsState.value = formattedProjects;
 
   return formattedProjects;
 };
 
-export { projectsState, syncProjects };
+const createNewProject = async (name: string, id: string, uid: string) => {
+  if (!userState.currentUser) throw new Error('User is not defined');
+  const database = await loadFirebaseDatabase();
+
+  const projectRef = database.ref(`projects/${id}`);
+
+  let newUserProjects: string[] = [];
+  if (userState.currentUser.projects) {
+    newUserProjects = userState.currentUser.projects;
+  }
+
+  await Promise.all<void>([
+    projectRef.set({
+      name,
+      id,
+      user: [uid],
+    }),
+    database.ref(`projectIds/${projectIds.value.length}`).set(id),
+    syncProjects(),
+    updateUser({
+      ...userState.currentUser,
+      projects: [...newUserProjects, id],
+    }),
+  ]);
+};
+
+export {
+  projectsState,
+  projectIds,
+  syncProjects,
+  createNewProject,
+};

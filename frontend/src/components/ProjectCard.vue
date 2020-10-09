@@ -14,6 +14,12 @@
         :image="user.photoURL"
         :title="user.name"
       />
+      <p
+        v-if="filteredUsers.length === 6"
+        class="body-normal"
+      >
+        +{{ users.length - 6 }}
+      </p>
     </footer>
   </section>
 </template>
@@ -72,9 +78,16 @@ export default defineComponent({
     }
 
     footer {
+      display: flex;
+      align-items: center;
+
       .avatar {
         margin-right: -3rem;
-        display: inline-block;
+      }
+
+      p {
+        margin-left: 3rem;
+        color: $colorGrey400;
       }
     }
 
