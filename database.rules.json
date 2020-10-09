@@ -1,6 +1,14 @@
 {
   "rules": {
-    ".read": true,
-    ".write": true
+    ".read": "auth != null",
+    ".write": false,
+    "projects": {
+      ".write": "auth != null"
+    },
+    "users": {
+      "$uid": {
+        ".write": "auth.uid == $uid"
+      }
+    }
   }
 }

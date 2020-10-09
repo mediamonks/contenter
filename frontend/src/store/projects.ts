@@ -1,5 +1,5 @@
-import { user, User, fetchUser } from '@/store/user';
 import { ref } from 'vue';
+import { user, User, fetchUser } from '@/store/user';
 import { loadFirebaseDatabase } from '@/firebase';
 import firebase from 'firebase/app';
 
