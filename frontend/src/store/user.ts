@@ -1,6 +1,7 @@
 import { reactive } from 'vue';
 import firebase from 'firebase/app';
 import { loadFirebaseAuth, loadFirebaseDatabase } from '@/firebase';
+import { projectsState } from '@/store/projects';
 
 interface User {
   uid: string;
@@ -15,18 +16,18 @@ interface UserState {
   currentUser: User | null;
 }
 
-const user = reactive<UserState>({
+const userState = reactive<UserState>({
   currentUser: null,
 });
 
 const setUser = async (properties: User): Promise<User> => {
-  user.currentUser = properties;
+  userState.currentUser = properties;
   const database = await loadFirebaseDatabase();
   const snapshot = await database
     .ref(`users/${properties.uid}`)
     .once('value');
 
-  user.currentUser = snapshot.val() as User;
+  userState.currentUser = snapshot.val() as User;
 
   return snapshot.val();
 };
@@ -84,9 +85,10 @@ const signOut = async () => {
   await auth.signOut();
 
   const database = await loadFirebaseDatabase();
-  database.ref(`users/${user.currentUser?.uid}`).off();
+  database.ref(`users/${userState.currentUser?.uid}`).off();
 
-  user.currentUser = null;
+  userState.currentUser = null;
+  projectsState.value = [];
 };
 
 const fetchUser = async (uid: string): Promise<User> => {
@@ -113,7 +115,7 @@ const checkIfUserIsSignedIn = async () => {
 };
 
 export {
-  user,
+  userState,
   signOut,
   signIn,
   fetchUser,

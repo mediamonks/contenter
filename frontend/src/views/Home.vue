@@ -10,11 +10,11 @@
           Sign Out
         </Button>
         <Avatar
-          v-if="user.currentUser"
+          v-if="userState.currentUser"
           inverted
-          :image="user.currentUser.photoURL"
-          :name="user.currentUser.displayName"
-          :role="user.currentUser.role"
+          :image="userState.currentUser.photoURL"
+          :name="userState.currentUser.displayName"
+          :role="userState.currentUser.role"
         />
       </aside>
     </header>
@@ -24,7 +24,7 @@
       </h1>
       <ul>
         <li
-          v-for="project in projects"
+          v-for="project in projectsState"
           :key="project.id"
         >
           <router-link to="/">
@@ -47,12 +47,11 @@
 
 <script lang="ts">
 import { defineComponent } from 'vue';
-import { signOut, user } from '@/store/user';
+import { signOut, userState } from '@/store/user';
 import Avatar from '@/components/Avatar.vue';
 import ProjectCard from '@/components/ProjectCard.vue';
-import { projects, syncProjects } from '@/store/projects';
+import { projectsState, syncProjects } from '@/store/projects';
 import Button from '@/components/Button.vue';
-// eslint-disable-next-line import/no-cycle
 import router from '@/router';
 
 export default defineComponent({
@@ -73,8 +72,8 @@ export default defineComponent({
     }
 
     return {
-      user,
-      projects,
+      userState,
+      projectsState,
       handleSignOut,
     };
   },

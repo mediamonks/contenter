@@ -1,5 +1,5 @@
 import { ref } from 'vue';
-import { user, User, fetchUser } from '@/store/user';
+import { userState, User, fetchUser } from '@/store/user';
 import { loadFirebaseDatabase } from '@/firebase';
 import firebase from 'firebase/app';
 
@@ -15,7 +15,7 @@ interface Project {
   users: User[];
 }
 
-const projects = ref<Project[]>([]);
+const projectsState = ref<Project[]>([]);
 
 const getRawUserProjects = async (ids: string[]): Promise<ProjectData[]> => {
   const database = await loadFirebaseDatabase();
@@ -50,13 +50,13 @@ const getFormattedProjects = async (projectIds: string[]): Promise<Project[]> =>
 };
 
 const syncProjects = async (): Promise<Project[]> => {
-  if (!user.currentUser) throw new Error('No user defined');
-  if (!user.currentUser.projects) return [];
+  if (!userState.currentUser) throw new Error('No user defined');
+  if (!userState.currentUser.projects) return [];
 
-  const formattedProjects = await getFormattedProjects(user.currentUser.projects);
-  projects.value = formattedProjects;
+  const formattedProjects = await getFormattedProjects(userState.currentUser.projects);
+  projectsState.value = formattedProjects;
 
   return formattedProjects;
 };
 
-export { projects, syncProjects };
+export { projectsState, syncProjects };
