@@ -1,23 +1,5 @@
 <template>
   <div class="home">
-    <header>
-      <h3>MM Content Editor</h3>
-      <aside>
-        <Button
-          flat
-          @click="handleSignOut"
-        >
-          Sign Out
-        </Button>
-        <Avatar
-          v-if="userState.currentUser"
-          inverted
-          :image="userState.currentUser.photoURL"
-          :name="userState.currentUser.displayName"
-          :role="userState.currentUser.role"
-        />
-      </aside>
-    </header>
     <main>
       <h1 class="title">
         Your Projects
@@ -51,18 +33,14 @@
 <script lang="ts">
 import { defineComponent } from 'vue';
 import { signOut, userState } from '@/store/user';
-import Avatar from '@/components/Avatar.vue';
 import ProjectCard from '@/components/ProjectCard.vue';
 import { projectsState, syncProjects } from '@/store/projects';
-import Button from '@/components/Button.vue';
 import router from '@/router';
 
 export default defineComponent({
   name: 'Home',
   components: {
-    Avatar,
     ProjectCard,
-    Button,
   },
   setup() {
     syncProjects().catch((err) => {
@@ -87,23 +65,6 @@ export default defineComponent({
   @import '~@/assets/scss/variables';
 
   .home {
-    header {
-      display: flex;
-      width: 100%;
-      justify-content: space-between;
-      align-items: center;
-      padding: 4rem;
-
-      aside {
-        display: flex;
-        align-items: center;
-
-        > * {
-          margin-left: 1rem;
-        }
-      }
-    }
-
     main {
       max-width: 166rem;
       margin: 10rem auto 0;

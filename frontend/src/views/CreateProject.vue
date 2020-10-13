@@ -1,14 +1,5 @@
 <template>
   <div class="create-project">
-    <header>
-      <h3>Create a new project</h3>
-      <Button
-        to="/"
-        flat
-      >
-        Cancel
-      </Button>
-    </header>
     <main>
       <form @submit.prevent="handleFormSubmit">
         <TextField
@@ -118,15 +109,6 @@ export default defineComponent({
 
 <style lang="scss" scoped>
   .create-project {
-    header {
-      display: flex;
-      width: 100%;
-      justify-content: space-between;
-      align-items: center;
-      padding: 4rem;
-      position: absolute;
-    }
-
     main {
       display: flex;
       justify-content: center;

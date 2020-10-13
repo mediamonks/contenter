@@ -1,7 +1,7 @@
 <template>
   <div
     class="avatar"
-    :class="{ inverted: inverted }"
+    :class="{ inverted: inverted, 'color-inverted': colorInverted }"
   >
     <img
       :src="image"
@@ -24,6 +24,10 @@ import { defineComponent } from 'vue';
 export default defineComponent({
   props: {
     inverted: {
+      type: Boolean,
+      default: false,
+    },
+    colorInverted: {
       type: Boolean,
       default: false,
     },
@@ -71,6 +75,20 @@ export default defineComponent({
       img {
         margin-right: 0;
         margin-left: 1rem;
+      }
+    }
+
+    &.color-inverted {
+      img {
+        border-color: transparent;
+      }
+
+      h4 {
+        color: $colorGrey050;
+      }
+
+      p {
+        color: $colorGrey100;
       }
     }
   }

@@ -1,10 +1,35 @@
 <template>
-  <router-view />
+  <div class="app">
+    <NavigationPanel />
+    <div class="router-wrapper">
+      <router-view />
+    </div>
+  </div>
 </template>
+
+<script lang="ts">
+import { defineComponent } from 'vue';
+import NavigationPanel from '@/components/NavigationPanel.vue';
+
+export default defineComponent({
+  name: 'App',
+  components: {
+    NavigationPanel,
+  },
+});
+</script>
 
 <style lang="scss">
 @import '~@/assets/scss/variables';
 @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&display=swap');
+
+.app {
+  display: flex;
+
+  .router-wrapper {
+    width: 100%;
+  }
+}
 
 html {
   font-size: 8px;
