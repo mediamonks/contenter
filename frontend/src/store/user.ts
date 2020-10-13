@@ -14,10 +14,12 @@ interface User {
 
 interface UserState {
   currentUser: User | null;
+  users: User[];
 }
 
 const userState = reactive<UserState>({
   currentUser: null,
+  users: [],
 });
 
 const setUser = async (properties: User): Promise<User> => {
@@ -126,6 +128,21 @@ const updateUser = async (properties: User) => {
   return properties;
 };
 
+const fetchAllUsers = async () => {
+  const database = await loadFirebaseDatabase();
+
+  const snapshot = await database.ref('users').once('value');
+
+  const data: {
+    [key: string]: User;
+  } = snapshot.val();
+
+  const users: User[] = Object.keys(data).map((key) => data[key]);
+
+  userState.users = users;
+  return users;
+};
+
 export {
   userState,
   signOut,
@@ -133,6 +150,7 @@ export {
   fetchUser,
   checkIfUserIsSignedIn,
   updateUser,
+  fetchAllUsers,
   User,
   UserState,
 };

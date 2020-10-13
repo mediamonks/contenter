@@ -2,7 +2,7 @@ import { ref } from 'vue';
 import {
   userState,
   User,
-  fetchUser,
+  fetchAllUsers,
   updateUser,
 } from '@/store/user';
 import { loadFirebaseDatabase } from '@/firebase';
@@ -38,10 +38,7 @@ const getRawUserProjects = async (ids: string[]): Promise<ProjectData[]> => {
 
 const getFormattedProjects = async (ids: string[]): Promise<Project[]> => {
   const rawProjects = await getRawUserProjects(ids);
-  const userIds: string[] = rawProjects.map((rawProject) => rawProject.user).flat();
-
-  const userPromises: Promise<User>[] = userIds.map((uid) => fetchUser(uid));
-  const users: User[] = await Promise.all<User>(userPromises);
+  const users = await fetchAllUsers();
 
   return rawProjects.map((rawProject) => {
     const projectsUsers = rawProject.user.map((id) => users.filter(
@@ -74,7 +71,7 @@ const syncProjects = async (): Promise<Project[]> => {
   return formattedProjects;
 };
 
-const createNewProject = async (name: string, id: string, uid: string) => {
+const createNewProject = async (name: string, id: string, uid: string, users: User[] = []) => {
   if (!userState.currentUser) throw new Error('User is not defined');
   const database = await loadFirebaseDatabase();
 
@@ -85,11 +82,13 @@ const createNewProject = async (name: string, id: string, uid: string) => {
     newUserProjects = userState.currentUser.projects;
   }
 
+  const userIds = users.map((user) => user.uid);
+
   await Promise.all<void>([
     projectRef.set({
       name,
       id,
-      user: [uid],
+      user: [uid, ...userIds],
     }),
     database.ref(`projectIds/${projectIds.value.length}`).set(id),
     syncProjects(),

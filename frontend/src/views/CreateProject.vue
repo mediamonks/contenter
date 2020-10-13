@@ -22,6 +22,11 @@
           placeholder="some-id"
           :error="idError"
         />
+        <SearchSelector
+          label="Users"
+          placeholder="Search for a name"
+          @update-users="updateSelectedUsers"
+        />
         <Button>Create</Button>
       </form>
     </main>
@@ -36,8 +41,9 @@ import {
 } from 'vue';
 import Button from '@/components/Button.vue';
 import TextField from '@/components/TextField.vue';
+import SearchSelector from '@/components/SearchSelector.vue';
 import { createNewProject, projectIds, syncProjects } from '@/store/projects';
-import { userState } from '@/store/user';
+import { User, userState } from '@/store/user';
 import router from '@/router';
 
 export default defineComponent({
@@ -45,10 +51,12 @@ export default defineComponent({
   components: {
     Button,
     TextField,
+    SearchSelector,
   },
   setup() {
     const name = ref('');
     const id = ref('');
+    const selectedUsers = ref<User[]>([]);
 
     const isLoading = ref(false);
 
@@ -75,7 +83,12 @@ export default defineComponent({
     function handleFormSubmit() {
       if (!userState.currentUser) return;
       isLoading.value = true;
-      createNewProject(name.value, id.value, userState.currentUser.uid)
+      createNewProject(
+        name.value,
+        id.value,
+        userState.currentUser.uid,
+        selectedUsers.value,
+      )
         .then(() => {
           router.push('/');
           isLoading.value = false;
@@ -86,12 +99,18 @@ export default defineComponent({
         });
     }
 
+    function updateSelectedUsers(users: User[]) {
+      selectedUsers.value = users;
+    }
+
     return {
       handleFormSubmit,
+      updateSelectedUsers,
       idError,
       name,
       id,
       isLoading,
+      selectedUsers,
     };
   },
 });
