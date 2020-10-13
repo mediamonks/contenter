@@ -77,12 +77,24 @@ const createNewProject = async (name: string, id: string, uid: string, users: Us
 
   const projectRef = database.ref(`projects/${id}`);
 
-  let newUserProjects: string[] = [];
+  let currentUserProjects: string[] = [];
   if (userState.currentUser.projects) {
-    newUserProjects = userState.currentUser.projects;
+    currentUserProjects = userState.currentUser.projects;
   }
 
   const userIds = users.map((user) => user.uid);
+
+  const userUpdatePromises = users.map((user) => {
+    let currentProjects = user.projects;
+    if (!currentProjects) {
+      currentProjects = [];
+    }
+
+    return updateUser({
+      ...user,
+      projects: [...currentProjects, id],
+    });
+  });
 
   await Promise.all<void>([
     projectRef.set({
@@ -94,8 +106,9 @@ const createNewProject = async (name: string, id: string, uid: string, users: Us
     syncProjects(),
     updateUser({
       ...userState.currentUser,
-      projects: [...newUserProjects, id],
+      projects: [...currentUserProjects, id],
     }),
+    ...userUpdatePromises,
   ]);
 };
 
