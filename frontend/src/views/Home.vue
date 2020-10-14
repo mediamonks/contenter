@@ -6,10 +6,10 @@
       </h1>
       <ul>
         <li
-          v-for="project in projectsState"
+          v-for="project in projectsState.userProjects"
           :key="project.id"
         >
-          <router-link to="/">
+          <router-link :to="{ name: 'ProjectContent', params: { projectId: project.id } }">
             <ProjectCard
               :id="project.id"
               :name="project.name"

@@ -34,7 +34,7 @@ export default defineComponent({
       default: false,
     },
     to: {
-      type: Object && String,
+      type: [Object, String],
       default: () => null,
     },
   },
@@ -58,6 +58,7 @@ export default defineComponent({
     cursor: pointer;
     transition: 0.2s ease-out;
     text-decoration: none;
+    width: fit-content;
 
     &:hover {
       background: $colorBlue300;

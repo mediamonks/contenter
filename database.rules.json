@@ -5,6 +5,9 @@
     "projects": {
       ".write": "auth != null"
     },
+    "projectMetadata": {
+      ".write": "auth != null"
+    },
     "users": {
       "$uid": {
         ".write": "auth != null"

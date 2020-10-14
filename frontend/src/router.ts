@@ -23,6 +23,25 @@ const routes: Array<RouteRecordRaw> = [
       checkIfUserIsSignedIn().then(() => next({ path: '/' })).catch(() => next());
     },
   },
+  {
+    path: '/project/:projectId',
+    name: 'ProjectDetails',
+    component: () => import(/* webpackChunkName: "projectDetail" */ '@/views/project/ProjectRoot.vue'),
+    meta: { requiresAuth: true },
+    props: true,
+    children: [
+      {
+        path: '/project/:projectId/',
+        name: 'ProjectContent',
+        component: () => import(/* webpackChunkName: "projectDetailContent" */ '@/views/project/Content.vue'),
+      },
+      {
+        path: '/project/:projectId/schema',
+        name: 'ProjectSchema',
+        component: () => import(/* webpackChunkName: "projectDetailSchema" */ '@/views/project/Schema.vue'),
+      },
+    ],
+  },
 ];
 
 const router = createRouter({

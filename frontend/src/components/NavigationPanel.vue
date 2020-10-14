@@ -21,6 +21,31 @@
           </li>
         </ul>
       </nav>
+      <nav
+        v-if="router.currentRoute.value.params.projectId"
+        class="project-navigation"
+      >
+        <ul>
+          <li>
+            <router-link
+              :to="{
+                name: 'ProjectContent',
+                params: { projectId: router.currentRoute.value.params.projectId } }"
+            >
+              Content
+            </router-link>
+          </li>
+          <li>
+            <router-link
+              :to="{
+                name: 'ProjectSchema',
+                params: { projectId: router.currentRoute.value.params.projectId } }"
+            >
+              Schema
+            </router-link>
+          </li>
+        </ul>
+      </nav>
     </main>
     <footer>
       <Avatar
@@ -61,6 +86,7 @@ export default defineComponent({
 
     return {
       userState,
+      router,
       handleSignOut,
     };
   },
@@ -76,11 +102,10 @@ export default defineComponent({
     height: 100vh;
     background: $colorGrey700;
     color: $colorGrey050;
-    display: flex;
-    flex-direction: column;
+    display: grid;
+    grid-template-rows: 13rem auto 15rem;
 
     > * {
-      padding: 4rem;
       width: 100%;
       height: fit-content;
 
@@ -90,6 +115,11 @@ export default defineComponent({
     }
 
     header {
+      padding: 4rem;
+      height: 13rem;
+      display: flex;
+      align-items: center;
+
       h3 {
         color: inherit;
       }
@@ -97,13 +127,23 @@ export default defineComponent({
 
     main {
       flex-basis: 100%;
+
+      > * {
+        width: 100%;
+        height: fit-content;
+
+        &:not(:last-child) {
+          border-bottom: solid 1px $colorGrey500;
+        }
+      }
     }
 
     nav ul {
       list-style: none;
+      padding: 4rem 0;
 
-      li:not(:last-child) {
-        margin-bottom: 2rem;
+      li {
+        width: 100%;
       }
 
       a {
@@ -112,10 +152,13 @@ export default defineComponent({
         font-weight: 600;
         font-size: 3rem;
         line-height: 1em;
-        transition: color 0.1s ease-out;
+        width: 100%;
+        transition: background-color 0.1s ease-out;
+        padding: 2rem 4rem;
+        display: block;
 
         &:hover {
-          color: $colorGrey050;
+          background: $colorGrey600;
         }
 
         &.router-link-exact-active {
@@ -127,6 +170,7 @@ export default defineComponent({
     footer {
       display: flex;
       justify-content: space-between;
+      padding: 4rem;
 
       .options {
         display: flex;

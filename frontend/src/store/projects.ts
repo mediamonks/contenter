@@ -1,4 +1,4 @@
-import { ref } from 'vue';
+import { reactive } from 'vue';
 import {
   userState,
   User,
@@ -11,23 +11,39 @@ import firebase from 'firebase/app';
 interface ProjectData {
   name: string;
   id: string;
-  user: string[];
+  users: string[];
 }
 
-interface Project {
+interface ProjectMetadata {
   name: string;
   id: string;
   users: User[];
 }
 
-const projectsState = ref<Project[]>([]);
+interface Project {
+  metadata?: ProjectMetadata;
+  schemaURL?: string;
+  content?: any[] | {
+    [key: string]: any;
+  };
+}
 
-const projectIds = ref<string[]>([]);
+interface ProjectState {
+  userProjects: ProjectMetadata[];
+  currentProject: Project | null;
+  projectIds: string[];
+}
+
+const projectsState = reactive<ProjectState>({
+  userProjects: [],
+  currentProject: null,
+  projectIds: [],
+});
 
 const getRawUserProjects = async (ids: string[]): Promise<ProjectData[]> => {
   const database = await loadFirebaseDatabase();
 
-  const projectRefs = ids.map((projectId) => database.ref(`projects/${projectId}`).once('value'));
+  const projectRefs = ids.map((projectId) => database.ref(`projectMetadata/${projectId}`).once('value'));
   const projectsDataPromise = Promise.all<firebase.database.DataSnapshot>(projectRefs);
   const projectsDataSnapshots = await projectsDataPromise;
 
@@ -36,12 +52,12 @@ const getRawUserProjects = async (ids: string[]): Promise<ProjectData[]> => {
   )];
 };
 
-const getFormattedProjects = async (ids: string[]): Promise<Project[]> => {
+const getFormattedProjects = async (ids: string[]): Promise<ProjectMetadata[]> => {
   const rawProjects = await getRawUserProjects(ids);
   const users = await fetchAllUsers();
 
   return rawProjects.map((rawProject) => {
-    const projectsUsers = rawProject.user.map((id) => users.filter(
+    const projectsUsers = rawProject.users.map((id) => users.filter(
       (usr) => usr.uid === id,
     )[0]);
 
@@ -56,17 +72,22 @@ const getFormattedProjects = async (ids: string[]): Promise<Project[]> => {
 const getAllProjectIds = async (): Promise<string[]> => {
   const database = await loadFirebaseDatabase();
   const snapshot = await database.ref('projectIds').once('value');
+  const val = snapshot.val();
 
-  return snapshot.val();
+  if (!val) {
+    return [];
+  }
+
+  return val;
 };
 
-const syncProjects = async (): Promise<Project[]> => {
+const syncProjects = async (): Promise<ProjectMetadata[]> => {
   if (!userState.currentUser) throw new Error('No user defined');
-  projectIds.value = await getAllProjectIds();
+  projectsState.projectIds = await getAllProjectIds();
 
   if (!userState.currentUser.projects) return [];
   const formattedProjects = await getFormattedProjects(userState.currentUser.projects);
-  projectsState.value = formattedProjects;
+  projectsState.userProjects = formattedProjects;
 
   return formattedProjects;
 };
@@ -75,7 +96,7 @@ const createNewProject = async (name: string, id: string, uid: string, users: Us
   if (!userState.currentUser) throw new Error('User is not defined');
   const database = await loadFirebaseDatabase();
 
-  const projectRef = database.ref(`projects/${id}`);
+  const projectRef = database.ref(`projectMetadata/${id}`);
 
   let currentUserProjects: string[] = [];
   if (userState.currentUser.projects) {
@@ -102,7 +123,7 @@ const createNewProject = async (name: string, id: string, uid: string, users: Us
       id,
       user: [uid, ...userIds],
     }),
-    database.ref(`projectIds/${projectIds.value.length}`).set(id),
+    database.ref(`projectIds/${projectsState.projectIds.length}`).set(id),
     syncProjects(),
     updateUser({
       ...userState.currentUser,
@@ -112,9 +133,41 @@ const createNewProject = async (name: string, id: string, uid: string, users: Us
   ]);
 };
 
+const syncCurrentProject = async (id: string) => {
+  const database = await loadFirebaseDatabase();
+  const projectRef = database.ref(`projects/${id}`);
+
+  const projectMetadata = await getFormattedProjects([id]);
+
+  projectRef.on('value', (snapshot) => {
+    const data: null | {
+      schemaURL?: string;
+      content?: any[] | {
+        [key: string]: any;
+      };
+    } = snapshot.val();
+
+    projectsState.currentProject = {
+      metadata: projectMetadata[0],
+      ...data,
+    };
+  });
+};
+
+const resetCurrentProject = async () => {
+  if (!projectsState.currentProject) return;
+  if (!projectsState.currentProject.metadata) return;
+  const { id } = projectsState.currentProject.metadata;
+
+  const database = await loadFirebaseDatabase();
+  const projectRef = database.ref(`projects/${id}`);
+  projectRef.off('value');
+};
+
 export {
   projectsState,
-  projectIds,
   syncProjects,
   createNewProject,
+  syncCurrentProject,
+  resetCurrentProject,
 };

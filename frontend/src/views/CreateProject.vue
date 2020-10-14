@@ -33,7 +33,7 @@ import {
 import Button from '@/components/Button.vue';
 import TextField from '@/components/TextField.vue';
 import SearchSelector from '@/components/SearchSelector.vue';
-import { createNewProject, projectIds, syncProjects } from '@/store/projects';
+import { createNewProject, projectsState, syncProjects } from '@/store/projects';
 import { User, userState } from '@/store/user';
 import router from '@/router';
 
@@ -58,11 +58,11 @@ export default defineComponent({
     });
 
     watch(id, async () => {
-      if (projectIds.value.length === 0) {
+      if (projectsState.projectIds && projectsState.projectIds.length === 0) {
         await syncProjects();
       }
 
-      if (projectIds.value.includes(id.value)) {
+      if (projectsState.projectIds.includes(id.value)) {
         idError.value = 'ID already exists';
       } else if (id.value.split(' ').length > 1) {
         idError.value = 'Spaces are not allowed';

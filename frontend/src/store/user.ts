@@ -35,12 +35,14 @@ const setUser = async (properties: User): Promise<User> => {
 
 const createNewUser = async (properties: User) => {
   const database = await loadFirebaseDatabase();
-  await database
+
+  const result = await database
     .ref(`users/${properties.uid}`)
     .set({
       ...properties,
       role: 'editor',
-    } as User);
+    } as User).catch((err) => console.warn(err));
+  console.log('result', result);
 };
 
 const parseUser = async (authUser: firebase.User, isNewUser = false) => {
@@ -75,9 +77,9 @@ const signIn = async () => {
   const auth = await loadFirebaseAuth();
   const provider = new firebase.auth.GoogleAuthProvider();
   const authUser = await auth.signInWithPopup(provider);
-  if (!authUser.user) throw new Error('No user defined');
+  if (!authUser.user || !authUser.additionalUserInfo) throw new Error('No user defined');
 
-  return parseUser(authUser.user);
+  return parseUser(authUser.user, authUser.additionalUserInfo.isNewUser);
 };
 
 const signOut = async () => {
@@ -89,7 +91,7 @@ const signOut = async () => {
   database.ref(`users/${userState.currentUser?.uid}`).off();
 
   userState.currentUser = null;
-  projectsState.value = [];
+  projectsState.userProjects = [];
 };
 
 const fetchUser = async (uid: string): Promise<User> => {
@@ -130,8 +132,11 @@ const updateUser = async (properties: User) => {
 
 const fetchAllUsers = async () => {
   const database = await loadFirebaseDatabase();
-
   const snapshot = await database.ref('users').once('value');
+
+  if (!snapshot.val()) {
+    return [];
+  }
 
   const data: {
     [key: string]: User;
