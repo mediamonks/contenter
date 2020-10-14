@@ -42,7 +42,6 @@ const createNewUser = async (properties: User) => {
       ...properties,
       role: 'editor',
     } as User).catch((err) => console.warn(err));
-  console.log('result', result);
 };
 
 const parseUser = async (authUser: firebase.User, isNewUser = false) => {
