@@ -36,12 +36,12 @@ const setUser = async (properties: User): Promise<User> => {
 const createNewUser = async (properties: User) => {
   const database = await loadFirebaseDatabase();
 
-  const result = await database
+  await database
     .ref(`users/${properties.uid}`)
     .set({
       ...properties,
       role: 'editor',
-    } as User).catch((err) => console.warn(err));
+    } as User);
 };
 
 const parseUser = async (authUser: firebase.User, isNewUser = false) => {

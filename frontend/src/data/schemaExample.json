@@ -1,0 +1,97 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema",
+  "$id": "http://example.com/example.json",
+  "type": "object",
+  "title": "The root schema",
+  "description": "The root schema comprises the entire JSON document.",
+  "default": {},
+  "examples": [
+    {
+      "title": "Title",
+      "articles": [
+        {
+          "title": "Article 1",
+          "description": "Nullam quis risus eget urna mollis ornare vel eu leo. Cras justo odio, dapibus ac facilisis in, egestas eget quam."
+        }
+      ]
+    }
+  ],
+  "required": [
+    "title",
+    "articles"
+  ],
+  "properties": {
+    "title": {
+      "$id": "#/properties/title",
+      "type": "string",
+      "title": "The title schema",
+      "description": "An explanation about the purpose of this instance.",
+      "default": "",
+      "examples": [
+        "Title"
+      ]
+    },
+    "articles": {
+      "$id": "#/properties/articles",
+      "type": "array",
+      "title": "The articles schema",
+      "description": "An explanation about the purpose of this instance.",
+      "default": [],
+      "examples": [
+        [
+          {
+            "title": "Article 1",
+            "description": "Nullam quis risus eget urna mollis ornare vel eu leo. Cras justo odio, dapibus ac facilisis in, egestas eget quam."
+          }
+        ]
+      ],
+      "additionalItems": true,
+      "items": {
+        "$id": "#/properties/articles/items",
+        "anyOf": [
+          {
+            "$id": "#/properties/articles/items/anyOf/0",
+            "type": "object",
+            "title": "The first anyOf schema",
+            "description": "An explanation about the purpose of this instance.",
+            "default": {},
+            "examples": [
+              {
+                "title": "Article 1",
+                "description": "Nullam quis risus eget urna mollis ornare vel eu leo. Cras justo odio, dapibus ac facilisis in, egestas eget quam."
+              }
+            ],
+            "required": [
+              "title",
+              "description"
+            ],
+            "properties": {
+              "title": {
+                "$id": "#/properties/articles/items/anyOf/0/properties/title",
+                "type": "string",
+                "title": "The title schema",
+                "description": "An explanation about the purpose of this instance.",
+                "default": "",
+                "examples": [
+                  "Article 1"
+                ]
+              },
+              "description": {
+                "$id": "#/properties/articles/items/anyOf/0/properties/description",
+                "type": "string",
+                "title": "The description schema",
+                "description": "An explanation about the purpose of this instance.",
+                "default": "",
+                "examples": [
+                  "Nullam quis risus eget urna mollis ornare vel eu leo. Cras justo odio, dapibus ac facilisis in, egestas eget quam."
+                ]
+              }
+            },
+            "additionalProperties": true
+          }
+        ]
+      }
+    }
+  },
+  "additionalProperties": true
+}

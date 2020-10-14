@@ -97,6 +97,7 @@ export default defineComponent({
   @import "~@/assets/scss/variables";
 
   .navigation-panel {
+    min-width: 54rem;
     max-width: 54rem;
     width: 100%;
     height: 100vh;
@@ -150,11 +151,11 @@ export default defineComponent({
         color: $colorGrey100;
         text-decoration: none;
         font-weight: 600;
-        font-size: 3rem;
+        font-size: 2.5rem;
         line-height: 1em;
         width: 100%;
         transition: background-color 0.1s ease-out;
-        padding: 2rem 4rem;
+        padding: 1.5rem 4rem;
         display: block;
 
         &:hover {

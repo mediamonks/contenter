@@ -27,7 +27,14 @@ const loadFirebaseDatabase = async () => {
   return firebaseApp.database();
 };
 
+const loadFirebaseStorage = async () => {
+  await import(/* webpackChunkName: "firebase-storage" */'firebase/storage');
+
+  return firebase.storage();
+};
+
 export {
   loadFirebaseAuth,
   loadFirebaseDatabase,
+  loadFirebaseStorage,
 };

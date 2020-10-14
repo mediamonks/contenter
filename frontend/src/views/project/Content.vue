@@ -7,7 +7,9 @@
       v-else
       class="no-schema"
     >
-      <h2>There is no schema defined for {{ projectsState.currentProject.metadata.name }}</h2>
+      <h2>
+        You first need to define a schema for {{ projectsState.currentProject.metadata.name }}
+      </h2>
       <Button
         class="button"
         :to="{
@@ -15,7 +17,7 @@
           params: { projectId: projectsState.currentProject.metadata.id }
         }"
       >
-        Upload a schema
+        Go to schema
       </Button>
     </div>
   </div>

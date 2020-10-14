@@ -7,6 +7,14 @@
   >
     <slot />
   </router-link>
+  <label
+    v-else-if="labelFor"
+    :for="labelFor"
+    class="button"
+    :class="{ flat: flat }"
+  >
+    <slot />
+  </label>
   <button
     v-else
     class="button"
@@ -37,6 +45,10 @@ export default defineComponent({
       type: [Object, String],
       default: () => null,
     },
+    labelFor: {
+      type: String,
+      default: null,
+    },
   },
 });
 </script>
@@ -49,9 +61,9 @@ export default defineComponent({
     background: $colorBlue400;
     color: $colorBlue050;
     font-weight: 600;
-    font-size: 2.5rem;
+    font-size: 2.25rem;
     line-height: 3rem;
-    padding: 1.5rem 4rem;
+    padding: 1rem 3rem;
     border: none;
     border-radius: 0.5rem;
     height: fit-content;

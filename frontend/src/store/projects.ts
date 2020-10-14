@@ -1,11 +1,11 @@
 import { reactive } from 'vue';
 import {
-  userState,
-  User,
   fetchAllUsers,
   updateUser,
+  User,
+  userState,
 } from '@/store/user';
-import { loadFirebaseDatabase } from '@/firebase';
+import { loadFirebaseDatabase, loadFirebaseStorage } from '@/firebase';
 import firebase from 'firebase/app';
 
 interface ProjectData {
@@ -23,21 +23,21 @@ interface ProjectMetadata {
 interface Project {
   metadata?: ProjectMetadata;
   schemaURL?: string;
-  content?: any[] | {
-    [key: string]: any;
-  };
+  content?: any[] | Record<any, any>;
 }
 
 interface ProjectState {
   userProjects: ProjectMetadata[];
   currentProject: Project | null;
   projectIds: string[];
+  currentProjectSchema: Record<any, any> | null;
 }
 
 const projectsState = reactive<ProjectState>({
   userProjects: [],
   currentProject: null,
   projectIds: [],
+  currentProjectSchema: null,
 });
 
 const getRawUserProjects = async (ids: string[]): Promise<ProjectData[]> => {
@@ -121,8 +121,8 @@ const createNewProject = async (name: string, id: string, uid: string, users: Us
     projectRef.set({
       name,
       id,
-      user: [uid, ...userIds],
-    }),
+      users: [uid, ...userIds],
+    } as ProjectData),
     database.ref(`projectIds/${projectsState.projectIds.length}`).set(id),
     syncProjects(),
     updateUser({
@@ -133,19 +133,31 @@ const createNewProject = async (name: string, id: string, uid: string, users: Us
   ]);
 };
 
+const fetchJSONSchema = async (url: string) => {
+  const result = await fetch(url);
+  const json = await result.json();
+
+  return json;
+};
+
 const syncCurrentProject = async (id: string) => {
   const database = await loadFirebaseDatabase();
   const projectRef = database.ref(`projects/${id}`);
 
   const projectMetadata = await getFormattedProjects([id]);
 
-  projectRef.on('value', (snapshot) => {
+  projectRef.on('value', async (snapshot) => {
     const data: null | {
       schemaURL?: string;
       content?: any[] | {
         [key: string]: any;
       };
     } = snapshot.val();
+
+    const oldSchemaURL = projectsState.currentProject?.schemaURL;
+    if (oldSchemaURL !== data?.schemaURL && data?.schemaURL) {
+      projectsState.currentProjectSchema = await fetchJSONSchema(data?.schemaURL);
+    }
 
     projectsState.currentProject = {
       metadata: projectMetadata[0],
@@ -164,10 +176,41 @@ const resetCurrentProject = async () => {
   projectRef.off('value');
 };
 
+const updateProject = async (projectId: string, newData: Project) => {
+  const database = await loadFirebaseDatabase();
+  const ref = database.ref(`projects/${projectId}`);
+
+  await ref.update(newData);
+};
+
+const uploadSchema = async (schemaFile: File, project: Project) => {
+  if (!project.metadata) throw new Error('Project has no metadata');
+  const storage = await loadFirebaseStorage();
+  const ref = storage.ref(`${project.metadata?.id}/schema.json`);
+
+  const snapshot = await ref.put(schemaFile);
+  const downloadUrl = await snapshot.ref.getDownloadURL();
+  const jsonSchema = await fetchJSONSchema(downloadUrl);
+
+  const newData = {
+    ...project,
+    schemaURL: downloadUrl,
+  };
+
+  delete newData.metadata;
+  await updateProject(project.metadata.id, newData);
+
+  projectsState.currentProjectSchema = jsonSchema;
+
+  return jsonSchema;
+};
+
 export {
   projectsState,
   syncProjects,
   createNewProject,
   syncCurrentProject,
   resetCurrentProject,
+  uploadSchema,
+  fetchJSONSchema,
 };

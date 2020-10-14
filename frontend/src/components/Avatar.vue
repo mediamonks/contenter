@@ -6,6 +6,7 @@
     <img
       :src="image"
       :alt="name"
+      referrerpolicy="no-referrer"
     >
     <main>
       <h4 v-if="name">

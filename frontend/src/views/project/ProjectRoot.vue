@@ -3,21 +3,13 @@
     v-if="projectsState.currentProject"
     class="project"
   >
-    <header>
-      <h3>{{ projectsState.currentProject.metadata.name }}</h3>
-      <p class="body-small">
-        {{ projectId }}
-      </p>
-    </header>
-    <main>
-      <router-view />
-    </main>
+    <router-view />
   </div>
 </template>
 
 <script lang="ts">
-import { defineComponent } from 'vue';
-import { syncCurrentProject, projectsState } from '@/store/projects';
+import { defineComponent, onUnmounted } from 'vue';
+import { syncCurrentProject, projectsState, resetCurrentProject } from '@/store/projects';
 
 export default defineComponent({
   name: 'Project',
@@ -28,7 +20,12 @@ export default defineComponent({
     },
   },
   setup(props) {
-    syncCurrentProject(props.projectId);
+    syncCurrentProject(props.projectId)
+      .catch((err) => console.error(err));
+
+    onUnmounted(async () => {
+      await resetCurrentProject();
+    });
 
     return {
       projectsState,
@@ -44,16 +41,5 @@ export default defineComponent({
     display: flex;
     flex-direction: column;
     height: 100vh;
-
-    header {
-      height: 13rem;
-      border-bottom: 1px solid $colorGrey500;
-      padding: 4rem;
-    }
-
-    main {
-      padding: 4rem 4rem 0 4rem;
-      height: 100%;
-    }
   }
 </style>
