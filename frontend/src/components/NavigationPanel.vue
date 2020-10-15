@@ -4,10 +4,11 @@
     class="navigation-panel"
   >
     <header>
-      <h3>MM Content Manager</h3>
+      <h2>MM Content Manager</h2>
     </header>
     <main>
       <nav class="global-navigation">
+        <h3>Global</h3>
         <ul>
           <li>
             <router-link to="/">
@@ -25,6 +26,7 @@
         v-if="router.currentRoute.value.params.projectId"
         class="project-navigation"
       >
+        <h3>Project</h3>
         <ul>
           <li>
             <router-link
@@ -122,7 +124,7 @@ export default defineComponent({
       display: flex;
       align-items: center;
 
-      h3 {
+      h2 {
         color: inherit;
       }
     }
@@ -140,31 +142,39 @@ export default defineComponent({
       }
     }
 
-    nav ul {
-      list-style: none;
-      padding: 4rem 0;
-
-      li {
-        width: 100%;
+    nav {
+      h3 {
+        padding: 0 4rem;
+        margin: 4rem 0 1rem;
+        color: $colorGrey050;
       }
 
-      a {
-        color: $colorGrey100;
-        text-decoration: none;
-        font-weight: 600;
-        font-size: 2.5rem;
-        line-height: 1em;
-        width: 100%;
-        transition: background-color 0.1s ease-out;
-        padding: 1.5rem 4rem;
-        display: block;
+      ul {
+        list-style: none;
+        padding: 0 0 4rem;
 
-        &:hover {
-          background: $colorGrey600;
+        li {
+          width: 100%;
         }
 
-        &.router-link-exact-active {
-          color: $colorBlue400;
+        a {
+          color: $colorGrey100;
+          text-decoration: none;
+          font-weight: 600;
+          font-size: 2.5rem;
+          line-height: 1em;
+          width: 100%;
+          transition: background-color 0.1s ease-out;
+          padding: 1.5rem 4rem;
+          display: block;
+
+          &:hover {
+            background: $colorGrey600;
+          }
+
+          &.router-link-exact-active {
+            color: $colorBlue400;
+          }
         }
       }
     }

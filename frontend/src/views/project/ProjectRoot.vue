@@ -15,6 +15,7 @@
 <script lang="ts">
 import { defineComponent, onUnmounted } from 'vue';
 import { syncCurrentProject, projectsState, resetCurrentProject } from '@/store/projects';
+import router from '@/router';
 
 export default defineComponent({
   name: 'Project',
@@ -26,7 +27,9 @@ export default defineComponent({
   },
   setup(props) {
     syncCurrentProject(props.projectId)
-      .catch((err) => console.error(err));
+      .catch(() => {
+        router.push('/');
+      });
 
     onUnmounted(async () => {
       await resetCurrentProject();

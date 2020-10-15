@@ -40,7 +40,7 @@ const projectsState = reactive<ProjectState>({
   currentProjectSchema: null,
 });
 
-const getRawUserProjects = async (ids: string[]): Promise<ProjectData[]> => {
+async function getRawUserProjects(ids: string[]): Promise<ProjectData[]> {
   const database = await loadFirebaseDatabase();
 
   const projectRefs = ids.map((projectId) => database.ref(`projectMetadata/${projectId}`).once('value'));
@@ -50,9 +50,9 @@ const getRawUserProjects = async (ids: string[]): Promise<ProjectData[]> => {
   return [...projectsDataSnapshots.map(
     (projectSnapshot) => projectSnapshot.val(),
   )];
-};
+}
 
-const getFormattedProjects = async (ids: string[]): Promise<ProjectMetadata[]> => {
+async function getFormattedProjects(ids: string[]): Promise<ProjectMetadata[]> {
   const rawProjects = await getRawUserProjects(ids);
   const users = await fetchAllUsers();
 
@@ -67,9 +67,9 @@ const getFormattedProjects = async (ids: string[]): Promise<ProjectMetadata[]> =
       users: projectsUsers,
     };
   });
-};
+}
 
-const getAllProjectIds = async (): Promise<string[]> => {
+async function getAllProjectIds(): Promise<string[]> {
   const database = await loadFirebaseDatabase();
   const snapshot = await database.ref('projectIds').once('value');
   const val = snapshot.val();
@@ -79,9 +79,9 @@ const getAllProjectIds = async (): Promise<string[]> => {
   }
 
   return val;
-};
+}
 
-const syncProjects = async (): Promise<ProjectMetadata[]> => {
+async function syncProjects(): Promise<ProjectMetadata[]> {
   if (!userState.currentUser) throw new Error('No user defined');
   projectsState.projectIds = await getAllProjectIds();
 
@@ -90,9 +90,9 @@ const syncProjects = async (): Promise<ProjectMetadata[]> => {
   projectsState.userProjects = formattedProjects;
 
   return formattedProjects;
-};
+}
 
-const createNewProject = async (name: string, id: string, uid: string, users: User[] = []) => {
+async function createNewProject(name: string, id: string, uid: string, users: User[] = []) {
   if (!userState.currentUser) throw new Error('User is not defined');
   const database = await loadFirebaseDatabase();
 
@@ -131,7 +131,7 @@ const createNewProject = async (name: string, id: string, uid: string, users: Us
     }),
     ...userUpdatePromises,
   ]);
-};
+}
 
 const fetchJSONSchema = async (url: string) => {
   const result = await fetch(url);
@@ -140,7 +140,7 @@ const fetchJSONSchema = async (url: string) => {
   return json;
 };
 
-const syncCurrentProject = async (id: string) => {
+async function syncCurrentProject(id: string) {
   const database = await loadFirebaseDatabase();
   const projectRef = database.ref(`projects/${id}`);
 
@@ -164,9 +164,9 @@ const syncCurrentProject = async (id: string) => {
       ...data,
     };
   });
-};
+}
 
-const resetCurrentProject = async () => {
+async function resetCurrentProject() {
   if (!projectsState.currentProject) return;
   if (!projectsState.currentProject.metadata) return;
   const { id } = projectsState.currentProject.metadata;
@@ -177,7 +177,7 @@ const resetCurrentProject = async () => {
   const database = await loadFirebaseDatabase();
   const projectRef = database.ref(`projects/${id}`);
   projectRef.off('value');
-};
+}
 
 const updateProject = async (projectId: string, newData: Project) => {
   const database = await loadFirebaseDatabase();
@@ -186,7 +186,7 @@ const updateProject = async (projectId: string, newData: Project) => {
   await ref.update(newData);
 };
 
-const uploadSchema = async (schemaFile: File, project: Project) => {
+async function uploadSchema(schemaFile: File, project: Project) {
   if (!project.metadata) throw new Error('Project has no metadata');
   const storage = await loadFirebaseStorage();
   const ref = storage.ref(`${project.metadata?.id}/schema.json`);
@@ -206,7 +206,7 @@ const uploadSchema = async (schemaFile: File, project: Project) => {
   projectsState.currentProjectSchema = jsonSchema;
 
   return jsonSchema;
-};
+}
 
 export {
   projectsState,

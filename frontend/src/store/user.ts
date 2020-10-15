@@ -22,7 +22,7 @@ const userState = reactive<UserState>({
   users: [],
 });
 
-const setUser = async (properties: User): Promise<User> => {
+async function setUser(properties: User): Promise<User> {
   const database = await loadFirebaseDatabase();
   const snapshot = await database
     .ref(`users/${properties.uid}`)
@@ -31,9 +31,9 @@ const setUser = async (properties: User): Promise<User> => {
   userState.currentUser = snapshot.val() as User;
 
   return snapshot.val();
-};
+}
 
-const createNewUser = async (properties: User) => {
+async function createNewUser(properties: User) {
   const database = await loadFirebaseDatabase();
 
   await database
@@ -42,9 +42,9 @@ const createNewUser = async (properties: User) => {
       ...properties,
       role: 'editor',
     } as User);
-};
+}
 
-const parseUser = async (authUser: firebase.User, isNewUser = false) => {
+async function parseUser(authUser: firebase.User, isNewUser = false) {
   const {
     displayName,
     email,
@@ -70,18 +70,18 @@ const parseUser = async (authUser: firebase.User, isNewUser = false) => {
   }
 
   return setUser(userData);
-};
+}
 
-const signIn = async () => {
+async function signIn() {
   const auth = await loadFirebaseAuth();
   const provider = new firebase.auth.GoogleAuthProvider();
   const authUser = await auth.signInWithPopup(provider);
   if (!authUser.user || !authUser.additionalUserInfo) throw new Error('No user defined');
 
   return parseUser(authUser.user, authUser.additionalUserInfo.isNewUser);
-};
+}
 
-const signOut = async () => {
+async function signOut() {
   const auth = await loadFirebaseAuth();
   if (!auth.currentUser) throw new Error('No user defined');
   await auth.signOut();
@@ -91,17 +91,17 @@ const signOut = async () => {
 
   userState.currentUser = null;
   projectsState.userProjects = [];
-};
+}
 
-const fetchUser = async (uid: string): Promise<User> => {
+async function fetchUser(uid: string): Promise<User> {
   const database = await loadFirebaseDatabase();
 
   const snapshot = await database.ref(`users/${uid}`).once('value');
 
   return snapshot.val();
-};
+}
 
-const checkIfUserIsSignedIn = async () => {
+async function checkIfUserIsSignedIn() {
   const auth = await loadFirebaseAuth();
   return new Promise<User>(((resolve, reject) => {
     auth.onAuthStateChanged((state) => {
@@ -118,18 +118,18 @@ const checkIfUserIsSignedIn = async () => {
       }
     });
   }));
-};
+}
 
-const updateUser = async (properties: User) => {
+async function updateUser(properties: User) {
   const database = await loadFirebaseDatabase();
 
   await database.ref(`users/${properties.uid}`).update(properties);
   await setUser(properties);
 
   return properties;
-};
+}
 
-const fetchAllUsers = async () => {
+async function fetchAllUsers() {
   const database = await loadFirebaseDatabase();
   const snapshot = await database.ref('users').once('value');
 
@@ -145,7 +145,7 @@ const fetchAllUsers = async () => {
 
   userState.users = users;
   return users;
-};
+}
 
 export {
   userState,
