@@ -1,9 +1,14 @@
 <template>
-  <div
-    v-if="projectsState.currentProject"
-    class="project"
-  >
-    <router-view />
+  <div class="project">
+    <template v-if="projectsState.currentProject">
+      <router-view />
+    </template>
+    <div
+      v-else
+      class="loading"
+    >
+      <h2>Loading...</h2>
+    </div>
   </div>
 </template>
 
@@ -41,5 +46,13 @@ export default defineComponent({
     display: flex;
     flex-direction: column;
     height: 100vh;
+
+    .loading {
+      display: flex;
+      width: 100%;
+      height: 100%;
+      align-items: center;
+      justify-content: center;
+    }
   }
 </style>

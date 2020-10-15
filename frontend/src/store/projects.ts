@@ -171,6 +171,9 @@ const resetCurrentProject = async () => {
   if (!projectsState.currentProject.metadata) return;
   const { id } = projectsState.currentProject.metadata;
 
+  projectsState.currentProject = null;
+  projectsState.currentProjectSchema = null;
+
   const database = await loadFirebaseDatabase();
   const projectRef = database.ref(`projects/${id}`);
   projectRef.off('value');
@@ -213,4 +216,5 @@ export {
   resetCurrentProject,
   uploadSchema,
   fetchJSONSchema,
+  updateProject,
 };

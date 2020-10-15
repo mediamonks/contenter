@@ -105,6 +105,7 @@ export default defineComponent({
     color: $colorGrey050;
     display: grid;
     grid-template-rows: 13rem auto 15rem;
+    z-index: 10;
 
     > * {
       width: 100%;
