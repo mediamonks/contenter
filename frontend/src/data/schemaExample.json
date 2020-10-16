@@ -21,6 +21,7 @@
     "habitats": {
       "id": "#/properties/habitats",
       "type": "array",
+      "format": "tabs",
       "title": "Habitats",
       "default": [],
       "additionalItems": true,
@@ -51,7 +52,7 @@
                 "id": "#/properties/habitats/items/anyOf/0/properties/species",
                 "type": "array",
                 "title": "Species",
-
+                "format": "tabs",
                 "default": [],
                 "additionalItems": true,
                 "items": {
@@ -109,6 +110,7 @@
                         "animals": {
                           "id": "#/properties/habitats/items/anyOf/0/properties/species/items/anyOf/0/properties/animals",
                           "type": "array",
+                          "format": "tabs",
                           "title": "Animals",
                           "default": [],
                           "examples": [
@@ -167,7 +169,7 @@
                                   "dateOfBirth": {
                                     "id": "#/properties/habitats/items/anyOf/0/properties/species/items/anyOf/0/properties/animals/items/anyOf/0/properties/dateOfBirth",
                                     "type": "string",
-                                    "format": "date-time",
+                                    "format": "datetime",
                                     "title": "Date of birth",
                                     "default": "",
                                     "examples": [

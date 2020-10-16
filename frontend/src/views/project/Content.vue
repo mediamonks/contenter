@@ -1,5 +1,5 @@
 <template>
-  <div class="content">
+  <div class="content-page">
     <ProjectBar>
       <Button
         flat
@@ -115,13 +115,130 @@ export default defineComponent({
 });
 </script>
 
-<style lang="scss" scoped>
-  .content {
+<style lang="scss">
+  @import '~@/assets/scss/variables';
+
+  .content-page {
     height: 100vh;
     overflow-y: scroll;
 
-    main {
-      padding: 4rem 0 0 4rem;
+    > main {
+      padding: 4rem;
+    }
+
+    .json-editor {
+      div[data-schematype="array"] {
+        > div {
+          display: flex;
+
+          .content {
+            flex-basis: 100%;
+            padding-right: 0.5rem;
+          }
+        }
+      }
+
+      .je-indented-panel {
+        padding: 2rem 0 2rem 1rem;
+        margin: 0;
+        border-radius: 0 1rem 1rem 1rem;
+        border: dashed 1px $colorGrey100;
+        display: block;
+        border-right-style: none;
+
+        &:first-child {
+          margin-top: 0;
+        }
+
+        > span {
+          display: block;
+        }
+      }
+
+      .je-header {
+        display: inline-flex;
+        align-items: center;
+      }
+
+      div[data-schematype="object"] {
+        > .je-indented-panel {
+          padding: 0;
+          border: none;
+        }
+      }
+
+      > div[data-schematype="object"] {
+        > .je-indented-panel {
+          border: 1px $colorGrey100 dashed;
+          padding: 2rem 0 2rem 2rem;
+          border-radius: 1rem;
+        }
+      }
+
+      .tabs {
+        .je-tab {
+          border: solid 1px $colorGrey100;
+          margin-bottom: -1px;
+          border-radius: 0;
+
+          &:last-child {
+            border-radius: 0 0 0 1rem;
+          }
+
+          &:first-child {
+            border-radius: 1rem 0 0 0;
+          }
+        }
+      }
+
+      input, select {
+        font-size: 2rem;
+        padding: 1rem;
+        border: solid 1px $colorGrey100;
+        border-radius: 0.5rem;
+        transition: border-color 0.1s ease-out;
+        width: calc(100% - 2rem);
+
+        &:focus {
+          outline: none;
+          border-color: $colorBlue400;
+        }
+      }
+
+      select {
+        cursor: pointer;
+      }
+
+      .form-control {
+        margin-bottom: 2rem;
+
+        label {
+          color: $colorGrey900;
+          text-transform: uppercase;
+          letter-spacing: 0.1em;
+        }
+      }
+
+      button {
+        font-size: 1.5rem;
+        border: solid 1px $colorBlue400;
+        border-radius: 0.5rem;
+        padding: 0.5rem 1rem;
+        color: $colorBlue400;
+        font-weight: 500;
+        background: transparent;
+        margin: 1rem 0.5rem;
+        cursor: pointer;
+        transition: background-color 0.1s ease-out;
+
+        &:hover {
+          background: $colorBlue050;
+        }
+
+        &.json-editor-btn-edit_properties {
+          display: none;
+        }
+      }
     }
 
     .no-schema {
