@@ -36,11 +36,16 @@
 
 <script lang="ts">
 import {
-  defineComponent, ref, onMounted, watch,
+  defineComponent,
+  ref,
+  onMounted,
+  watch,
+  onBeforeUnmount,
 } from 'vue';
 import { projectsState, updateProject } from '@/store/projects';
 import ProjectBar from '@/components/ProjectBar.vue';
 import Button from '@/components/Button.vue';
+import { displayError } from '@/store/error';
 
 export default defineComponent({
   name: 'Content',
@@ -52,6 +57,24 @@ export default defineComponent({
     const jsonEditor = ref<HTMLDivElement | null>(null);
     const contentData = ref<object | null>(null);
     let editor: any = null;
+
+    function changeData() {
+      contentData.value = editor.getValue();
+
+      if (!projectsState.currentProject) return;
+      if (!projectsState.currentProject.metadata) return;
+
+      const currentData = { ...projectsState.currentProject };
+      delete currentData.metadata;
+
+      const newData = {
+        ...currentData,
+        content: editor.getValue(),
+      };
+
+      updateProject(projectsState.currentProject.metadata.id, newData)
+        .catch((error) => displayError(error));
+    }
 
     onMounted(async () => {
       if (!jsonEditor.value) return;
@@ -65,22 +88,13 @@ export default defineComponent({
         editor.setValue(projectsState.currentProject?.content);
       }
 
-      editor.on('change', () => {
-        contentData.value = editor.getValue();
+      editor.on('change', changeData);
+    });
 
-        if (!projectsState.currentProject) return;
-        if (!projectsState.currentProject.metadata) return;
+    onBeforeUnmount(() => {
+      if (!editor) return;
 
-        const currentData = { ...projectsState.currentProject };
-        delete currentData.metadata;
-
-        const newData = {
-          ...currentData,
-          content: editor.getValue(),
-        };
-
-        updateProject(projectsState.currentProject.metadata.id, newData);
-      });
+      editor.off('change', changeData);
     });
 
     watch(projectsState, () => {
@@ -130,6 +144,7 @@ export default defineComponent({
       div[data-schematype="array"] {
         > div {
           display: flex;
+          flex-direction: column;
 
           .content {
             flex-basis: 100%;
@@ -176,13 +191,22 @@ export default defineComponent({
       }
 
       .tabs {
+        display: flex;
+        float: none;
+        width: 100%;
+        overflow-x: auto;
+
         .je-tab {
           border: solid 1px $colorGrey100;
           margin-bottom: -1px;
+          margin-right: -1px;
           border-radius: 0;
+          text-transform: capitalize;
+          padding: 1rem;
+          width: fit-content;
 
           &:last-child {
-            border-radius: 0 0 0 1rem;
+            border-radius: 0 1rem 0 0;
           }
 
           &:first-child {
@@ -207,6 +231,7 @@ export default defineComponent({
 
       select {
         cursor: pointer;
+        margin-left: 0;
       }
 
       .form-control {
