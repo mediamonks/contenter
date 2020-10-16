@@ -38,6 +38,7 @@ import { defineComponent, ref } from 'vue';
 import { projectsState, uploadSchema } from '@/store/projects';
 import ProjectBar from '@/components/ProjectBar.vue';
 import Button from '@/components/Button.vue';
+import { displayError } from '@/store/error';
 
 export default defineComponent({
   name: 'Schema',
@@ -59,9 +60,9 @@ export default defineComponent({
         .then(() => {
           loading.value = false;
         })
-        .catch((err) => {
+        .catch((error) => {
           loading.value = false;
-          console.error(err);
+          displayError(error);
         });
     }
 

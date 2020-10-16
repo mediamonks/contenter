@@ -57,6 +57,7 @@ async function getFormattedProjects(ids: string[]): Promise<ProjectMetadata[]> {
   const users = await fetchAllUsers();
 
   return rawProjects.map((rawProject) => {
+    if (!rawProject) throw new Error('Project doesn\'t exists');
     const projectsUsers = rawProject.users.map((id) => users.filter(
       (usr) => usr.uid === id,
     )[0]);

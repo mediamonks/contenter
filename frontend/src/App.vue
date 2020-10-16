@@ -1,5 +1,6 @@
 <template>
   <div class="app">
+    <ErrorDisplay />
     <NavigationPanel />
     <div class="router-wrapper">
       <router-view />
@@ -10,11 +11,13 @@
 <script lang="ts">
 import { defineComponent } from 'vue';
 import NavigationPanel from '@/components/NavigationPanel.vue';
+import ErrorDisplay from '@/components/ErrorDisplay.vue';
 
 export default defineComponent({
   name: 'App',
   components: {
     NavigationPanel,
+    ErrorDisplay,
   },
 });
 </script>

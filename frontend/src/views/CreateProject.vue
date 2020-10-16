@@ -36,6 +36,7 @@ import SearchSelector from '@/components/SearchSelector.vue';
 import { createNewProject, projectsState, syncProjects } from '@/store/projects';
 import { User, userState } from '@/store/user';
 import router from '@/router';
+import { displayError } from '@/store/error';
 
 export default defineComponent({
   name: 'CreateProject',
@@ -84,8 +85,8 @@ export default defineComponent({
           router.push('/');
           isLoading.value = false;
         })
-        .catch((err) => {
-          console.error(err);
+        .catch((error) => {
+          displayError(error);
           isLoading.value = false;
         });
     }

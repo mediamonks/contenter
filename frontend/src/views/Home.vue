@@ -36,6 +36,7 @@ import { signOut, userState } from '@/store/user';
 import ProjectCard from '@/components/ProjectCard.vue';
 import { projectsState, syncProjects } from '@/store/projects';
 import router from '@/router';
+import { displayError } from '@/store/error';
 
 export default defineComponent({
   name: 'Home',
@@ -43,9 +44,7 @@ export default defineComponent({
     ProjectCard,
   },
   setup() {
-    syncProjects().catch((err) => {
-      console.error(err);
-    });
+    syncProjects().catch((error) => displayError(error));
 
     async function handleSignOut() {
       await signOut();

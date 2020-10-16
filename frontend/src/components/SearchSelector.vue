@@ -43,6 +43,7 @@ import {
 import TextField from '@/components/TextField.vue';
 import { User, userState, fetchAllUsers } from '@/store/user';
 import Avatar from '@/components/Avatar.vue';
+import { displayError } from '@/store/error';
 
 export default defineComponent({
   name: 'SearchSelector',
@@ -62,7 +63,7 @@ export default defineComponent({
   },
   emits: ['update-users'],
   setup(props, context) {
-    fetchAllUsers().catch((err) => console.error(err));
+    fetchAllUsers().catch((error) => displayError(error));
 
     const searchInput = ref('');
     const selectedResults = ref<User[]>([]);

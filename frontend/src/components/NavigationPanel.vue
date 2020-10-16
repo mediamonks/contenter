@@ -76,6 +76,7 @@ import LayerPlus from '@/assets/icons/LayersPlus.vue';
 import Edit from '@/assets/icons/Edit.vue';
 import Database from '@/assets/icons/Database.vue';
 import router from '@/router';
+import { displayError } from '@/store/error';
 
 export default defineComponent({
   name: 'NavigationPanel',
@@ -91,7 +92,7 @@ export default defineComponent({
     function handleSignOut() {
       signOut()
         .then(() => router.push('/sign-in'))
-        .catch((err) => console.error(err));
+        .catch((error) => displayError(error));
     }
 
     return {

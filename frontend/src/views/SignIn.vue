@@ -14,12 +14,6 @@
       >
         Sign in with Google
       </Button>
-      <p
-        v-if="error"
-        class="error"
-      >
-        Something went wrong, error: {{ error }}
-      </p>
     </main>
   </div>
 </template>
@@ -29,6 +23,7 @@ import { defineComponent, ref } from 'vue';
 import router from '@/router';
 import { signIn } from '@/store/user';
 import Button from '@/components/Button.vue';
+import { displayError } from '@/store/error';
 
 export default defineComponent({
   name: 'SignIn',
@@ -36,7 +31,6 @@ export default defineComponent({
     Button,
   },
   setup() {
-    const error = ref('');
     const loading = ref(false);
 
     function handleSignIn() {
@@ -45,9 +39,7 @@ export default defineComponent({
         .then(() => {
           router.push('/');
         })
-        .catch((err: Error) => {
-          error.value = err.message;
-        })
+        .catch((error: Error) => displayError(error))
         .finally(() => {
           loading.value = false;
         });
@@ -55,7 +47,6 @@ export default defineComponent({
 
     return {
       handleSignIn,
-      error,
       loading,
     };
   },
