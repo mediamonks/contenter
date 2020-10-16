@@ -12,12 +12,12 @@
         <ul>
           <li>
             <router-link to="/">
-              Projects
+              <Task /> Projects
             </router-link>
           </li>
           <li>
             <router-link to="/create-project">
-              Create Project
+              <LayerPlus /> Create Project
             </router-link>
           </li>
         </ul>
@@ -34,7 +34,7 @@
                 name: 'ProjectContent',
                 params: { projectId: router.currentRoute.value.params.projectId } }"
             >
-              Content
+              <Edit /> Content
             </router-link>
           </li>
           <li>
@@ -43,7 +43,7 @@
                 name: 'ProjectSchema',
                 params: { projectId: router.currentRoute.value.params.projectId } }"
             >
-              Schema
+              <Database /> Schema
             </router-link>
           </li>
         </ul>
@@ -71,6 +71,10 @@ import { defineComponent } from 'vue';
 import { signOut, userState } from '@/store/user';
 import Avatar from '@/components/Avatar.vue';
 import ArrowToLeft from '@/assets/icons/ArrowToLeft.vue';
+import Task from '@/assets/icons/Task.vue';
+import LayerPlus from '@/assets/icons/LayersPlus.vue';
+import Edit from '@/assets/icons/Edit.vue';
+import Database from '@/assets/icons/Database.vue';
 import router from '@/router';
 
 export default defineComponent({
@@ -78,6 +82,10 @@ export default defineComponent({
   components: {
     Avatar,
     ArrowToLeft,
+    Task,
+    LayerPlus,
+    Edit,
+    Database,
   },
   setup() {
     function handleSignOut() {
@@ -166,7 +174,14 @@ export default defineComponent({
           width: 100%;
           transition: background-color 0.1s ease-out;
           padding: 1.5rem 4rem;
-          display: block;
+          display: flex;
+          align-items: center;
+          height: calc(1em + 2 * 1.5rem);
+
+          .icon {
+            width: 1em;
+            margin-right: 2rem;
+          }
 
           &:hover {
             background: $colorGrey600;
