@@ -98,7 +98,8 @@ export default defineComponent({
             color: $colorBlue400;
           }
 
-          &:hover {
+          &:hover, &:focus {
+            outline: none;
             border-color: $colorBlue400;
           }
         }

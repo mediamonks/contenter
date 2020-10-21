@@ -131,6 +131,10 @@ p {
   line-height: 3rem;
 }
 
+code {
+  font-family: monospace;
+}
+
 .body- {
   &large {
     font-size: 2.25rem;
@@ -156,5 +160,9 @@ ol {
 
 img {
   display: block;
+}
+
+*:focus:not(:focus-visible) {
+  outline: none;
 }
 </style>

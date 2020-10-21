@@ -124,7 +124,9 @@ async function updateUser(properties: User) {
   const database = await loadFirebaseDatabase();
 
   await database.ref(`users/${properties.uid}`).update(properties);
-  await setUser(properties);
+  if (userState.currentUser && userState.currentUser.uid === properties.uid) {
+    await setUser(properties);
+  }
 
   return properties;
 }

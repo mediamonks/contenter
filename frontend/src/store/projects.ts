@@ -8,7 +8,7 @@ import {
 import { loadFirebaseDatabase, loadFirebaseStorage } from '@/firebase';
 import firebase from 'firebase/app';
 
-interface ProjectData {
+interface ProjectRawMetadata {
   name: string;
   id: string;
   users: string[];
@@ -40,7 +40,7 @@ const projectsState = reactive<ProjectState>({
   currentProjectSchema: null,
 });
 
-async function getRawUserProjects(ids: string[]): Promise<ProjectData[]> {
+async function getRawUserProjects(ids: string[]): Promise<ProjectRawMetadata[]> {
   const database = await loadFirebaseDatabase();
 
   const projectRefs = ids.map((projectId) => database.ref(`projectMetadata/${projectId}`).once('value'));
@@ -123,7 +123,7 @@ async function createNewProject(name: string, id: string, uid: string, users: Us
       name,
       id,
       users: [uid, ...userIds],
-    } as ProjectData),
+    } as ProjectRawMetadata),
     database.ref(`projectIds/${projectsState.projectIds.length}`).set(id),
     syncProjects(),
     updateUser({
@@ -167,7 +167,7 @@ async function syncCurrentProject(id: string) {
   });
 }
 
-async function resetCurrentProject() {
+async function resetCurrentProjectState() {
   if (!projectsState.currentProject) return;
   if (!projectsState.currentProject.metadata) return;
   const { id } = projectsState.currentProject.metadata;
@@ -209,13 +209,31 @@ async function uploadSchema(schemaFile: File, project: Project) {
   return jsonSchema;
 }
 
+async function updateProjectsMetadata(newMetadata: ProjectMetadata): Promise<ProjectMetadata> {
+  if (!projectsState.currentProject) throw new Error('No current project defined');
+  const userIds = newMetadata.users.map((user) => user.uid);
+  const metadata = {
+    ...newMetadata,
+    users: [...new Set(userIds)],
+  };
+
+  const database = await loadFirebaseDatabase();
+  const ref = database.ref(`projectMetadata/${newMetadata.id}`);
+  await ref.update(metadata);
+
+  projectsState.currentProject.metadata = newMetadata;
+
+  return newMetadata;
+}
+
 export {
   projectsState,
   syncProjects,
   createNewProject,
   syncCurrentProject,
-  resetCurrentProject,
+  resetCurrentProjectState,
   uploadSchema,
   fetchJSONSchema,
   updateProject,
+  updateProjectsMetadata,
 };

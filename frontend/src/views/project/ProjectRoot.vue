@@ -14,7 +14,7 @@
 
 <script lang="ts">
 import { defineComponent, onUnmounted } from 'vue';
-import { syncCurrentProject, projectsState, resetCurrentProject } from '@/store/projects';
+import { syncCurrentProject, projectsState, resetCurrentProjectState } from '@/store/projects';
 import router from '@/router';
 import { displayError } from '@/store/error';
 
@@ -34,7 +34,7 @@ export default defineComponent({
       });
 
     onUnmounted(async () => {
-      await resetCurrentProject();
+      await resetCurrentProjectState();
     });
 
     return {

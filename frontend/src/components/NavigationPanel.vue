@@ -46,6 +46,15 @@
               <Database /> Schema
             </router-link>
           </li>
+          <li>
+            <router-link
+              :to="{
+                name: 'ProjectSettings',
+                params: { projectId: router.currentRoute.value.params.projectId } }"
+            >
+              <Cogs /> Settings
+            </router-link>
+          </li>
         </ul>
       </nav>
     </main>
@@ -75,6 +84,7 @@ import Task from '@/assets/icons/Task.vue';
 import LayerPlus from '@/assets/icons/LayersPlus.vue';
 import Edit from '@/assets/icons/Edit.vue';
 import Database from '@/assets/icons/Database.vue';
+import Cogs from '@/assets/icons/Cogs.vue';
 import router from '@/router';
 import { displayError } from '@/store/error';
 
@@ -87,6 +97,7 @@ export default defineComponent({
     LayerPlus,
     Edit,
     Database,
+    Cogs,
   },
   setup() {
     function handleSignOut() {
@@ -184,7 +195,8 @@ export default defineComponent({
             margin-right: 2rem;
           }
 
-          &:hover {
+          &:hover, &:focus {
+            outline: none;
             background: $colorGrey600;
           }
 

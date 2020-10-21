@@ -94,10 +94,6 @@ export default defineComponent({
         overflow-y: auto;
         overflow-x: auto;
         max-height: 70vh;
-
-        code {
-          font-family: monospace;
-        }
       }
     }
 

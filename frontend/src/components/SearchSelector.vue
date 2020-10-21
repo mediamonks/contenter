@@ -100,6 +100,11 @@ export default defineComponent({
       return searchResults;
     });
 
+    function resetFields() {
+      searchInput.value = '';
+      selectedResults.value = [];
+    }
+
     return {
       searchInput,
       results,
@@ -107,6 +112,7 @@ export default defineComponent({
       error,
       addUserToSelection,
       removeUser,
+      resetFields,
     };
   },
 });

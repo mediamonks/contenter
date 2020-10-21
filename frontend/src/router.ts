@@ -40,6 +40,11 @@ const routes: Array<RouteRecordRaw> = [
         name: 'ProjectSchema',
         component: () => import(/* webpackChunkName: "projectDetailSchema" */ '@/views/project/Schema.vue'),
       },
+      {
+        path: '/project/:projectId/settings',
+        name: 'ProjectSettings',
+        component: () => import(/* webpackChunkName: "projectSettings" */ '@/views/project/ProjectSettings.vue'),
+      },
     ],
   },
 ];

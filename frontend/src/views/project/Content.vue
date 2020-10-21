@@ -204,6 +204,7 @@ export default defineComponent({
           text-transform: capitalize;
           padding: 1rem;
           width: fit-content;
+          transition: 0.2s ease-out;
 
           &:last-child {
             border-radius: 0 1rem 0 0;
@@ -222,6 +223,7 @@ export default defineComponent({
         border-radius: 0.5rem;
         transition: border-color 0.1s ease-out;
         width: calc(100% - 2rem);
+        background: $colorGrey050;
 
         &:focus {
           outline: none;
@@ -246,18 +248,20 @@ export default defineComponent({
 
       button {
         font-size: 1.5rem;
-        border: solid 1px $colorBlue400;
+        border: solid 1px $colorGrey100;
         border-radius: 0.5rem;
         padding: 0.5rem 1rem;
-        color: $colorBlue400;
+        color: $colorGrey600;
         font-weight: 500;
         background: transparent;
         margin: 1rem 0.5rem;
         cursor: pointer;
-        transition: background-color 0.1s ease-out;
+        transition: 0.1s ease-out;
+        transition-property:  border-color, color;
 
         &:hover {
-          background: $colorBlue050;
+          border-color: $colorBlue400;
+          color: $colorBlue400;
         }
 
         &.json-editor-btn-edit_properties {
