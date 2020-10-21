@@ -1,5 +1,17 @@
 {
   "projects": {
     "default": "mm-content-manager"
+  },
+  "targets": {
+    "mm-content-manager": {
+      "hosting": {
+        "testing": [
+          "mm-content-manager"
+        ],
+        "develop": [
+          "dev-mm-content-manager"
+        ]
+      }
+    }
   }
 }

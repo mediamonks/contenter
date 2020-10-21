@@ -1,0 +1,22 @@
+name: Verify commits
+on:
+  push:
+    branches:
+      - 'feature/*'
+      - 'bugfix/*'
+      - 'hotfix/*'
+      - 'release/*'
+jobs:
+  test_pull_request:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/setup-node@v1
+        with:
+          node-version: 10
+      - run: cd ./frontend
+      - run: yarn
+      - run: yarn lint
+      - run: yarn build
+    env:
+      CI: true

@@ -1,8 +1,8 @@
-name: Build and deploy to development
+name: Build and deploy to testing
 on:
   push:
     branches:
-      - 'develop'
+      - 'testing'
 jobs:
   build_release:
     runs-on: ubuntu-latest
@@ -14,7 +14,7 @@ jobs:
       - run: cd ./frontend && yarn && cd ../
       - run: npm install -g firebase-tools
       - run: yarn build:frontend
-      - run: firebase deploy --only hosting:develop  --token=$FIREBASE_TOKEN --project mm-content-manager --non-interactive
+      - run: firebase deploy --only hosting:testing  --token=$FIREBASE_TOKEN --project mm-content-manager --non-interactive
     env:
       CI: true
       FIREBASE_TOKEN: ${{ secrets.FIREBASE_TOKEN }}
