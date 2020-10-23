@@ -40,9 +40,17 @@ async function loadFirebaseAnalytics() {
   return firebase.analytics();
 }
 
+async function loadFirebasePerformance() {
+  await import(/* webpackChunkName: "firebase-performance" */'firebase/performance');
+  firebase.performance();
+
+  return firebase.performance();
+}
+
 export {
   loadFirebaseAuth,
   loadFirebaseDatabase,
   loadFirebaseStorage,
   loadFirebaseAnalytics,
+  loadFirebasePerformance,
 };
