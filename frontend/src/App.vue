@@ -12,12 +12,18 @@
 import { defineComponent } from 'vue';
 import NavigationPanel from '@/components/NavigationPanel.vue';
 import ErrorDisplay from '@/components/ErrorDisplay.vue';
+import { loadFirebaseAnalytics } from '@/firebase';
 
 export default defineComponent({
   name: 'App',
   components: {
     NavigationPanel,
     ErrorDisplay,
+  },
+  setup() {
+    loadFirebaseAnalytics().then((analytics) => {
+      analytics.logEvent('app_startup');
+    });
   },
 });
 </script>
@@ -84,8 +90,8 @@ h6 {
 }
 
 .title {
-  font-size: 7rem;
-  line-height: 8rem;
+  font-size: 5rem;
+  line-height: 6rem;
   font-weight: 600;
 }
 
@@ -97,32 +103,32 @@ h6 {
 }
 
 h1 {
-  font-size: 5rem;
-  line-height: 6rem;
+  font-size: 4rem;
+  line-height: 5rem;
   font-weight: 700;
 }
 
 h2 {
-  font-size: 4rem;
-  line-height: 5rem;
+  font-size: 3rem;
+  line-height: 4rem;
   font-weight: 600;
 }
 
 h3 {
-  font-size: 3rem;
-  line-height: 4rem;
+  font-size: 2.5rem;
+  line-height: 3rem;
   font-weight: 600;
 }
 
 h4 {
-  font-size: 3rem;
-  line-height: 4rem;
+  font-size: 2rem;
+  line-height: 3rem;
   font-weight: 500;
 }
 
 h5 {
-  font-size: 2.5rem;
-  line-height: 3rem;
+  font-size: 1.75rem;
+  line-height: 2rem;
   font-weight: 500;
 }
 

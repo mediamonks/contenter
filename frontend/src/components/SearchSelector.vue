@@ -6,33 +6,35 @@
       :placeholder="placeholder"
       :error="error"
     />
-    <ul
-      v-if="selectedResults.length > 0"
-      class="selected-users"
-    >
-      <li
-        v-for="(result, index) in selectedResults"
-        :key="`selected-result-${result.uid}`"
-        @click="removeUser(index)"
+    <div class="result-wrapper">
+      <ul
+        v-if="selectedResults.length > 0"
+        class="selected-users"
       >
-        <Avatar :image="result.photoURL" />
-      </li>
-    </ul>
-    <ul
-      v-if="results.length > 0"
-      class="results"
-    >
-      <li
-        v-for="result in results"
-        :key="`result-${result.uid}`"
-        @click="addUserToSelection(result)"
+        <li
+          v-for="(result, index) in selectedResults"
+          :key="`selected-result-${result.uid}`"
+          @click="removeUser(index)"
+        >
+          <Avatar :image="result.photoURL" />
+        </li>
+      </ul>
+      <ul
+        v-if="results.length > 0"
+        class="results"
       >
-        <Avatar
-          :image="result.photoURL"
-          :name="result.displayName"
-        />
-      </li>
-    </ul>
+        <li
+          v-for="result in results"
+          :key="`result-${result.uid}`"
+          @click="addUserToSelection(result)"
+        >
+          <Avatar
+            :image="result.photoURL"
+            :name="result.displayName"
+          />
+        </li>
+      </ul>
+    </div>
   </div>
 </template>
 
@@ -73,6 +75,8 @@ export default defineComponent({
       if (selectedResults.value.filter((result) => result.uid === user.uid).length <= 0) {
         selectedResults.value.push(user);
         context.emit('update-users', [...selectedResults.value]);
+
+        searchInput.value = '';
       }
     }
 
@@ -123,15 +127,24 @@ export default defineComponent({
 
   .search-selector {
     width: 100%;
+    position: relative;
+    margin-bottom: 10rem;
+
+    .result-wrapper {
+      position: absolute;
+      width: 100%;
+      z-index: 10;
+    }
 
     .results {
-      margin-top: 3rem;
       padding: 1rem;
       max-height: 20rem;
       overflow: auto;
       list-style: none;
       border: solid 1px $colorGrey100;
       border-radius: 0.5rem;
+      background: $colorGrey050;
+      margin-top: 2rem;
 
       li {
         padding: 0.5rem;
@@ -153,7 +166,7 @@ export default defineComponent({
       list-style: none;
       display: flex;
       flex-wrap: wrap;
-      margin-top: 1rem;
+      margin-top: 2rem;
 
       li {
         cursor: pointer;

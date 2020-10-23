@@ -64,13 +64,17 @@ export default defineComponent({
   @import '~@/assets/scss/variables';
 
   .home {
+    height: 100vh;
+    padding: 6rem 0;
+    overflow-y: auto;
+
     main {
       max-width: 166rem;
-      margin: 10rem auto 0;
+      margin: 0 auto;
       padding: 0 3rem;
 
       ul {
-        margin-top: 5rem;
+        margin-top: 3rem;
         display: grid;
         grid-template-columns: 1fr 1fr 1fr;
         grid-gap: 2rem;
