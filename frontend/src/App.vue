@@ -12,12 +12,18 @@
 import { defineComponent } from 'vue';
 import NavigationPanel from '@/components/NavigationPanel.vue';
 import ErrorDisplay from '@/components/ErrorDisplay.vue';
+import { loadFirebaseAnalytics } from '@/firebase';
 
 export default defineComponent({
   name: 'App',
   components: {
     NavigationPanel,
     ErrorDisplay,
+  },
+  setup() {
+    loadFirebaseAnalytics().then((analytics) => {
+      analytics.logEvent('app_startup');
+    });
   },
 });
 </script>

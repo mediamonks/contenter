@@ -1,6 +1,6 @@
 import { reactive } from 'vue';
 import firebase from 'firebase/app';
-import { loadFirebaseAuth, loadFirebaseDatabase } from '@/firebase';
+import { loadFirebaseAnalytics, loadFirebaseAuth, loadFirebaseDatabase } from '@/firebase';
 import { projectsState } from '@/store/projects';
 
 interface User {
@@ -69,7 +69,16 @@ async function parseUser(authUser: firebase.User, isNewUser = false) {
     await createNewUser(userData);
   }
 
-  return setUser(userData);
+  const user = await setUser(userData);
+
+  const analytics = await loadFirebaseAnalytics();
+  analytics.setUserId(authUser.uid);
+  analytics.logEvent('login', {
+    method: 'Google',
+  });
+  analytics.setUserProperties(user);
+
+  return user;
 }
 
 async function signIn() {

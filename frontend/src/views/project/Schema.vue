@@ -39,6 +39,7 @@ import { projectsState, uploadSchema } from '@/store/projects';
 import ProjectBar from '@/components/ProjectBar.vue';
 import Button from '@/components/Button.vue';
 import { displayError } from '@/store/error';
+import { loadFirebaseAnalytics } from '@/firebase';
 
 export default defineComponent({
   name: 'Schema',
@@ -59,6 +60,13 @@ export default defineComponent({
       uploadSchema(file, projectsState.currentProject)
         .then(() => {
           loading.value = false;
+
+          return loadFirebaseAnalytics();
+        })
+        .then((analytics) => {
+          analytics.logEvent('uploadJSON', {
+            projectId: projectsState.currentProject?.metadata?.id,
+          });
         })
         .catch((error) => {
           loading.value = false;

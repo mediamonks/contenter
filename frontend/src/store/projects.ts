@@ -5,7 +5,7 @@ import {
   User,
   userState,
 } from '@/store/user';
-import { loadFirebaseDatabase, loadFirebaseStorage } from '@/firebase';
+import { loadFirebaseAnalytics, loadFirebaseDatabase, loadFirebaseStorage } from '@/firebase';
 import firebase from 'firebase/app';
 
 interface ProjectRawMetadata {
@@ -132,6 +132,11 @@ async function createNewProject(name: string, id: string, uid: string, users: Us
     }),
     ...userUpdatePromises,
   ]);
+
+  const analytics = await loadFirebaseAnalytics();
+  analytics.logEvent('create_project', {
+    userAmount: userIds.length + 1,
+  });
 }
 
 const fetchJSONSchema = async (url: string) => {
