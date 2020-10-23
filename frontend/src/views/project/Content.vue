@@ -144,29 +144,40 @@ export default defineComponent({
       div[data-schematype="array"] {
         > div {
           display: flex;
-          flex-direction: column;
 
           .content {
-            flex-basis: 100%;
-            padding-right: 0.5rem;
+            margin-right: -1px;
           }
         }
       }
 
+      .je-child-editor-holder {
+        margin-bottom: -1px;
+      }
+
       .je-indented-panel {
-        padding: 2rem 0 2rem 1rem;
+        padding: 2rem 0 0 2rem;
         margin: 0;
         border-radius: 0 1rem 1rem 1rem;
-        border: dashed 1px $colorGrey100;
-        display: block;
-        border-right-style: none;
+        border: solid 1px $colorGrey100;
+        display: flex;
+        flex-direction: column;
 
         &:first-child {
           margin-top: 0;
         }
 
+        > select {
+          order: 2;
+        }
+
+        > div {
+          order: 3;
+        }
+
         > span {
           display: block;
+          order: 1;
         }
       }
 
@@ -179,41 +190,40 @@ export default defineComponent({
         > .je-indented-panel {
           padding: 0;
           border: none;
-        }
-      }
-
-      > div[data-schematype="object"] {
-        > .je-indented-panel {
-          border: 1px $colorGrey100 dashed;
-          padding: 2rem 0 2rem 2rem;
-          border-radius: 1rem;
+          background: none;
         }
       }
 
       .tabs {
-        display: flex;
         float: none;
-        width: 100%;
-        overflow-x: auto;
+        width: 15rem;
+        height: fit-content;
 
         .je-tab {
           border: solid 1px $colorGrey100;
           margin-bottom: -1px;
-          margin-right: -1px;
           border-radius: 0;
           text-transform: capitalize;
           padding: 1rem;
-          width: fit-content;
+          width: 100%;
           transition: 0.2s ease-out;
+          white-space: nowrap;
+          font-size: 1.75rem;
+          font-weight: 500;
+          line-height: 1em;
 
           &:last-child {
-            border-radius: 0 1rem 0 0;
+            border-radius: 0 0 0 1rem;
           }
 
           &:first-child {
             border-radius: 1rem 0 0 0;
           }
         }
+      }
+
+      .content {
+        width: 100%;
       }
 
       input, select {
@@ -264,9 +274,13 @@ export default defineComponent({
           color: $colorBlue400;
         }
 
-        &.json-editor-btn-edit_properties {
+        &.json-editor-btn-edit_properties, &.json-editor-btn-collapse {
           display: none;
         }
+      }
+
+      .je-object__controls {
+        display: none;
       }
     }
 
