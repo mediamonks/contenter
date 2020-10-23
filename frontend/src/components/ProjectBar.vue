@@ -30,7 +30,12 @@ export default defineComponent({
   @import '~@/assets/scss/variables';
 
   .project-bar {
+    position: sticky;
+    top: 0;
+    background: $colorGrey050;
+    z-index: 10;
     height: 13rem;
+    width: 100%;
     border-bottom: 1px solid $colorGrey500;
     padding: 4rem;
     display: flex;

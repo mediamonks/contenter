@@ -15,7 +15,10 @@
             remain <code>{{ projectsState.currentProject.metadata.id }}</code>
           </p>
         </div>
-        <template v-if="projectsState.currentProject.metadata.users.length > 1">
+        <div
+          v-if="projectsState.currentProject.metadata.users.length > 1"
+          class="input-wrapper"
+        >
           <h4>Users</h4>
           <ul class="user-list">
             <template
@@ -36,7 +39,7 @@
               </li>
             </template>
           </ul>
-        </template>
+        </div>
         <SearchSelector
           ref="searchSelector"
           label="Users"
@@ -187,11 +190,9 @@ export default defineComponent({
       max-width: 64rem;
       margin-top: 3rem;
 
-      > *:not(:last-child) {
-        margin-bottom: 3rem;
-      }
-
       .input-wrapper {
+        margin-bottom: 3rem;
+
         .body-small {
           margin-top: 1rem;
         }
