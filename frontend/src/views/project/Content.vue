@@ -46,6 +46,7 @@ import { projectsState, updateProject } from '@/store/projects';
 import ProjectBar from '@/components/ProjectBar.vue';
 import Button from '@/components/Button.vue';
 import { displayError } from '@/store/error';
+import { loadFirebaseAnalytics } from '@/firebase';
 
 export default defineComponent({
   name: 'Content',
@@ -58,7 +59,7 @@ export default defineComponent({
     const contentData = ref<object | null>(null);
     let editor: any = null;
 
-    function changeData() {
+    async function changeData() {
       contentData.value = editor.getValue();
 
       if (!projectsState.currentProject) return;
@@ -74,6 +75,11 @@ export default defineComponent({
 
       updateProject(projectsState.currentProject.metadata.id, newData)
         .catch((error) => displayError(error));
+
+      const analytics = await loadFirebaseAnalytics();
+      analytics.logEvent('changeContent', {
+        projectId: projectsState.currentProject.metadata.id,
+      });
     }
 
     onMounted(async () => {
@@ -105,7 +111,7 @@ export default defineComponent({
       editor.setValue(projectsState.currentProject.content);
     });
 
-    function exportToJSON() {
+    async function exportToJSON() {
       if (!projectsState.currentProject) return;
       if (!projectsState.currentProject.content) return;
 
@@ -118,6 +124,11 @@ export default defineComponent({
       document.body.appendChild(anchorNode);
       anchorNode.click();
       anchorNode.remove();
+
+      const analytics = await loadFirebaseAnalytics();
+      analytics.logEvent('exportJSON', {
+        projectId: projectsState.currentProject.metadata?.id,
+      });
     }
 
     return {

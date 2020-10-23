@@ -1,6 +1,11 @@
 import { reactive } from 'vue';
 import firebase from 'firebase/app';
-import { loadFirebaseAuth, loadFirebaseDatabase } from '@/firebase';
+import {
+  loadFirebaseAnalytics,
+  loadFirebaseAuth,
+  loadFirebaseDatabase,
+  loadFirebasePerformance,
+} from '@/firebase';
 import { projectsState } from '@/store/projects';
 
 interface User {
@@ -45,6 +50,10 @@ async function createNewUser(properties: User) {
 }
 
 async function parseUser(authUser: firebase.User, isNewUser = false) {
+  const performance = await loadFirebasePerformance();
+  const perfTrace = performance.trace('parseUser');
+  perfTrace.start();
+
   const {
     displayName,
     email,
@@ -69,7 +78,17 @@ async function parseUser(authUser: firebase.User, isNewUser = false) {
     await createNewUser(userData);
   }
 
-  return setUser(userData);
+  const user = await setUser(userData);
+
+  const analytics = await loadFirebaseAnalytics();
+  analytics.setUserId(authUser.uid);
+  analytics.logEvent('login', {
+    method: 'Google',
+  });
+  analytics.setUserProperties(user);
+
+  perfTrace.stop();
+  return user;
 }
 
 async function signIn() {
@@ -94,9 +113,14 @@ async function signOut() {
 }
 
 async function fetchUser(uid: string): Promise<User> {
+  const performance = await loadFirebasePerformance();
+  const perfTrace = performance.trace('userFetch');
+  perfTrace.start();
+
   const database = await loadFirebaseDatabase();
 
   const snapshot = await database.ref(`users/${uid}`).once('value');
+  perfTrace.stop();
 
   return snapshot.val();
 }

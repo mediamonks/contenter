@@ -1,6 +1,7 @@
 import { createRouter, createWebHistory, RouteRecordRaw } from 'vue-router';
 import { checkIfUserIsSignedIn } from '@/store/user';
 import Home from '@/views/Home.vue';
+import { loadFirebaseAnalytics } from '@/firebase';
 
 const routes: Array<RouteRecordRaw> = [
   {
@@ -55,6 +56,25 @@ const router = createRouter({
 });
 
 router.beforeEach((to, from, next) => {
+  loadFirebaseAnalytics().then((analytics) => {
+    if (typeof to.name === 'string') {
+      const { projectId } = to.params;
+
+      const params: {
+        name: string;
+        projectId?: string;
+      } = {
+        name: to.name,
+      };
+
+      if (projectId && typeof projectId === 'string') {
+        params.projectId = projectId;
+      }
+
+      analytics.logEvent('page_view', params);
+    }
+  });
+
   if (to.matched.some((record) => record.meta.requiresAuth)) {
     checkIfUserIsSignedIn().then(() => next()).catch(() => next({ path: '/sign-in' }));
   } else {
