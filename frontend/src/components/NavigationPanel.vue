@@ -4,7 +4,7 @@
     class="navigation-panel"
   >
     <header>
-      <h2>MM Content Manager</h2>
+      <h3>MM Content Manager</h3>
     </header>
     <main>
       <nav class="global-navigation">
@@ -119,8 +119,7 @@ export default defineComponent({
   @import "~@/assets/scss/variables";
 
   .navigation-panel {
-    min-width: 54rem;
-    max-width: 54rem;
+    max-width: 38rem;
     width: 100%;
     height: 100vh;
     background: $colorGrey700;
@@ -139,12 +138,12 @@ export default defineComponent({
     }
 
     header {
-      padding: 4rem;
+      padding: 3rem;
       height: 13rem;
       display: flex;
       align-items: center;
 
-      h2 {
+      h3 {
         color: inherit;
       }
     }
@@ -164,14 +163,14 @@ export default defineComponent({
 
     nav {
       h3 {
-        padding: 0 4rem;
-        margin: 4rem 0 1rem;
+        padding: 0 3rem;
+        margin: 3rem 0 1rem;
         color: $colorGrey050;
       }
 
       ul {
         list-style: none;
-        padding: 0 0 4rem;
+        padding: 0 0 3rem;
 
         li {
           width: 100%;
@@ -181,11 +180,11 @@ export default defineComponent({
           color: $colorGrey100;
           text-decoration: none;
           font-weight: 600;
-          font-size: 2.5rem;
+          font-size: 2.25rem;
           line-height: 1em;
           width: 100%;
           transition: background-color 0.1s ease-out;
-          padding: 1.5rem 4rem;
+          padding: 1rem 3rem;
           display: flex;
           align-items: center;
           height: calc(1em + 2 * 1.5rem);

@@ -9,10 +9,13 @@
       referrerpolicy="no-referrer"
     >
     <main>
-      <h5 v-if="name">
+      <h4 v-if="name">
         {{ name }}
-      </h5>
-      <p v-if="role">
+      </h4>
+      <p
+        v-if="role"
+        class="body-small"
+      >
         {{ role }}
       </p>
     </main>
@@ -84,7 +87,7 @@ export default defineComponent({
         border-color: transparent;
       }
 
-      h5 {
+      h4 {
         color: $colorGrey050;
       }
 
