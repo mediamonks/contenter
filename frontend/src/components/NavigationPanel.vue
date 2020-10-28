@@ -72,6 +72,20 @@
         />
       </div>
     </footer>
+    <section class="issue-reporter-bar">
+      <div>
+        <h5>Found an issue?</h5>
+        <p class="body-small">
+          Report it on GitHub
+        </p>
+      </div>
+      <a
+        href="https://github.com/MickJasker/MM-Content-Manager/issues"
+        target="_blank"
+        referrerpolicy="no-referrer"
+        @click="logGitHubClick"
+      ><GitHub /></a>
+    </section>
   </aside>
 </template>
 
@@ -85,8 +99,10 @@ import LayerPlus from '@/assets/icons/LayersPlus.vue';
 import Edit from '@/assets/icons/Edit.vue';
 import Database from '@/assets/icons/Database.vue';
 import Cogs from '@/assets/icons/Cogs.vue';
+import GitHub from '@/assets/icons/GitHub.vue';
 import router from '@/router';
 import { displayError } from '@/store/error';
+import { loadFirebaseAnalytics } from '@/firebase';
 
 export default defineComponent({
   name: 'NavigationPanel',
@@ -98,6 +114,7 @@ export default defineComponent({
     Edit,
     Database,
     Cogs,
+    GitHub,
   },
   setup() {
     function handleSignOut() {
@@ -106,10 +123,19 @@ export default defineComponent({
         .catch((error) => displayError(error));
     }
 
+    async function logGitHubClick(event: Event) {
+      const element = event.currentTarget as HTMLAnchorElement;
+      const analytics = await loadFirebaseAnalytics();
+      analytics.logEvent('click_link', {
+        to: element.attributes.getNamedItem('href'),
+      });
+    }
+
     return {
       userState,
       router,
       handleSignOut,
+      logGitHubClick,
     };
   },
 });
@@ -125,7 +151,7 @@ export default defineComponent({
     background: $colorGrey700;
     color: $colorGrey050;
     display: grid;
-    grid-template-rows: 13rem auto 15rem;
+    grid-template-rows: 13rem auto 15rem 12rem;
     z-index: 10;
 
     > * {
@@ -248,6 +274,33 @@ export default defineComponent({
               visibility: visible;
             }
           }
+        }
+      }
+    }
+
+    .issue-reporter-bar {
+      padding: 0 4rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      height: 100%;
+
+      h5 {
+        color: $colorGrey050;
+      }
+
+      p {
+        color: $colorGrey400;
+      }
+
+      a {
+        display: block;
+        width: 3rem;
+        color: $colorGrey400;
+        transition: 0.2s ease-out;
+
+        &:hover {
+          color: $colorGrey200;
         }
       }
     }
