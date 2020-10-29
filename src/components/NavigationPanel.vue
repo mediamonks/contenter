@@ -235,7 +235,7 @@ export default defineComponent({
     footer {
       display: flex;
       justify-content: space-between;
-      padding: 4rem;
+      padding: 3rem;
 
       .options {
         display: flex;
@@ -279,7 +279,7 @@ export default defineComponent({
     }
 
     .issue-reporter-bar {
-      padding: 0 4rem;
+      padding: 0 3rem;
       display: flex;
       align-items: center;
       justify-content: space-between;

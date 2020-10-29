@@ -88,6 +88,8 @@ export default defineComponent({
 
       editor = new JSONEditor(jsonEditor.value, {
         schema: projectsState.currentProjectSchema,
+        // eslint-disable-next-line @typescript-eslint/camelcase
+        object_layout: 'tabs',
       });
 
       if (projectsState.currentProject?.content) {
@@ -207,7 +209,9 @@ export default defineComponent({
 
       .tabs {
         float: none;
-        width: 15rem;
+        width: 20rem;
+        top: 17rem;
+        margin-right: -1px;
         height: fit-content;
 
         .je-tab {
@@ -218,8 +222,7 @@ export default defineComponent({
           padding: 1rem;
           width: 100%;
           transition: 0.2s ease-out;
-          white-space: nowrap;
-          font-size: 1.75rem;
+          font-size: 1.5rem;
           font-weight: 500;
           line-height: 1em;
 
@@ -237,7 +240,7 @@ export default defineComponent({
         width: 100%;
       }
 
-      input, select {
+      input, select, textarea {
         font-size: 2rem;
         padding: 1rem;
         border: solid 1px $colorGrey100;
@@ -257,6 +260,15 @@ export default defineComponent({
         margin-left: 0;
       }
 
+      label {
+        font-weight: 700;
+        color: $colorGrey900;
+        text-transform: uppercase;
+        letter-spacing: 0.1em;
+        font-size: 2rem;
+        line-height: 3rem;
+      }
+
       .form-control {
         margin-bottom: 2rem;
 
@@ -264,6 +276,12 @@ export default defineComponent({
           color: $colorGrey900;
           text-transform: uppercase;
           letter-spacing: 0.1em;
+        }
+
+        p {
+          font-size: 1.75rem;
+          line-height: 2rem;
+          font-weight: 400;
         }
       }
 
@@ -275,7 +293,7 @@ export default defineComponent({
         color: $colorGrey600;
         font-weight: 500;
         background: transparent;
-        margin: 1rem 0.5rem;
+        margin: 1rem 1rem 1rem 0;
         cursor: pointer;
         transition: 0.1s ease-out;
         transition-property:  border-color, color;
