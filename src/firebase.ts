@@ -18,13 +18,13 @@ export default firebaseApp;
 async function loadFirebaseAuth() {
   await import(/* webpackChunkName: "firebase-auth" */'firebase/auth');
 
-  return firebaseApp.auth();
+  return firebase.auth();
 }
 
 async function loadFirebaseDatabase() {
   await import(/* webpackChunkName: "firebase-database" */'firebase/database');
 
-  return firebaseApp.database();
+  return firebase.database();
 }
 
 async function loadFirebaseStorage() {
