@@ -216,7 +216,8 @@ export default defineComponent({
           height: calc(1em + 2 * 1.5rem);
 
           .icon {
-            width: 1em;
+            height: 1em;
+            width: 1.25em;
             margin-right: 2rem;
           }
 
@@ -236,6 +237,7 @@ export default defineComponent({
       display: flex;
       justify-content: space-between;
       padding: 3rem;
+      height: 100%;
 
       .options {
         display: flex;

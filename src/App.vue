@@ -55,7 +55,6 @@ html {
   -moz-osx-font-smoothing: grayscale;
   box-sizing: inherit;
   -webkit-tap-highlight-color: rgba(#000, 0);
-  font-family: Montserrat, sans-serif;
 }
 
 body {
@@ -63,6 +62,7 @@ body {
   line-height: 3rem;
   margin: 0;
   padding: 0;
+  font-family: Montserrat, sans-serif;
 
   &.no-scroll {
     overflow: hidden;
@@ -141,6 +141,12 @@ code {
   font-family: monospace;
 }
 
+.icon {
+  svg {
+    height: 100%;
+  }
+}
+
 .body- {
   &large {
     font-size: 2.25rem;
@@ -156,6 +162,10 @@ code {
     font-size: 1.75rem;
     line-height: 2rem;
   }
+}
+
+button, input, textarea {
+  font-family: Montserrat, sans-serif;
 }
 
 ul,
