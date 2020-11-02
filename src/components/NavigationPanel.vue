@@ -31,7 +31,7 @@
           <li>
             <router-link
               :to="{
-                name: 'ProjectContent',
+                name: 'ProjectLocaleList',
                 params: { projectId: router.currentRoute.value.params.projectId } }"
             >
               <Edit /> Content

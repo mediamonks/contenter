@@ -4,7 +4,7 @@
       {{ label }}
     </span>
     <input
-      :placeholder="placeholder"
+      v-bind="$attrs"
       type="text"
       :value="modelValue"
       @input="$emit('update:modelValue', $event.target.value)"
@@ -25,10 +25,6 @@ export default defineComponent({
     label: {
       type: String,
       required: true,
-    },
-    placeholder: {
-      type: String,
-      default: null,
     },
     modelValue: {
       type: String,

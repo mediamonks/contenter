@@ -9,7 +9,7 @@
           v-for="project in projectsState.userProjects"
           :key="project.id"
         >
-          <router-link :to="{ name: 'ProjectContent', params: { projectId: project.id } }">
+          <router-link :to="{ name: 'ProjectLocaleList', params: { projectId: project.id } }">
             <ProjectCard
               :id="project.id"
               :name="project.name"

@@ -1,13 +1,12 @@
 import { createRouter, createWebHistory, RouteRecordRaw } from 'vue-router';
 import { checkIfUserIsSignedIn } from '@/store/user';
-import Home from '@/views/Home.vue';
 import { loadFirebaseAnalytics } from '@/firebase';
 
 const routes: Array<RouteRecordRaw> = [
   {
     path: '/',
     name: 'Home',
-    component: Home,
+    component: () => import(/* webpackChunkName: "home" */ '@/views/Home.vue'),
     meta: { requiresAuth: true },
   },
   {
@@ -32,9 +31,9 @@ const routes: Array<RouteRecordRaw> = [
     props: true,
     children: [
       {
-        path: '/project/:projectId/',
-        name: 'ProjectContent',
-        component: () => import(/* webpackChunkName: "projectDetailContent" */ '@/views/project/Content.vue'),
+        path: '/project/:projectId/content',
+        name: 'ProjectLocaleList',
+        component: () => import(/* webpackChunkName: "projectDetailLocales" */ '@/views/project/LocaleList.vue'),
       },
       {
         path: '/project/:projectId/schema',
@@ -45,6 +44,11 @@ const routes: Array<RouteRecordRaw> = [
         path: '/project/:projectId/settings',
         name: 'ProjectSettings',
         component: () => import(/* webpackChunkName: "projectSettings" */ '@/views/project/ProjectSettings.vue'),
+      },
+      {
+        path: '/project/:projectId/content/:locale',
+        name: 'ProjectContent',
+        component: () => import(/* webpackChunkName: "projectDetailContent" */ '@/views/project/Content.vue'),
       },
     ],
   },
