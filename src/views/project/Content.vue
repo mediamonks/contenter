@@ -42,6 +42,8 @@ import {
   watch,
   onBeforeUnmount,
 } from 'vue';
+import EasyMDE from 'easymde';
+import 'easymde/dist/easymde.min.css';
 import { projectsState, updateProject } from '@/store/projects';
 import ProjectBar from '@/components/ProjectBar.vue';
 import Button from '@/components/Button.vue';
@@ -58,6 +60,7 @@ export default defineComponent({
     const jsonEditor = ref<HTMLDivElement | null>(null);
     const contentData = ref<object | null>(null);
     let editor: any = null;
+    let mdEditors: EasyMDE[] = [];
 
     async function changeData() {
       contentData.value = editor.getValue();
@@ -92,6 +95,26 @@ export default defineComponent({
         object_layout: 'tabs',
       });
 
+      setTimeout(() => {
+        if (!jsonEditor.value) return;
+        const mdFields = [...jsonEditor.value.querySelectorAll<HTMLTextAreaElement>('textarea[data-schemaformat="markdown"]')];
+        mdEditors = mdFields.map((mdField: HTMLTextAreaElement) => {
+          const easyMDE = new EasyMDE({
+            element: mdField,
+          });
+
+          easyMDE.codemirror.on('blur', () => {
+            const path = mdField.parentElement?.parentElement?.dataset.schemapath as string;
+
+            const textarea = editor.getEditor(path);
+            textarea.setValue(easyMDE.value());
+            textarea.input.value = easyMDE.value();
+          });
+
+          return easyMDE;
+        });
+      }, 100);
+
       if (projectsState.currentProject?.content) {
         editor.setValue(projectsState.currentProject?.content);
       }
@@ -111,6 +134,16 @@ export default defineComponent({
       if (!editor) return;
 
       editor.setValue(projectsState.currentProject.content);
+
+      mdEditors.forEach((mdEditor) => {
+        // eslint-disable-next-line @typescript-eslint/ban-ts-ignore
+        // @ts-ignore
+        const { value } = mdEditor.element;
+
+        if (value !== mdEditor.value()) {
+          mdEditor.value(value as string);
+        }
+      });
     });
 
     async function exportToJSON() {
