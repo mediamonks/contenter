@@ -205,11 +205,16 @@ export default defineComponent({
       }
 
       .locale-row {
-        transition: 0.2s ease-out;
         cursor: pointer;
 
+        td {
+          transition: 0.2s ease-out;
+        }
+
         &:hover {
-          background: $colorGrey100;
+          td {
+            color: $colorBlue400;
+          }
         }
       }
     }

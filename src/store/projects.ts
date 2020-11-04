@@ -329,4 +329,5 @@ export {
   updateProjectsMetadata,
   createNewLocale,
   Project,
+  ProjectMetadata,
 };

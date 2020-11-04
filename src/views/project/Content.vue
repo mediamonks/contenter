@@ -1,6 +1,8 @@
 <template>
   <div class="content-page">
-    <ProjectBar :subtitle="`${projectsState.currentProject.metadata.id}/${locale}`">
+    <ProjectBar
+      :subtitle="`${metadata.id} - ${localeName}`"
+    >
       <Button
         flat
         @click="exportToJSON"
@@ -45,7 +47,11 @@ import {
 } from 'vue';
 import EasyMDE from 'easymde';
 import 'easymde/dist/easymde.min.css';
-import { projectsState, updateProject } from '@/store/projects';
+import {
+  ProjectMetadata,
+  projectsState,
+  updateProject,
+} from '@/store/projects';
 import ProjectBar from '@/components/ProjectBar.vue';
 import Button from '@/components/Button.vue';
 import { displayError } from '@/store/error';
@@ -81,6 +87,20 @@ export default defineComponent({
       return projectsState.currentProject.locales[locale].content;
     });
 
+    const localeName = computed<string | null>(() => {
+      if (!projectsState.currentProject) return null;
+      if (!projectsState.currentProject.locales) return null;
+      if (!projectsState.currentProject.locales[props.locale]) return null;
+
+      return projectsState.currentProject.locales[props.locale].name;
+    });
+
+    const metadata = computed<ProjectMetadata | null>(() => {
+      if (!projectsState.currentProject?.metadata) return null;
+
+      return projectsState.currentProject?.metadata;
+    });
+
     async function changeData() {
       contentData.value = editor.getValue();
 
@@ -90,11 +110,16 @@ export default defineComponent({
       const currentData = { ...projectsState.currentProject };
       delete currentData.metadata;
 
+      if (!projectsState.currentProject.locales) return;
+      const { name } = projectsState.currentProject.locales[props.locale];
+
       const newData = {
         ...currentData,
-        [props.locale]: {
-          ...[props.locale],
-          content: editor.getValue(),
+        locales: {
+          [props.locale]: {
+            name,
+            content: editor.getValue(),
+          },
         },
       };
 
@@ -192,6 +217,8 @@ export default defineComponent({
       projectsState,
       jsonEditor,
       exportToJSON,
+      localeName,
+      metadata,
     };
   },
 });
