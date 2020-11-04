@@ -14,7 +14,6 @@ export default defineComponent({
 
 <style lang="scss" scoped>
 .main-container {
-  max-width: 166rem;
   margin: 0 auto;
   padding: 3rem 3rem 0;
 }

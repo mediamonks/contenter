@@ -31,8 +31,48 @@
         </template>
       </Modal>
     </form>
-    <ProjectBar />
-    <MainContainer class="no-locales">
+    <ProjectBar>
+      <Button
+        v-if="projectsState.currentProject.metadata.locales.length > 0"
+        class="button"
+        flat
+        @click="openCreateLocaleModal"
+      >
+        Create a Locale
+      </Button>
+    </ProjectBar>
+    <MainContainer
+      v-if="projectsState.currentProject.metadata.locales.length > 0"
+      class="locales"
+    >
+      <table>
+        <tr>
+          <th class="code-col">
+            Code
+          </th>
+          <th class="name-col">
+            Name
+          </th>
+        </tr>
+        <tr
+          v-for="locale in projectsState.currentProject.metadata.locales"
+          :key="`locale-list-${locale.code}`"
+          class="locale-row"
+          @click="navigateToLocalePage(locale.code)"
+        >
+          <td>
+            {{ locale.code }}
+          </td>
+          <td>
+            {{ locale.name }}
+          </td>
+        </tr>
+      </table>
+    </MainContainer>
+    <MainContainer
+      v-else
+      class="no-locales"
+    >
       <div class="no-locales-content">
         <h1>No Locales Found</h1>
         <p>Create your first locale below</p>
@@ -54,6 +94,9 @@ import MainContainer from '@/components/MainContainer.vue';
 import Button from '@/components/Button.vue';
 import Modal from '@/components/Modal.vue';
 import TextField from '@/components/TextField.vue';
+import { createNewLocale, projectsState } from '@/store/projects';
+import { displayError } from '@/store/error';
+import router from '@/router';
 
 export default defineComponent({
   name: 'LocaleList',
@@ -79,14 +122,21 @@ export default defineComponent({
       modalVisible.value = false;
     }
 
-    function handleFormSubmit() {
+    async function handleFormSubmit() {
       localeCreationFormData.code = localeCreationFormData.code.toUpperCase();
-      console.log(localeCreationFormData);
+
+      await createNewLocale(localeCreationFormData.code, localeCreationFormData.name)
+        .catch((error) => displayError(error));
 
       localeCreationFormData.code = '';
       localeCreationFormData.name = '';
 
       closeCreateLocaleModal();
+    }
+
+    function navigateToLocalePage(locale: string) {
+      const { projectId } = router.currentRoute.value.params;
+      router.push({ name: 'ProjectContent', params: { projectId, locale } });
     }
 
     return {
@@ -95,12 +145,16 @@ export default defineComponent({
       modalVisible,
       localeCreationFormData,
       handleFormSubmit,
+      projectsState,
+      navigateToLocalePage,
     };
   },
 });
 </script>
 
 <style lang="scss" scoped>
+@import '~@/assets/scss/variables';
+
 .locale-list {
   height: 100vh;
 
@@ -118,6 +172,45 @@ export default defineComponent({
 
       .button {
         margin-top: 2rem;
+      }
+    }
+  }
+
+  .locales {
+    table {
+      width: 100%;
+      border-spacing: 0;
+
+      tr {
+        height: 6rem;
+        border-collapse: collapse;
+
+        &:not(:last-child) {
+          th, td {
+            border-bottom: solid 1px $colorGrey100;
+            padding: 0;
+          }
+        }
+
+        th {
+          text-align: left;
+          color: $colorGrey900;
+          text-transform: uppercase;
+          letter-spacing: 0.1em;
+        }
+
+        .code-col {
+          width: 15rem;
+        }
+      }
+
+      .locale-row {
+        transition: 0.2s ease-out;
+        cursor: pointer;
+
+        &:hover {
+          background: $colorGrey100;
+        }
       }
     }
   }

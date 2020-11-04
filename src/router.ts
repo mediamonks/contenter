@@ -49,6 +49,7 @@ const routes: Array<RouteRecordRaw> = [
         path: '/project/:projectId/content/:locale',
         name: 'ProjectContent',
         component: () => import(/* webpackChunkName: "projectDetailContent" */ '@/views/project/Content.vue'),
+        props: true,
       },
     ],
   },

@@ -1,6 +1,6 @@
 <template>
   <div class="content-page">
-    <ProjectBar>
+    <ProjectBar :subtitle="`${projectsState.currentProject.metadata.id}/${locale}`">
       <Button
         flat
         @click="exportToJSON"
@@ -41,6 +41,7 @@ import {
   onMounted,
   watch,
   onBeforeUnmount,
+  computed,
 } from 'vue';
 import EasyMDE from 'easymde';
 import 'easymde/dist/easymde.min.css';
@@ -56,11 +57,29 @@ export default defineComponent({
     Button,
     ProjectBar,
   },
-  setup() {
+  props: {
+    locale: {
+      type: String,
+      required: true,
+    },
+  },
+  setup(props: {
+    locale: string;
+  }) {
     const jsonEditor = ref<HTMLDivElement | null>(null);
     const contentData = ref<object | null>(null);
     let editor: any = null;
     let mdEditors: EasyMDE[] = [];
+
+    const projectData = computed<object | any[] | null>((): any => {
+      const { locale } = props;
+      if (!projectsState.currentProject) return null;
+      if (!projectsState.currentProject.locales) return null;
+      if (!projectsState.currentProject.locales[locale]) return null;
+      if (!projectsState.currentProject.locales[locale].content) return null;
+
+      return projectsState.currentProject.locales[locale].content;
+    });
 
     async function changeData() {
       contentData.value = editor.getValue();
@@ -73,7 +92,10 @@ export default defineComponent({
 
       const newData = {
         ...currentData,
-        content: editor.getValue(),
+        [props.locale]: {
+          ...[props.locale],
+          content: editor.getValue(),
+        },
       };
 
       updateProject(projectsState.currentProject.metadata.id, newData)
@@ -115,8 +137,8 @@ export default defineComponent({
         });
       }, 100);
 
-      if (projectsState.currentProject?.content) {
-        editor.setValue(projectsState.currentProject?.content);
+      if (projectData.value) {
+        editor.setValue(projectData.value);
       }
 
       editor.on('change', changeData);
@@ -129,11 +151,10 @@ export default defineComponent({
     });
 
     watch(projectsState, () => {
-      if (!projectsState.currentProject) return;
-      if (!projectsState.currentProject.content) return;
+      if (!projectData.value) return;
       if (!editor) return;
 
-      editor.setValue(projectsState.currentProject.content);
+      editor.setValue(projectData.value);
 
       mdEditors.forEach((mdEditor) => {
         // eslint-disable-next-line @typescript-eslint/ban-ts-ignore
@@ -147,10 +168,9 @@ export default defineComponent({
     });
 
     async function exportToJSON() {
-      if (!projectsState.currentProject) return;
-      if (!projectsState.currentProject.content) return;
+      if (projectData.value) return;
 
-      const { content } = projectsState.currentProject;
+      const content = projectData.value;
       const dataString = `data:text/json;charset=utf-8,${encodeURIComponent(JSON.stringify(content))}`;
       const anchorNode = document.createElement('a');
       anchorNode.setAttribute('style', 'display: hidden;');
@@ -161,6 +181,8 @@ export default defineComponent({
       anchorNode.remove();
 
       const analytics = await loadFirebaseAnalytics();
+
+      if (!projectsState.currentProject) return;
       analytics.logEvent('exportJSON', {
         projectId: projectsState.currentProject.metadata?.id,
       });
