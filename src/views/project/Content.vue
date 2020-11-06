@@ -4,6 +4,7 @@
       :subtitle="`${metadata.id} - ${localeName}`"
     >
       <Button
+        v-if="projectData"
         flat
         @click="exportToJSON"
       >
@@ -48,6 +49,7 @@ import {
 import EasyMDE from 'easymde';
 import 'easymde/dist/easymde.min.css';
 import {
+  downloadData,
   ProjectMetadata,
   projectsState,
   updateProject,
@@ -116,6 +118,7 @@ export default defineComponent({
       const newData = {
         ...currentData,
         locales: {
+          ...currentData.locales,
           [props.locale]: {
             name,
             content: editor.getValue(),
@@ -193,17 +196,8 @@ export default defineComponent({
     });
 
     async function exportToJSON() {
-      if (projectData.value) return;
-
-      const content = projectData.value;
-      const dataString = `data:text/json;charset=utf-8,${encodeURIComponent(JSON.stringify(content))}`;
-      const anchorNode = document.createElement('a');
-      anchorNode.setAttribute('style', 'display: hidden;');
-      anchorNode.setAttribute('href', dataString);
-      anchorNode.setAttribute('download', 'content.json');
-      document.body.appendChild(anchorNode);
-      anchorNode.click();
-      anchorNode.remove();
+      if (!projectData.value) return;
+      downloadData(projectData.value);
 
       const analytics = await loadFirebaseAnalytics();
 
@@ -219,6 +213,7 @@ export default defineComponent({
       exportToJSON,
       localeName,
       metadata,
+      projectData,
     };
   },
 });

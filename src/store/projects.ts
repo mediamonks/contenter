@@ -287,7 +287,7 @@ async function updateProjectsMetadata(newMetadata: ProjectMetadata): Promise<Pro
   return newMetadata;
 }
 
-async function createNewLocale(code: string, name: string) {
+async function createNewLocale(code: string, name: string, content?: object | any[]) {
   if (!projectsState.currentProject) throw new Error('No current project defined');
   if (!projectsState.currentProject.metadata) throw new Error('No current project defined');
   const performance = await loadFirebasePerformance();
@@ -312,9 +312,34 @@ async function createNewLocale(code: string, name: string) {
     },
   };
   delete newProjectData.metadata;
+
+  if (content && newProjectData.locales) {
+    newProjectData.locales[code].content = content;
+  }
+
   await updateProject(newProjectMetadata.id, newProjectData);
 
   perfTrace.stop();
+}
+
+function getCurrentProjectContent(code: string): object | any[] | undefined {
+  if (!projectsState.currentProject) return undefined;
+  if (!projectsState.currentProject.locales) return undefined;
+  if (!projectsState.currentProject.locales[code]) return undefined;
+  if (!projectsState.currentProject.locales[code].content) return undefined;
+
+  return projectsState.currentProject.locales[code].content;
+}
+
+function downloadData(data: object | any[]) {
+  const dataString = `data:text/json;charset=utf-8,${encodeURIComponent(JSON.stringify(data))}`;
+  const anchorNode = document.createElement('a');
+  anchorNode.setAttribute('style', 'display: hidden;');
+  anchorNode.setAttribute('href', dataString);
+  anchorNode.setAttribute('download', 'content.json');
+  document.body.appendChild(anchorNode);
+  anchorNode.click();
+  anchorNode.remove();
 }
 
 export {
@@ -328,6 +353,8 @@ export {
   updateProject,
   updateProjectsMetadata,
   createNewLocale,
+  getCurrentProjectContent,
+  downloadData,
   Project,
   ProjectMetadata,
 };

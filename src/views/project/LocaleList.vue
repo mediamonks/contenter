@@ -53,18 +53,25 @@
           <th class="name-col">
             Name
           </th>
+          <th class="controls-col">
+            <Download @click="downloadAllContent" />
+          </th>
         </tr>
         <tr
-          v-for="locale in projectsState.currentProject.metadata.locales"
+          v-for="locale in projectsState.currentProject?.metadata?.locales"
           :key="`locale-list-${locale.code}`"
           class="locale-row"
-          @click="navigateToLocalePage(locale.code)"
         >
           <td>
             {{ locale.code }}
           </td>
           <td>
             {{ locale.name }}
+          </td>
+          <td class="controls">
+            <Edit @click="navigateToLocalePage(locale.code)" />
+            <Copy @click="duplicateLocale(locale.code)" />
+            <Download @click="downloadLocale(locale.code)" />
           </td>
         </tr>
       </table>
@@ -88,13 +95,18 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, ref, reactive } from 'vue';
+import { defineComponent, reactive, ref } from 'vue';
 import ProjectBar from '@/components/ProjectBar.vue';
 import MainContainer from '@/components/MainContainer.vue';
 import Button from '@/components/Button.vue';
 import Modal from '@/components/Modal.vue';
 import TextField from '@/components/TextField.vue';
-import { createNewLocale, projectsState } from '@/store/projects';
+import Edit from '@/assets/icons/Edit.vue';
+import Copy from '@/assets/icons/Copy.vue';
+import Download from '@/assets/icons/Download.vue';
+import {
+  createNewLocale, downloadData, getCurrentProjectContent, projectsState,
+} from '@/store/projects';
 import { displayError } from '@/store/error';
 import router from '@/router';
 
@@ -106,12 +118,20 @@ export default defineComponent({
     Button,
     Modal,
     TextField,
+    Edit,
+    Copy,
+    Download,
   },
   setup() {
     const modalVisible = ref(false);
-    const localeCreationFormData = reactive({
+    const localeCreationFormData = reactive<{
+      code: string;
+      name: string;
+      content: object | any[] | undefined;
+    }>({
       code: '',
       name: '',
+      content: undefined,
     });
 
     function openCreateLocaleModal() {
@@ -125,11 +145,16 @@ export default defineComponent({
     async function handleFormSubmit() {
       localeCreationFormData.code = localeCreationFormData.code.toUpperCase();
 
-      await createNewLocale(localeCreationFormData.code, localeCreationFormData.name)
+      await createNewLocale(
+        localeCreationFormData.code,
+        localeCreationFormData.name,
+        localeCreationFormData.content,
+      )
         .catch((error) => displayError(error));
 
       localeCreationFormData.code = '';
       localeCreationFormData.name = '';
+      localeCreationFormData.content = undefined;
 
       closeCreateLocaleModal();
     }
@@ -137,6 +162,33 @@ export default defineComponent({
     function navigateToLocalePage(locale: string) {
       const { projectId } = router.currentRoute.value.params;
       router.push({ name: 'ProjectContent', params: { projectId, locale } });
+    }
+
+    function duplicateLocale(locale: string) {
+      localeCreationFormData.content = getCurrentProjectContent(locale);
+      openCreateLocaleModal();
+    }
+
+    function downloadLocale(locale: string) {
+      const content = getCurrentProjectContent(locale);
+
+      if (!content) {
+        displayError(new Error('Project has no content to download'));
+        return;
+      }
+
+      downloadData(content);
+    }
+
+    function downloadAllContent() {
+      const locales = projectsState.currentProject?.metadata?.locales;
+
+      if (!locales) {
+        displayError(new Error('Project has no content'));
+        return;
+      }
+
+      locales.forEach((locale) => downloadLocale(locale.code));
     }
 
     return {
@@ -147,12 +199,15 @@ export default defineComponent({
       handleFormSubmit,
       projectsState,
       navigateToLocalePage,
+      duplicateLocale,
+      downloadLocale,
+      downloadAllContent,
     };
   },
 });
 </script>
 
-<style lang="scss" scoped>
+<style lang="scss">
 @import '~@/assets/scss/variables';
 
 .locale-list {
@@ -202,18 +257,43 @@ export default defineComponent({
         .code-col {
           width: 15rem;
         }
+
+        .controls-col {
+          width: auto;
+          display: flex;
+          justify-content: flex-end;
+          align-items: center;
+          height: 6rem;
+
+          .icon {
+            height: 2.25rem;
+            color: $colorGrey600;
+            cursor: pointer;
+            transition: 0.2s ease-out;
+
+            &:hover {
+              color: $colorBlue400;
+            }
+          }
+        }
       }
 
       .locale-row {
-        cursor: pointer;
+        .controls {
+          display: flex;
+          justify-content: flex-end;
+          height: 6rem;
+          align-items: center;
+          gap: 1.5rem;
 
-        td {
-          transition: 0.2s ease-out;
-        }
+          .icon {
+            height: 2.25rem;
+            cursor: pointer;
+            transition: 0.2s ease-out;
 
-        &:hover {
-          td {
-            color: $colorBlue400;
+            &:hover {
+              color: $colorBlue400;
+            }
           }
         }
       }
