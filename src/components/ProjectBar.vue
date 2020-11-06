@@ -19,7 +19,7 @@
 
 <script lang="ts">
 import { defineComponent } from 'vue';
-import { projectsState } from '../store/projects';
+import { projectsState } from '@/store/projects';
 
 export default defineComponent({
   name: 'ProjectBar',

@@ -331,12 +331,12 @@ function getCurrentProjectContent(code: string): object | any[] | undefined {
   return projectsState.currentProject.locales[code].content;
 }
 
-function downloadData(data: object | any[]) {
+function downloadData(data: object | any[], name = 'content') {
   const dataString = `data:text/json;charset=utf-8,${encodeURIComponent(JSON.stringify(data))}`;
   const anchorNode = document.createElement('a');
   anchorNode.setAttribute('style', 'display: hidden;');
   anchorNode.setAttribute('href', dataString);
-  anchorNode.setAttribute('download', 'content.json');
+  anchorNode.setAttribute('download', `${name}.json`);
   document.body.appendChild(anchorNode);
   anchorNode.click();
   anchorNode.remove();

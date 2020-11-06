@@ -221,8 +221,7 @@ export default defineComponent({
             margin-right: 2rem;
           }
 
-          &:hover, &:focus {
-            outline: none;
+          &:hover {
             background: $colorGrey600;
           }
 

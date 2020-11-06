@@ -3,7 +3,13 @@
     <form @submit.prevent="handleFormSubmit">
       <Modal :visible="modalVisible">
         <template #header>
-          <h1>Create a locale</h1>
+          <template v-if="localeCreationFormData.duplicate">
+            <h1>Duplicate locale</h1>
+            <p>Duplicated from: {{ localeCreationFormData.oldLocale }}</p>
+          </template>
+          <h1 v-else>
+            Create a locale
+          </h1>
         </template>
         <template #main>
           <TextField
@@ -128,11 +134,23 @@ export default defineComponent({
       code: string;
       name: string;
       content: object | any[] | undefined;
+      duplicate: boolean;
+      oldLocale: string | null;
     }>({
       code: '',
       name: '',
       content: undefined,
+      duplicate: false,
+      oldLocale: null,
     });
+
+    function resetLocaleForm() {
+      localeCreationFormData.code = '';
+      localeCreationFormData.name = '';
+      localeCreationFormData.content = undefined;
+      localeCreationFormData.duplicate = false;
+      localeCreationFormData.oldLocale = null;
+    }
 
     function openCreateLocaleModal() {
       modalVisible.value = true;
@@ -140,6 +158,8 @@ export default defineComponent({
 
     function closeCreateLocaleModal() {
       modalVisible.value = false;
+
+      resetLocaleForm();
     }
 
     async function handleFormSubmit() {
@@ -152,9 +172,7 @@ export default defineComponent({
       )
         .catch((error) => displayError(error));
 
-      localeCreationFormData.code = '';
-      localeCreationFormData.name = '';
-      localeCreationFormData.content = undefined;
+      resetLocaleForm();
 
       closeCreateLocaleModal();
     }
@@ -166,6 +184,9 @@ export default defineComponent({
 
     function duplicateLocale(locale: string) {
       localeCreationFormData.content = getCurrentProjectContent(locale);
+      localeCreationFormData.duplicate = true;
+      localeCreationFormData.oldLocale = locale;
+
       openCreateLocaleModal();
     }
 
@@ -177,7 +198,7 @@ export default defineComponent({
         return;
       }
 
-      downloadData(content);
+      downloadData(content, locale);
     }
 
     function downloadAllContent() {

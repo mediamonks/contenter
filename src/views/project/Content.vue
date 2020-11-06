@@ -12,6 +12,12 @@
       </Button>
     </ProjectBar>
     <main v-if="projectsState.currentProject.schemaURL">
+      <router-link
+        class="back-button"
+        :to="{ name: 'ProjectLocaleList', params: { projectId: metadata.id } }"
+      >
+        <ArrowToLeft />Back to locales
+      </router-link>
       <div
         ref="jsonEditor"
         class="json-editor"
@@ -56,6 +62,7 @@ import {
 } from '@/store/projects';
 import ProjectBar from '@/components/ProjectBar.vue';
 import Button from '@/components/Button.vue';
+import ArrowToLeft from '@/assets/icons/ArrowToLeft.vue';
 import { displayError } from '@/store/error';
 import { loadFirebaseAnalytics } from '@/firebase';
 
@@ -64,6 +71,7 @@ export default defineComponent({
   components: {
     Button,
     ProjectBar,
+    ArrowToLeft,
   },
   props: {
     locale: {
@@ -135,6 +143,47 @@ export default defineComponent({
       });
     }
 
+    function resetMarkdownEditors() {
+      mdEditors.forEach((mdEditor) => {
+        mdEditor.toTextArea();
+        // eslint-disable-next-line @typescript-eslint/ban-ts-ignore
+        // @ts-ignore
+        // eslint-disable-next-line no-param-reassign
+        mdEditor = null;
+      });
+
+      mdEditors = [];
+    }
+
+    function initMarkdownEditor() {
+      return new Promise<HTMLTextAreaElement[]>(((resolve) => {
+        resetMarkdownEditors();
+
+        setTimeout(() => {
+          if (!jsonEditor.value) return;
+          const mdFields = [...jsonEditor.value.querySelectorAll<HTMLTextAreaElement>('textarea[data-schemaformat="markdown"]')];
+
+          mdEditors = mdFields.map((mdField: HTMLTextAreaElement) => {
+            const easyMDE = new EasyMDE({
+              element: mdField,
+            });
+
+            easyMDE.codemirror.on('blur', () => {
+              const path = mdField.parentElement?.parentElement?.dataset.schemapath as string;
+
+              const textarea = editor.getEditor(path);
+              textarea.setValue(easyMDE.value());
+              textarea.input.value = easyMDE.value();
+            });
+
+            return easyMDE;
+          });
+
+          resolve(mdFields);
+        }, 10);
+      }));
+    }
+
     onMounted(async () => {
       if (!jsonEditor.value) return;
       const { JSONEditor } = await import(/* webpackChunkName: "JSONEditor" */'@json-editor/json-editor');
@@ -145,29 +194,10 @@ export default defineComponent({
         object_layout: 'tabs',
       });
 
-      setTimeout(() => {
-        if (!jsonEditor.value) return;
-        const mdFields = [...jsonEditor.value.querySelectorAll<HTMLTextAreaElement>('textarea[data-schemaformat="markdown"]')];
-        mdEditors = mdFields.map((mdField: HTMLTextAreaElement) => {
-          const easyMDE = new EasyMDE({
-            element: mdField,
-          });
-
-          easyMDE.codemirror.on('blur', () => {
-            const path = mdField.parentElement?.parentElement?.dataset.schemapath as string;
-
-            const textarea = editor.getEditor(path);
-            textarea.setValue(easyMDE.value());
-            textarea.input.value = easyMDE.value();
-          });
-
-          return easyMDE;
-        });
-      }, 100);
-
       if (projectData.value) {
         editor.setValue(projectData.value);
       }
+      await initMarkdownEditor();
 
       editor.on('change', changeData);
     });
@@ -178,11 +208,13 @@ export default defineComponent({
       editor.off('change', changeData);
     });
 
-    watch(projectsState, () => {
+    watch(projectsState, async () => {
       if (!projectData.value) return;
       if (!editor) return;
 
+      resetMarkdownEditors();
       editor.setValue(projectData.value);
+      await initMarkdownEditor();
 
       mdEditors.forEach((mdEditor) => {
         // eslint-disable-next-line @typescript-eslint/ban-ts-ignore
@@ -230,7 +262,32 @@ export default defineComponent({
       padding: 4rem;
     }
 
+    .back-button {
+      display: flex;
+      height: 1.5em;
+      align-items: center;
+      gap: 1rem;
+      color: $colorGrey900;
+      font-weight: 600;
+      text-decoration: none;
+      transition: 0.2s ease-out;
+      width: fit-content;
+
+      .icon {
+        width: 3rem;
+        height: 100%;
+        color: $colorBlue400;
+      }
+
+      &:hover {
+        color: $colorBlue400;
+        gap: 1.5rem;
+      }
+    }
+
     .json-editor {
+      margin-top: 2rem;
+
       div[data-schematype="array"] {
         > div {
           display: flex;
