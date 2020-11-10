@@ -103,7 +103,7 @@ async function getAllProjectIds(): Promise<string[]> {
   return val;
 }
 
-async function syncProjects(): Promise<ProjectMetadata[]> {
+async function syncProjectsMetadata(): Promise<ProjectMetadata[]> {
   if (!userState.currentUser) throw new Error('No user defined');
   projectsState.projectIds = await getAllProjectIds();
 
@@ -155,7 +155,7 @@ async function createNewProject(name: string, id: string, uid: string, users: Us
       users: [uid, ...userIds],
     } as ProjectRawMetadata),
     database.ref(`projectIds/${projectsState.projectIds.length}`).set(id),
-    syncProjects(),
+    syncProjectsMetadata(),
     updateUser({
       ...userState.currentUser,
       projects: [...currentUserProjects, id],
@@ -232,6 +232,8 @@ const updateProject = async (projectId: string, newData: Project) => {
   const ref = database.ref(`projects/${projectId}`);
 
   await ref.update(newData);
+
+  await syncProjectsMetadata();
 
   perfTrace.stop();
 };
@@ -344,7 +346,7 @@ function downloadData(data: object | any[], name = 'content') {
 
 export {
   projectsState,
-  syncProjects,
+  syncProjectsMetadata,
   createNewProject,
   syncCurrentProject,
   resetCurrentProjectState,

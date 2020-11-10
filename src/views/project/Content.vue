@@ -18,6 +18,25 @@
       >
         <ArrowToLeft />Back to locales
       </router-link>
+      <label>
+        Reference Locale
+        <select
+          id="referenceLocale"
+          v-model="referenceLocale"
+          name="Reference Locale"
+        >
+          <template
+            v-for="localeOption in projectsState.currentProject.metadata.locales"
+            :key="localeOption.code"
+          >
+            <option
+              v-if="localeOption.code !== locale"
+              :value="localeOption.code"
+            >{{ localeOption.name }}</option>
+          </template>
+          <option :value="null">None</option>
+        </select>
+      </label>
       <div
         ref="jsonEditor"
         class="json-editor"
@@ -55,7 +74,7 @@ import {
 import EasyMDE from 'easymde';
 import 'easymde/dist/easymde.min.css';
 import {
-  downloadData,
+  downloadData, getCurrentProjectContent,
   ProjectMetadata,
   projectsState,
   updateProject,
@@ -239,6 +258,49 @@ export default defineComponent({
       });
     }
 
+    const referenceLocale = ref<string | null>(null);
+
+    watch(referenceLocale, async (value) => {
+      if (!jsonEditor.value) return;
+      const currentRefElements = [...jsonEditor.value.querySelectorAll<HTMLDivElement>('.ref-element')];
+      currentRefElements.forEach((element) => {
+        // eslint-disable-next-line no-param-reassign
+        element.outerHTML = '';
+      });
+
+      if (!value) return;
+
+      const formControlElements = [...jsonEditor.value.querySelectorAll<HTMLDivElement>('.form-control')];
+      const projectLocaleData = getCurrentProjectContent(value);
+      if (!projectLocaleData) return;
+
+      const { get } = await import(/* webpackChunkName: "lodash" */'lodash');
+
+      formControlElements.forEach((element) => {
+        const inputEl = element.querySelector<
+          HTMLInputElement |
+          HTMLTextAreaElement |
+          HTMLSelectElement>('[name]');
+        let path = inputEl?.getAttribute('name');
+
+        if (!path) return;
+
+        const filterWords = ['root'];
+        const rgx = new RegExp(filterWords.join(''), 'gi');
+
+        path = path.replace(rgx, '');
+        const refData = get(projectLocaleData, path);
+
+        if (refData === '') return;
+
+        const refElement = document.createElement('p');
+        refElement.innerText = `${value} value: ${refData}`;
+        refElement.classList.add('ref-element');
+
+        element.appendChild(refElement);
+      });
+    });
+
     return {
       projectsState,
       jsonEditor,
@@ -246,6 +308,7 @@ export default defineComponent({
       localeName,
       metadata,
       projectData,
+      referenceLocale,
     };
   },
 });
@@ -260,6 +323,10 @@ export default defineComponent({
 
     > main {
       padding: 4rem;
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
+      align-items: center;
     }
 
     .back-button {
@@ -287,6 +354,7 @@ export default defineComponent({
 
     .json-editor {
       margin-top: 2rem;
+      width: 100%;
 
       div[data-schematype="array"] {
         > div {
@@ -382,6 +450,7 @@ export default defineComponent({
         transition: border-color 0.1s ease-out;
         width: calc(100% - 2rem);
         background: $colorGrey050;
+        font-style: normal;
 
         &:focus {
           outline: none;

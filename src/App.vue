@@ -164,7 +164,7 @@ code {
   }
 }
 
-button, input, textarea {
+button, input, textarea, select {
   font-family: Montserrat, sans-serif;
 }
 
@@ -176,6 +176,35 @@ ol {
 
 img {
   display: block;
+}
+
+input, select, textarea {
+  font-size: 2rem;
+  padding: 1rem;
+  border: solid 1px $colorGrey100;
+  border-radius: 0.5rem;
+  transition: border-color 0.1s ease-out;
+  width: calc(100% - 2rem);
+  background: $colorGrey050;
+
+  &:focus {
+    outline: none;
+    border-color: $colorBlue400;
+  }
+}
+
+select {
+  cursor: pointer;
+  margin-left: 0;
+}
+
+label {
+  font-weight: 700;
+  color: $colorGrey900;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  font-size: 2rem;
+  line-height: 3rem;
 }
 
 *:focus:not(:focus-visible) {
