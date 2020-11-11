@@ -73,6 +73,7 @@ import {
 } from 'vue';
 import EasyMDE from 'easymde';
 import 'easymde/dist/easymde.min.css';
+import { debounce, get } from 'lodash';
 import {
   downloadData, getCurrentProjectContent,
   ProjectMetadata,
@@ -163,15 +164,20 @@ export default defineComponent({
     }
 
     function resetMarkdownEditors() {
-      mdEditors.forEach((mdEditor) => {
-        mdEditor.toTextArea();
-        // eslint-disable-next-line @typescript-eslint/ban-ts-ignore
-        // @ts-ignore
-        // eslint-disable-next-line no-param-reassign
-        mdEditor = null;
-      });
+      return new Promise((resolve) => {
+        setTimeout(() => {
+          mdEditors.forEach((mdEditor) => {
+            mdEditor.toTextArea();
+            // eslint-disable-next-line @typescript-eslint/ban-ts-ignore
+            // @ts-ignore
+            // eslint-disable-next-line no-param-reassign
+            mdEditor = null;
+          });
 
-      mdEditors = [];
+          mdEditors = [];
+          resolve();
+        }, 10);
+      });
     }
 
     function initMarkdownEditor() {
@@ -227,11 +233,11 @@ export default defineComponent({
       editor.off('change', changeData);
     });
 
-    watch(projectsState, async () => {
+    const handleProjectStateChange = debounce(async () => {
       if (!projectData.value) return;
       if (!editor) return;
 
-      resetMarkdownEditors();
+      await resetMarkdownEditors();
       editor.setValue(projectData.value);
       await initMarkdownEditor();
 
@@ -244,7 +250,9 @@ export default defineComponent({
           mdEditor.value(value as string);
         }
       });
-    });
+    }, 300);
+
+    watch(projectsState, handleProjectStateChange);
 
     async function exportToJSON() {
       if (!projectData.value) return;
@@ -260,7 +268,7 @@ export default defineComponent({
 
     const referenceLocale = ref<string | null>(null);
 
-    watch(referenceLocale, async (value) => {
+    watch(referenceLocale, (value) => {
       if (!jsonEditor.value) return;
       const currentRefElements = [...jsonEditor.value.querySelectorAll<HTMLDivElement>('.ref-element')];
       currentRefElements.forEach((element) => {
@@ -273,8 +281,6 @@ export default defineComponent({
       const formControlElements = [...jsonEditor.value.querySelectorAll<HTMLDivElement>('.form-control')];
       const projectLocaleData = getCurrentProjectContent(value);
       if (!projectLocaleData) return;
-
-      const { get } = await import(/* webpackChunkName: "lodash" */'lodash');
 
       formControlElements.forEach((element) => {
         const inputEl = element.querySelector<
