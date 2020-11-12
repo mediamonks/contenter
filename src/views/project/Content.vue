@@ -1,7 +1,10 @@
 <template>
   <div class="content-page">
-    <ProjectBar>
+    <ProjectBar
+      :subtitle="`${metadata.id} - ${localeName}`"
+    >
       <Button
+        v-if="projectData"
         flat
         @click="exportToJSON"
       >
@@ -9,6 +12,31 @@
       </Button>
     </ProjectBar>
     <main v-if="projectsState.currentProject.schemaURL">
+      <router-link
+        class="back-button"
+        :to="{ name: 'ProjectLocaleList', params: { projectId: metadata.id } }"
+      >
+        <ArrowToLeft />Back to locales
+      </router-link>
+      <label>
+        Reference Locale
+        <select
+          id="referenceLocale"
+          v-model="referenceLocale"
+          name="Reference Locale"
+        >
+          <template
+            v-for="localeOption in projectsState.currentProject.metadata.locales"
+            :key="localeOption.code"
+          >
+            <option
+              v-if="localeOption.code !== locale"
+              :value="localeOption.code"
+            >{{ localeOption.name }} ({{ localeOption.code }})</option>
+          </template>
+          <option :value="null">None</option>
+        </select>
+      </label>
       <div
         ref="jsonEditor"
         class="json-editor"
@@ -41,12 +69,20 @@ import {
   onMounted,
   watch,
   onBeforeUnmount,
+  computed,
 } from 'vue';
 import EasyMDE from 'easymde';
 import 'easymde/dist/easymde.min.css';
-import { projectsState, updateProject } from '@/store/projects';
+import { debounce, get } from 'lodash';
+import {
+  downloadData, getCurrentProjectContent,
+  ProjectMetadata,
+  projectsState,
+  updateProject,
+} from '@/store/projects';
 import ProjectBar from '@/components/ProjectBar.vue';
 import Button from '@/components/Button.vue';
+import ArrowToLeft from '@/assets/icons/ArrowToLeft.vue';
 import { displayError } from '@/store/error';
 import { loadFirebaseAnalytics } from '@/firebase';
 
@@ -55,25 +91,56 @@ export default defineComponent({
   components: {
     Button,
     ProjectBar,
+    ArrowToLeft,
   },
-  setup() {
+  props: {
+    locale: {
+      type: String,
+      required: true,
+    },
+  },
+  setup(props: {
+    locale: string;
+  }) {
     const jsonEditor = ref<HTMLDivElement | null>(null);
     const contentData = ref<object | null>(null);
     let editor: any = null;
     let mdEditors: EasyMDE[] = [];
 
+    const projectData = computed<object | any[] | undefined>(
+      () => getCurrentProjectContent(props.locale),
+    );
+
+    const localeName = computed<string | undefined>(() => projectsState
+      .currentProject
+      ?.locales
+      ?.[props.locale]
+      .name);
+
+    const metadata = computed<ProjectMetadata | undefined>(() => projectsState
+      .currentProject
+      ?.metadata);
+
     async function changeData() {
       contentData.value = editor.getValue();
 
-      if (!projectsState.currentProject) return;
-      if (!projectsState.currentProject.metadata) return;
+      if (!projectsState.currentProject?.metadata) return;
 
       const currentData = { ...projectsState.currentProject };
       delete currentData.metadata;
 
+      if (!projectsState.currentProject.locales) return;
+      const { name } = projectsState.currentProject.locales[props.locale];
+
       const newData = {
         ...currentData,
-        content: editor.getValue(),
+        locales: {
+          ...currentData.locales,
+          [props.locale]: {
+            name,
+            content: editor.getValue(),
+          },
+        },
       };
 
       updateProject(projectsState.currentProject.metadata.id, newData)
@@ -83,6 +150,52 @@ export default defineComponent({
       analytics.logEvent('changeContent', {
         projectId: projectsState.currentProject.metadata.id,
       });
+    }
+
+    function resetMarkdownEditors() {
+      return new Promise((resolve) => {
+        setTimeout(() => {
+          mdEditors.forEach((mdEditor) => {
+            mdEditor.toTextArea();
+            // eslint-disable-next-line @typescript-eslint/ban-ts-ignore
+            // @ts-ignore
+            // eslint-disable-next-line no-param-reassign
+            mdEditor = null;
+          });
+
+          mdEditors = [];
+          resolve();
+        }, 10);
+      });
+    }
+
+    function initMarkdownEditor() {
+      return new Promise<HTMLTextAreaElement[]>(((resolve) => {
+        resetMarkdownEditors();
+
+        setTimeout(() => {
+          if (!jsonEditor.value) return;
+          const mdFields = [...jsonEditor.value.querySelectorAll<HTMLTextAreaElement>('textarea[data-schemaformat="markdown"]')];
+
+          mdEditors = mdFields.map((mdField: HTMLTextAreaElement) => {
+            const easyMDE = new EasyMDE({
+              element: mdField,
+            });
+
+            easyMDE.codemirror.on('blur', () => {
+              const path = mdField.parentElement?.parentElement?.dataset.schemapath as string;
+
+              const textarea = editor.getEditor(path);
+              textarea.setValue(easyMDE.value());
+              textarea.input.value = easyMDE.value();
+            });
+
+            return easyMDE;
+          });
+
+          resolve(mdFields);
+        }, 10);
+      }));
     }
 
     onMounted(async () => {
@@ -95,29 +208,10 @@ export default defineComponent({
         object_layout: 'tabs',
       });
 
-      setTimeout(() => {
-        if (!jsonEditor.value) return;
-        const mdFields = [...jsonEditor.value.querySelectorAll<HTMLTextAreaElement>('textarea[data-schemaformat="markdown"]')];
-        mdEditors = mdFields.map((mdField: HTMLTextAreaElement) => {
-          const easyMDE = new EasyMDE({
-            element: mdField,
-          });
-
-          easyMDE.codemirror.on('blur', () => {
-            const path = mdField.parentElement?.parentElement?.dataset.schemapath as string;
-
-            const textarea = editor.getEditor(path);
-            textarea.setValue(easyMDE.value());
-            textarea.input.value = easyMDE.value();
-          });
-
-          return easyMDE;
-        });
-      }, 100);
-
-      if (projectsState.currentProject?.content) {
-        editor.setValue(projectsState.currentProject?.content);
+      if (projectData.value) {
+        editor.setValue(projectData.value);
       }
+      await initMarkdownEditor();
 
       editor.on('change', changeData);
     });
@@ -128,12 +222,13 @@ export default defineComponent({
       editor.off('change', changeData);
     });
 
-    watch(projectsState, () => {
-      if (!projectsState.currentProject) return;
-      if (!projectsState.currentProject.content) return;
+    const handleProjectStateChange = debounce(async () => {
+      if (!projectData.value) return;
       if (!editor) return;
 
-      editor.setValue(projectsState.currentProject.content);
+      await resetMarkdownEditors();
+      editor.setValue(projectData.value);
+      await initMarkdownEditor();
 
       mdEditors.forEach((mdEditor) => {
         // eslint-disable-next-line @typescript-eslint/ban-ts-ignore
@@ -144,32 +239,71 @@ export default defineComponent({
           mdEditor.value(value as string);
         }
       });
-    });
+    }, 300);
+
+    watch(projectsState, handleProjectStateChange);
 
     async function exportToJSON() {
-      if (!projectsState.currentProject) return;
-      if (!projectsState.currentProject.content) return;
-
-      const { content } = projectsState.currentProject;
-      const dataString = `data:text/json;charset=utf-8,${encodeURIComponent(JSON.stringify(content))}`;
-      const anchorNode = document.createElement('a');
-      anchorNode.setAttribute('style', 'display: hidden;');
-      anchorNode.setAttribute('href', dataString);
-      anchorNode.setAttribute('download', 'content.json');
-      document.body.appendChild(anchorNode);
-      anchorNode.click();
-      anchorNode.remove();
+      if (!projectData.value) return;
+      downloadData(projectData.value, props.locale);
 
       const analytics = await loadFirebaseAnalytics();
+
       analytics.logEvent('exportJSON', {
-        projectId: projectsState.currentProject.metadata?.id,
+        projectId: projectsState.currentProject?.metadata?.id,
       });
     }
+
+    const referenceLocale = ref<string | null>(null);
+
+    watch(referenceLocale, (value) => {
+      if (!jsonEditor.value) return;
+      const currentRefElements = [...jsonEditor.value.querySelectorAll<HTMLDivElement>('.ref-element')];
+      currentRefElements.forEach((element) => {
+        // eslint-disable-next-line no-param-reassign
+        element.outerHTML = '';
+      });
+
+      if (!value) return;
+
+      const formControlElements = [...jsonEditor.value.querySelectorAll<HTMLDivElement>('.form-control')];
+      const projectLocaleData = getCurrentProjectContent(value);
+      if (!projectLocaleData) return;
+
+      formControlElements.forEach((element) => {
+        const inputEl = element.querySelector<
+          HTMLInputElement |
+          HTMLTextAreaElement |
+          HTMLSelectElement>('[name]');
+        let path = inputEl?.getAttribute('name');
+
+        if (!path) return;
+
+        // removes unnecessary 'root' key from path that gets generated by JSONEditor
+        const filterWords = ['root'];
+        const rgx = new RegExp(filterWords.join(''), 'gi');
+        path = path.replace(rgx, '');
+
+        const refData = get(projectLocaleData, path);
+
+        if (refData === '') return;
+
+        const refElement = document.createElement('p');
+        refElement.innerText = `${value} value: ${refData}`;
+        refElement.classList.add('ref-element');
+
+        element.appendChild(refElement);
+      });
+    });
 
     return {
       projectsState,
       jsonEditor,
       exportToJSON,
+      localeName,
+      metadata,
+      projectData,
+      referenceLocale,
     };
   },
 });
@@ -184,9 +318,39 @@ export default defineComponent({
 
     > main {
       padding: 4rem;
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .back-button {
+      display: flex;
+      height: 1.5em;
+      align-items: center;
+      gap: 1rem;
+      color: $colorGrey900;
+      font-weight: 600;
+      text-decoration: none;
+      transition: 0.2s ease-out;
+      width: fit-content;
+
+      .icon {
+        width: 3rem;
+        height: 100%;
+        color: $colorBlue400;
+      }
+
+      &:hover {
+        color: $colorBlue400;
+        gap: 1.5rem;
+      }
     }
 
     .json-editor {
+      margin-top: 2rem;
+      width: 100%;
+
       div[data-schematype="array"] {
         > div {
           display: flex;
@@ -281,6 +445,7 @@ export default defineComponent({
         transition: border-color 0.1s ease-out;
         width: calc(100% - 2rem);
         background: $colorGrey050;
+        font-style: normal;
 
         &:focus {
           outline: none;

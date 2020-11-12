@@ -31,7 +31,7 @@
           <li>
             <router-link
               :to="{
-                name: 'ProjectContent',
+                name: 'ProjectLocaleList',
                 params: { projectId: router.currentRoute.value.params.projectId } }"
             >
               <Edit /> Content
@@ -221,8 +221,7 @@ export default defineComponent({
             margin-right: 2rem;
           }
 
-          &:hover, &:focus {
-            outline: none;
+          &:hover {
             background: $colorGrey600;
           }
 

@@ -64,7 +64,6 @@ export default defineComponent({
     font-size: 2rem;
     line-height: 3rem;
     padding: 1rem 2.5rem;
-    border: none;
     border-radius: 0.5rem;
     height: fit-content;
     cursor: pointer;
@@ -73,14 +72,17 @@ export default defineComponent({
     text-transform: uppercase;
     letter-spacing: 0.1em;
     width: fit-content;
+    border: 1px solid $colorBlue400;
 
     &:hover {
       background: $colorBlue300;
+      border-color: $colorBlue300;
     }
 
     &:disabled {
       background: $colorGrey100;
       color: $colorGrey300;
+      border-color: $colorGrey100;
       cursor: not-allowed;
 
       &:hover {
@@ -92,7 +94,7 @@ export default defineComponent({
     &.flat {
       background: transparent;
       color: $colorBlue400;
-      border: 1px solid $colorGrey100;
+      border-color: $colorGrey100;
 
       &:hover {
         border-color: $colorBlue400;
