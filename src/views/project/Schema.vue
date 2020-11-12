@@ -12,7 +12,7 @@
     </ProjectBar>
     <main>
       <div v-if="projectsState.currentProject.schemaURL">
-        <h2>Schema</h2>
+        <h1>Schema</h1>
         <pre><code>{{ projectsState.currentProjectSchema }}</code></pre>
       </div>
       <div
@@ -91,7 +91,7 @@ export default defineComponent({
 
     main {
       height: calc(100% - 13rem);
-      width: calc(100vw - 54rem);
+      width: calc(100vw - 38rem);
       padding: 4rem;
 
       pre {

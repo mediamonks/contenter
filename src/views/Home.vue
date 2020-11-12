@@ -9,7 +9,7 @@
           v-for="project in projectsState.userProjects"
           :key="project.id"
         >
-          <router-link :to="{ name: 'ProjectContent', params: { projectId: project.id } }">
+          <router-link :to="{ name: 'ProjectLocaleList', params: { projectId: project.id } }">
             <ProjectCard
               :id="project.id"
               :name="project.name"
@@ -34,7 +34,7 @@
 import { defineComponent } from 'vue';
 import { signOut, userState } from '@/store/user';
 import ProjectCard from '@/components/ProjectCard.vue';
-import { projectsState, syncProjects } from '@/store/projects';
+import { projectsState, syncProjectsMetadata } from '@/store/projects';
 import router from '@/router';
 import { displayError } from '@/store/error';
 
@@ -44,7 +44,7 @@ export default defineComponent({
     ProjectCard,
   },
   setup() {
-    syncProjects().catch((error) => displayError(error));
+    syncProjectsMetadata().catch((error) => displayError(error));
 
     async function handleSignOut() {
       await signOut();

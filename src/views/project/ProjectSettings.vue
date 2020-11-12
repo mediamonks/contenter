@@ -2,7 +2,7 @@
   <div class="project-settings">
     <ProjectBar />
     <main>
-      <h2>Settings</h2>
+      <h1>Settings</h1>
       <form @submit.prevent="handleSavingChanges">
         <div class="input-wrapper">
           <TextField

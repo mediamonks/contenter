@@ -1,0 +1,131 @@
+{
+  "$schema": "http://json-schema.org/draft-04/schema",
+  "id": "http://example.com/example.json",
+  "type": "array",
+  "title": "Root",
+  "description": "The root schema comprises the entire JSON document.",
+  "default": [],
+  "additionalItems": true,
+  "format": "tabs",
+  "items": {
+    "id": "#/items",
+    "headerTemplate": "{{ self.title }}",
+    "anyOf": [
+      {
+        "id": "#/items/anyOf/0",
+        "type": "object",
+        "title": "Course",
+        "description": "An explanation about the purpose of this instance.",
+        "default": {},
+        "required": [
+          "title",
+          "headingImage",
+          "id",
+          "articles"
+        ],
+        "properties": {
+          "title": {
+            "id": "#/items/anyOf/0/properties/title",
+            "type": "string",
+            "title": "Title",
+            "description": "An explanation about the purpose of this instance.",
+            "default": "",
+            "examples": [
+              "Critical Design"
+            ]
+          },
+          "headingImage": {
+            "id": "#/items/anyOf/0/properties/headingImage",
+            "type": "string",
+            "title": "Heading Image",
+            "description": "An explanation about the purpose of this instance.",
+            "default": "",
+            "examples": [
+              "./img/courseImages/trash.jpg"
+            ]
+          },
+          "id": {
+            "id": "#/items/anyOf/0/properties/id",
+            "type": "string",
+            "title": "ID",
+            "description": "An explanation about the purpose of this instance.",
+            "default": "",
+            "examples": [
+              "critical-design"
+            ]
+          },
+          "articles": {
+            "id": "#/items/anyOf/0/properties/articles",
+            "type": "array",
+            "title": "Articles",
+            "format": "tabs",
+            "description": "An explanation about the purpose of this instance.",
+            "default": [],
+            "additionalItems": true,
+            "items": {
+              "id": "#/items/anyOf/0/properties/articles/items",
+              "headerTemplate": "{{ self.title }}",
+              "anyOf": [
+                {
+                  "id": "#/items/anyOf/0/properties/articles/items/anyOf/0",
+                  "type": "object",
+                  "title": "Articles",
+                  "description": "An explanation about the purpose of this instance.",
+                  "default": {},
+                  "required": [
+                    "title",
+                    "subtitle",
+                    "headingImage",
+                    "content"
+                  ],
+                  "properties": {
+                    "title": {
+                      "id": "#/items/anyOf/0/properties/articles/items/anyOf/0/properties/title",
+                      "type": "string",
+                      "title": "Title",
+                      "description": "An explanation about the purpose of this instance.",
+                      "default": "",
+                      "examples": [
+                        "Manifesto and personal project concept"
+                      ]
+                    },
+                    "subtitle": {
+                      "id": "#/items/anyOf/0/properties/articles/items/anyOf/0/properties/subtitle",
+                      "type": "string",
+                      "title": "Subtitle",
+                      "description": "An explanation about the purpose of this instance.",
+                      "default": "",
+                      "examples": [
+                        "Critical Design Project"
+                      ]
+                    },
+                    "headingImage": {
+                      "id": "#/items/anyOf/0/properties/articles/items/anyOf/0/properties/headingImage",
+                      "type": "string",
+                      "title": "Heading Image",
+                      "description": "An explanation about the purpose of this instance.",
+                      "default": "",
+                      "examples": [
+                        "./img/courseImages/trash.jpg"
+                      ]
+                    },
+                    "content": {
+                      "id": "#/items/anyOf/0/properties/articles/items/anyOf/0/properties/content",
+                      "type": "string",
+                      "format": "markdown",
+                      "title": "Content",
+                      "description": "An explanation about the purpose of this instance.",
+                      "default": ""
+                    }
+                  },
+                  "additionalProperties": true
+                }
+              ]
+            }
+          }
+        },
+        "additionalProperties": true
+      }
+    ]
+  }
+}

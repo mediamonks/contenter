@@ -18,7 +18,9 @@
           placeholder="Search for a name"
           @update-users="updateSelectedUsers"
         />
-        <Button>Create</Button>
+        <Button :loading="isLoading">
+          Create
+        </Button>
       </form>
     </main>
   </div>
@@ -33,10 +35,11 @@ import {
 import Button from '@/components/Button.vue';
 import TextField from '@/components/TextField.vue';
 import SearchSelector from '@/components/SearchSelector.vue';
-import { createNewProject, projectsState, syncProjects } from '@/store/projects';
+import { createNewProject, projectsState, syncProjectsMetadata } from '@/store/projects';
 import { User, userState } from '@/store/user';
 import router from '@/router';
 import { displayError } from '@/store/error';
+import { loadFirebaseAnalytics } from '@/firebase';
 
 export default defineComponent({
   name: 'CreateProject',
@@ -60,7 +63,7 @@ export default defineComponent({
 
     watch(id, async () => {
       if (projectsState.projectIds && projectsState.projectIds.length === 0) {
-        await syncProjects();
+        await syncProjectsMetadata();
       }
 
       if (projectsState.projectIds.includes(id.value)) {
@@ -94,6 +97,10 @@ export default defineComponent({
     function updateSelectedUsers(users: User[]) {
       selectedUsers.value = users;
     }
+
+    loadFirebaseAnalytics().then((analytics) => {
+      analytics.logEvent('project_creation_start');
+    });
 
     return {
       handleFormSubmit,

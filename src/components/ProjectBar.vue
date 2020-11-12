@@ -3,7 +3,12 @@
     <main>
       <h3>{{ projectsState.currentProject.metadata.name }}</h3>
       <p class="body-small">
-        {{ projectsState.currentProject.metadata.id }}
+        <template v-if="subtitle">
+          {{ subtitle }}
+        </template>
+        <template v-else>
+          {{ projectsState.currentProject.metadata.id }}
+        </template>
       </p>
     </main>
     <aside>
@@ -14,10 +19,16 @@
 
 <script lang="ts">
 import { defineComponent } from 'vue';
-import { projectsState } from '../store/projects';
+import { projectsState } from '@/store/projects';
 
 export default defineComponent({
   name: 'ProjectBar',
+  props: {
+    subtitle: {
+      type: String,
+      default: null,
+    },
+  },
   setup() {
     return {
       projectsState,
