@@ -13,24 +13,21 @@ import {
 } from '@/firebase';
 import firebase from 'firebase/app';
 
-interface ProjectRawMetadata {
+interface AbstractProjectMetadata {
   name: string;
   id: string;
-  users: string[];
   locales?: Array<{
     name: string;
     code: string;
   }>;
 }
 
-interface ProjectMetadata {
-  name: string;
-  id: string;
+interface ProjectRawMetadata extends AbstractProjectMetadata {
+  users: string[];
+}
+
+interface ProjectMetadata extends AbstractProjectMetadata{
   users: User[];
-  locales: Array<{
-    name: string;
-    code: string;
-  }>;
 }
 
 interface ProjectLocale {
@@ -41,16 +38,14 @@ interface ProjectLocale {
 interface Project {
   metadata?: ProjectMetadata;
   schemaURL?: string;
-  locales?: {
-    [key: string]: ProjectLocale;
-  };
+  locales?: Record<string, ProjectLocale>;
 }
 
 interface ProjectState {
   userProjects: ProjectMetadata[];
   currentProject: Project | null;
   projectIds: string[];
-  currentProjectSchema: Record<any, any> | null;
+  currentProjectSchema: Record<string, unknown> | null;
 }
 
 const projectsState = reactive<ProjectState>({
@@ -86,7 +81,7 @@ async function getFormattedProjects(ids: string[]): Promise<ProjectMetadata[]> {
       name: rawProject.name,
       id: rawProject.id,
       users: projectsUsers,
-      locales: rawProject.locales ? rawProject.locales : [],
+      locales: rawProject.locales || [],
     };
   });
 }
@@ -191,9 +186,7 @@ async function syncCurrentProject(id: string) {
   projectRef.on('value', async (snapshot) => {
     const data: null | {
       schemaURL?: string;
-      locales?: {
-        [key: string]: ProjectLocale;
-      };
+      locales?: Record<string, ProjectLocale>;
     } = snapshot.val();
 
     const projectMetadata = await getFormattedProjects([id]);
@@ -211,8 +204,7 @@ async function syncCurrentProject(id: string) {
 }
 
 async function resetCurrentProjectState() {
-  if (!projectsState.currentProject) return;
-  if (!projectsState.currentProject.metadata) return;
+  if (!projectsState.currentProject?.metadata) return;
   const { id } = projectsState.currentProject.metadata;
 
   projectsState.currentProject = null;
@@ -290,8 +282,7 @@ async function updateProjectsMetadata(newMetadata: ProjectMetadata): Promise<Pro
 }
 
 async function createNewLocale(code: string, name: string, content?: object | any[]) {
-  if (!projectsState.currentProject) throw new Error('No current project defined');
-  if (!projectsState.currentProject.metadata) throw new Error('No current project defined');
+  if (!projectsState.currentProject?.metadata) throw new Error('No current project defined');
   const performance = await loadFirebasePerformance();
   const perfTrace = performance.trace('createNewLocale');
   perfTrace.start();
@@ -300,7 +291,7 @@ async function createNewLocale(code: string, name: string, content?: object | an
 
   const newProjectMetadata: ProjectMetadata = {
     ...metadata,
-    locales: [...new Set([...metadata.locales, { code, name }])],
+    locales: [...new Set([...metadata.locales || [], { code, name }])],
   };
   await updateProjectsMetadata(newProjectMetadata);
 
@@ -325,12 +316,7 @@ async function createNewLocale(code: string, name: string, content?: object | an
 }
 
 function getCurrentProjectContent(code: string): object | any[] | undefined {
-  if (!projectsState.currentProject) return undefined;
-  if (!projectsState.currentProject.locales) return undefined;
-  if (!projectsState.currentProject.locales[code]) return undefined;
-  if (!projectsState.currentProject.locales[code].content) return undefined;
-
-  return projectsState.currentProject.locales[code].content;
+  return projectsState.currentProject?.locales?.[code].content;
 }
 
 function downloadData(data: object | any[], name = 'content') {
@@ -339,7 +325,6 @@ function downloadData(data: object | any[], name = 'content') {
   anchorNode.setAttribute('style', 'display: hidden;');
   anchorNode.setAttribute('href', dataString);
   anchorNode.setAttribute('download', `${name}.json`);
-  document.body.appendChild(anchorNode);
   anchorNode.click();
   anchorNode.remove();
 }
