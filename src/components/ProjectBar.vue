@@ -1,6 +1,6 @@
 <template>
   <header class="project-bar">
-    <main>
+    <header>
       <h3>{{ projectsState.currentProject.metadata.name }}</h3>
       <p class="body-small">
         <template v-if="subtitle">
@@ -10,6 +10,9 @@
           {{ projectsState.currentProject.metadata.id }}
         </template>
       </p>
+    </header>
+    <main>
+      <slot name="main" />
     </main>
     <aside>
       <slot />
@@ -51,6 +54,7 @@ export default defineComponent({
     padding: 4rem;
     display: flex;
     justify-content: space-between;
+    align-items: center;
 
     aside {
       display: flex;
