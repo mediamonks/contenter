@@ -3,6 +3,15 @@
     <ProjectBar
       :subtitle="`${metadata.id} - ${localeName}`"
     >
+      <template #main>
+        <div class="autosave-message">
+          <Sync
+            ref="syncIcon"
+            class="sync-icon"
+          />
+          <p>Your progress is being synchronized to the database</p>
+        </div>
+      </template>
       <Button
         v-if="projectData"
         flat
@@ -83,6 +92,7 @@ import {
 import ProjectBar from '@/components/ProjectBar.vue';
 import Button from '@/components/Button.vue';
 import ArrowToLeft from '@/assets/icons/ArrowToLeft.vue';
+import Sync from '@/assets/icons/Sync.vue';
 import { displayError } from '@/store/error';
 import { loadFirebaseAnalytics } from '@/firebase';
 
@@ -92,6 +102,7 @@ export default defineComponent({
     Button,
     ProjectBar,
     ArrowToLeft,
+    Sync,
   },
   props: {
     locale: {
@@ -121,6 +132,8 @@ export default defineComponent({
       .currentProject
       ?.metadata);
 
+    const syncIcon = ref<typeof Sync| null>(null);
+
     async function changeData() {
       contentData.value = editor.getValue();
 
@@ -149,6 +162,17 @@ export default defineComponent({
       const analytics = await loadFirebaseAnalytics();
       analytics.logEvent('changeContent', {
         projectId: projectsState.currentProject.metadata.id,
+      });
+
+      if (!syncIcon.value) return;
+      const { gsap, Power3 } = await import(/* webpackChunkName: "gsap" */'gsap');
+
+      gsap.fromTo(syncIcon.value.$el, {
+        rotate: 0,
+      }, {
+        rotate: 720,
+        ease: Power3.easeInOut,
+        duration: 1,
       });
     }
 
@@ -304,6 +328,7 @@ export default defineComponent({
       metadata,
       projectData,
       referenceLocale,
+      syncIcon,
     };
   },
 });
@@ -315,6 +340,17 @@ export default defineComponent({
   .content-page {
     height: 100vh;
     overflow-y: scroll;
+
+    .autosave-message {
+      display: flex;
+      align-items: center;
+
+      .icon {
+        height: 1.25em;
+        margin-right: 2rem;
+        color: $colorBlue400;
+      }
+    }
 
     > main {
       padding: 4rem;
@@ -398,9 +434,9 @@ export default defineComponent({
 
       div[data-schematype="object"] {
         > .je-indented-panel {
-          padding: 0;
-          border: none;
-          background: none;
+          margin-right: -1px;
+          margin-bottom: 3rem;
+          border-radius: 1rem;
         }
       }
 
