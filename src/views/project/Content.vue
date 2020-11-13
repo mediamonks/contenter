@@ -84,7 +84,7 @@ import EasyMDE from 'easymde';
 import 'easymde/dist/easymde.min.css';
 import { debounce, get } from 'lodash';
 import {
-  downloadData, getCurrentProjectContent,
+  downloadData, getCurrentProjectContent, onProjectUpdate,
   ProjectMetadata,
   projectsState,
   updateProject,
@@ -95,6 +95,7 @@ import ArrowToLeft from '@/assets/icons/ArrowToLeft.vue';
 import Sync from '@/assets/icons/Sync.vue';
 import { displayError } from '@/store/error';
 import { loadFirebaseAnalytics } from '@/firebase';
+import { User } from '@/store/user';
 
 export default defineComponent({
   name: 'Content',
@@ -128,7 +129,7 @@ export default defineComponent({
       ?.[props.locale]
       .name);
 
-    const metadata = computed<ProjectMetadata | undefined>(() => projectsState
+    const metadata = computed<ProjectMetadata<User> | undefined>(() => projectsState
       .currentProject
       ?.metadata);
 
@@ -265,7 +266,7 @@ export default defineComponent({
       });
     }, 300);
 
-    watch(projectsState, handleProjectStateChange);
+    onProjectUpdate(handleProjectStateChange);
 
     async function exportToJSON() {
       if (!projectData.value) return;
