@@ -13,21 +13,14 @@ import {
 } from '@/firebase';
 import firebase from 'firebase/app';
 
-interface AbstractProjectMetadata {
+interface ProjectMetadata<T>{
   name: string;
   id: string;
   locales?: Array<{
     name: string;
     code: string;
   }>;
-}
-
-interface ProjectRawMetadata extends AbstractProjectMetadata {
-  users: string[];
-}
-
-interface ProjectMetadata extends AbstractProjectMetadata{
-  users: User[];
+  users: T[];
 }
 
 interface ProjectLocale {
@@ -36,13 +29,13 @@ interface ProjectLocale {
 }
 
 interface Project {
-  metadata?: ProjectMetadata;
+  metadata?: ProjectMetadata<User>;
   schemaURL?: string;
   locales?: Record<string, ProjectLocale>;
 }
 
 interface ProjectState {
-  userProjects: ProjectMetadata[];
+  userProjects: ProjectMetadata<User>[];
   currentProject: Project | null;
   projectIds: string[];
   currentProjectSchema: Record<string, unknown> | null;
@@ -55,7 +48,9 @@ const projectsState = reactive<ProjectState>({
   currentProjectSchema: null,
 });
 
-async function getRawUserProjects(ids: string[]): Promise<ProjectRawMetadata[]> {
+const projectEventElement = document.createElement('div');
+
+async function getRawUserProjects(ids: string[]): Promise<ProjectMetadata<string>[]> {
   const database = await loadFirebaseDatabase();
 
   const projectRefs = ids.map((projectId) => database.ref(`projectMetadata/${projectId}`).once('value'));
@@ -67,7 +62,7 @@ async function getRawUserProjects(ids: string[]): Promise<ProjectRawMetadata[]> 
   )];
 }
 
-async function getFormattedProjects(ids: string[]): Promise<ProjectMetadata[]> {
+async function getFormattedProjects(ids: string[]): Promise<ProjectMetadata<User>[]> {
   const rawProjects = await getRawUserProjects(ids);
   const users = await fetchAllUsers();
 
@@ -98,7 +93,7 @@ async function getAllProjectIds(): Promise<string[]> {
   return val;
 }
 
-async function syncProjectsMetadata(): Promise<ProjectMetadata[]> {
+async function syncProjectsMetadata(): Promise<ProjectMetadata<User>[]> {
   if (!userState.currentUser) throw new Error('No user defined');
   projectsState.projectIds = await getAllProjectIds();
 
@@ -148,7 +143,7 @@ async function createNewProject(name: string, id: string, uid: string, users: Us
       name,
       id,
       users: [uid, ...userIds],
-    } as ProjectRawMetadata),
+    } as ProjectMetadata<string>),
     database.ref(`projectIds/${projectsState.projectIds.length}`).set(id),
     syncProjectsMetadata(),
     updateUser({
@@ -179,6 +174,12 @@ async function fetchJSONSchema(url: string) {
   return json;
 }
 
+function handleProjectUpdate() {
+  const event = new Event('updateProject');
+
+  projectEventElement.dispatchEvent(event);
+}
+
 async function syncCurrentProject(id: string) {
   const database = await loadFirebaseDatabase();
   const projectRef = database.ref(`projects/${id}`);
@@ -200,6 +201,8 @@ async function syncCurrentProject(id: string) {
       metadata: projectMetadata[0],
       ...data,
     };
+
+    handleProjectUpdate();
   });
 }
 
@@ -258,7 +261,8 @@ async function uploadSchema(schemaFile: File, project: Project) {
   return jsonSchema;
 }
 
-async function updateProjectsMetadata(newMetadata: ProjectMetadata): Promise<ProjectMetadata> {
+async function updateProjectsMetadata(newMetadata: ProjectMetadata<User>):
+  Promise<ProjectMetadata<User>> {
   if (!projectsState.currentProject) throw new Error('No current project defined');
   const performance = await loadFirebasePerformance();
   const perfTrace = performance.trace('updateProjectMetadata');
@@ -289,7 +293,7 @@ async function createNewLocale(code: string, name: string, content?: object | an
 
   const { metadata } = projectsState.currentProject;
 
-  const newProjectMetadata: ProjectMetadata = {
+  const newProjectMetadata: ProjectMetadata<User> = {
     ...metadata,
     locales: [...new Set([...metadata.locales || [], { code, name }])],
   };
@@ -329,6 +333,10 @@ function downloadData(data: object | any[], name = 'content') {
   anchorNode.remove();
 }
 
+function onProjectUpdate(callback: Function) {
+  projectEventElement.addEventListener('updateProject', () => { callback(); });
+}
+
 export {
   projectsState,
   syncProjectsMetadata,
@@ -342,6 +350,7 @@ export {
   createNewLocale,
   getCurrentProjectContent,
   downloadData,
+  onProjectUpdate,
   Project,
   ProjectMetadata,
 };
