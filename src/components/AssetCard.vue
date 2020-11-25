@@ -23,8 +23,12 @@
   </div>
 </template>
 
-<script>
-import { defineComponent } from 'vue';
+<script lang="ts">
+import {
+  defineComponent,
+  computed,
+  toRef,
+} from 'vue';
 
 export default defineComponent({
   name: 'AssetCard',
@@ -37,14 +41,24 @@ export default defineComponent({
       type: String,
       required: true,
     },
-    fileType: {
-      type: String,
-      required: true,
-    },
     selected: {
       type: Boolean,
       default: false,
     },
+  },
+  setup(props) {
+    const name = toRef(props, 'name');
+    const fileType = computed(() => {
+      console.log(name);
+
+      const nameSplit = name.value.split('.');
+
+      return nameSplit[nameSplit.length - 1];
+    });
+
+    return {
+      fileType,
+    };
   },
 });
 </script>
@@ -98,6 +112,8 @@ export default defineComponent({
     text-transform: uppercase;
     width: 100%;
     height: 100%;
+    left: 0;
+    top: 0;
   }
 
   &:hover {

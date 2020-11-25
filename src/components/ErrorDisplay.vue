@@ -43,7 +43,7 @@ export default defineComponent({
     padding: 1rem 2rem 0.5rem;
     color: $colorError;
     font-weight: 500;
-    background: $colorGrey050;
+    background: $colorGrey900;
     border-bottom: 0.5rem solid $colorError;
     border-radius: 0.5rem;
     box-shadow: 0 2rem 3rem rgba(black, 0.15), 0 0 3rem rgba(black, 0.15);

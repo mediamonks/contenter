@@ -6,13 +6,19 @@
     <div
       class="overlay-box"
       @click="closeView"
-    />
+    >
+      <img
+        v-if="data && data.thumbnail"
+        :src="data.thumbnail"
+        :alt="data.name"
+      >
+    </div>
     <aside>
       <template v-if="data">
-        <header>
+        <header v-if="data.thumbnail">
           <img
             :src="data.thumbnail"
-            alt=""
+            :alt="data.name"
           >
         </header>
         <main>
@@ -28,7 +34,7 @@
             </li>
             <li>
               <label>Type</label>
-              <p>image/jpeg</p>
+              <p>{{ data.type }}</p>
             </li>
             <li v-if="data.dimensions">
               <label>Dimensions</label>
@@ -89,6 +95,7 @@ export default defineComponent({
         .fromTo(overlayBox, {
           autoAlpha: 0,
           pointerEvents: 'none',
+          duration: 0.2,
         }, {
           autoAlpha: 1,
           pointerEvents: 'all',
@@ -98,6 +105,7 @@ export default defineComponent({
           autoAlpha: 0,
           ease: 'power3',
           pointerEvents: 'none',
+          duration: 0.2,
         }, {
           x: '0%',
           autoAlpha: 1,
@@ -150,6 +158,18 @@ export default defineComponent({
     width: 100%;
     height: 100%;
     background: rgba(black, 0.5);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding-right: 64rem;
+
+    img {
+      padding: 8rem;
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+      filter: drop-shadow(0 1rem 2rem rgba(black, 0.15)) drop-shadow(0 0 3rem rgba(black, 0.15));
+    }
   }
 
   aside {

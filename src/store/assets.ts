@@ -1,5 +1,8 @@
 import { ref } from 'vue';
-import { loadFirebaseStorage } from '@/firebase';
+import {
+  loadFirebasePerformance,
+  loadFirebaseStorage,
+} from '@/firebase';
 import firebase from 'firebase/app';
 
 interface Asset {
@@ -37,6 +40,10 @@ function parseSize(size: number) {
 }
 
 async function getProjectAssets(projectId: string) {
+  const performance = await loadFirebasePerformance();
+  const perfTrace = performance.trace('getProjectAsset');
+  perfTrace.start();
+
   const storage = await loadFirebaseStorage();
   const storageRef = storage.ref(`${projectId}/assets`);
 
@@ -63,10 +70,27 @@ async function getProjectAssets(projectId: string) {
 
     return data;
   });
+
+  perfTrace.stop();
+}
+
+async function uploadAsset(file: File, projectId: string) {
+  const performance = await loadFirebasePerformance();
+  const perfTrace = performance.trace('uploadAsset');
+  perfTrace.start();
+
+  const storage = await loadFirebaseStorage();
+  const storageRef = storage.ref(`${projectId}/assets/${file.name}`);
+
+  await storageRef.put(file);
+  await getProjectAssets(projectId);
+
+  perfTrace.stop();
 }
 
 export {
   Asset,
   assets,
   getProjectAssets,
+  uploadAsset,
 };

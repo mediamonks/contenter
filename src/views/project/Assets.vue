@@ -1,6 +1,14 @@
 <template>
   <div class="assets">
-    <ProjectBar />
+    <ProjectBar>
+      <Button
+        flat
+        :loading="loading"
+        label-for="asset-uploader"
+      >
+        Upload an asset
+      </Button>
+    </ProjectBar>
     <MainContainer>
       <h1>Assets</h1>
       <div class="asset-grid">
@@ -9,12 +17,18 @@
           :key="`asset-${index}`"
           :name="asset.name"
           :thumbnail="asset.thumbnail"
-          file-type="jpg"
           @click="openInfoPanel(index)"
         />
       </div>
     </MainContainer>
     <AssetInfoPanel ref="assetInfoPanel" />
+    <input
+      id="asset-uploader"
+      ref="fileSelector"
+      type="file"
+      class="upload-input"
+      @change="handleAssetUpload"
+    >
   </div>
 </template>
 
@@ -24,7 +38,8 @@ import ProjectBar from '@/components/ProjectBar.vue';
 import MainContainer from '@/components/MainContainer.vue';
 import AssetCard from '@/components/AssetCard.vue';
 import AssetInfoPanel from '@/components/AssetInfoPanel.vue';
-import { assets, getProjectAssets } from '@/store/assets';
+import Button from '@/components/Button.vue';
+import { assets, getProjectAssets, uploadAsset } from '@/store/assets';
 import { projectsState } from '@/store/projects';
 import { displayError } from '@/store/error';
 
@@ -35,6 +50,7 @@ export default defineComponent({
     MainContainer,
     AssetCard,
     AssetInfoPanel,
+    Button,
   },
   setup() {
     const projectId = projectsState.currentProject?.metadata?.id;
@@ -48,10 +64,25 @@ export default defineComponent({
       assetInfoPanel.value.openView(assets.value[index]);
     }
 
+    const loading = ref(false);
+    function handleAssetUpload(event: InputEvent) {
+      // eslint-disable-next-line @typescript-eslint/ban-ts-ignore
+      // @ts-ignore
+      const [file]: File = event.target.files;
+
+      if (!file || !projectsState.currentProject?.metadata?.id) return;
+      loading.value = true;
+      uploadAsset(file, projectsState.currentProject.metadata.id)
+        .catch((error) => displayError(error))
+        .then(() => { loading.value = false; });
+    }
+
     return {
       assets,
       openInfoPanel,
       assetInfoPanel,
+      handleAssetUpload,
+      loading,
     };
   },
 });
@@ -67,6 +98,10 @@ export default defineComponent({
     display: grid;
     grid-template-columns: repeat(4, 1fr);
     gap: 2rem;
+  }
+
+  .upload-input {
+    display: none;
   }
 
   @media screen and (min-width: 1600px) {
