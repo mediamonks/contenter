@@ -7,7 +7,7 @@
       v-else
       class="loading"
     >
-      <h2>Loading...</h2>
+      <h1>Loading...</h1>
     </div>
   </div>
 </template>

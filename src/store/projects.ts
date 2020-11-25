@@ -13,6 +13,7 @@ import {
 } from '@/firebase';
 import firebase from 'firebase/app';
 import { downloadFile } from '@/util';
+import { assets } from '@/store/assets';
 
 interface ProjectMetadata<T>{
   name: string;
@@ -217,6 +218,8 @@ async function resetCurrentProjectState() {
   const database = await loadFirebaseDatabase();
   const projectRef = database.ref(`projects/${id}`);
   projectRef.off('value');
+
+  assets.value = [];
 }
 
 const updateProject = async (projectId: string, newData: Project) => {

@@ -2,33 +2,55 @@
   <div class="assets">
     <ProjectBar>
       <Button
+        v-if="!loading"
         flat
-        :loading="loading"
+        :loading="uploading"
         label-for="asset-uploader"
       >
         Upload an asset
       </Button>
     </ProjectBar>
-    <MainContainer>
-      <h1>Assets</h1>
-      <div class="asset-grid">
-        <AssetCard
-          v-for="(asset, index) in assets"
-          :key="`asset-${index}`"
-          :name="asset.name"
-          :thumbnail="asset.thumbnail"
-          @click="openInfoPanel(index)"
-        />
-      </div>
-    </MainContainer>
-    <AssetInfoPanel ref="assetInfoPanel" />
-    <input
-      id="asset-uploader"
-      ref="fileSelector"
-      type="file"
-      class="upload-input"
-      @change="handleAssetUpload"
+    <main
+      v-if="loading"
+      class="loading"
     >
+      <h1>Loading...</h1>
+    </main>
+    <template v-else>
+      <template v-if="assets.length > 0">
+        <MainContainer>
+          <h1>Assets</h1>
+          <div class="asset-grid">
+            <AssetCard
+              v-for="(asset, index) in assets"
+              :key="`asset-${index}`"
+              :name="asset.name"
+              :thumbnail="asset.thumbnail"
+              @click="openInfoPanel(index)"
+            />
+          </div>
+        </MainContainer>
+        <AssetInfoPanel ref="assetInfoPanel" />
+      </template>
+      <main
+        v-else
+        class="no-assets"
+      >
+        <h1>This project has no assets</h1><Button
+          :loading="loading"
+          label-for="asset-uploader"
+        >
+          Upload the first asset
+        </Button>
+      </main>
+      <input
+        id="asset-uploader"
+        ref="fileSelector"
+        type="file"
+        class="upload-input"
+        @change="handleAssetUpload"
+      >
+    </template>
   </div>
 </template>
 
@@ -53,9 +75,15 @@ export default defineComponent({
     Button,
   },
   setup() {
+    const loading = ref(true);
     const projectId = projectsState.currentProject?.metadata?.id;
     if (projectId) {
-      getProjectAssets(projectId).catch((error) => displayError(error));
+      if (assets.value.length > 0) {
+        loading.value = false;
+      }
+      getProjectAssets(projectId)
+        .catch((error) => displayError(error))
+        .then(() => { loading.value = false; });
     }
 
     const assetInfoPanel = ref<(typeof AssetInfoPanel) | null>(null);
@@ -64,17 +92,17 @@ export default defineComponent({
       assetInfoPanel.value.openView(assets.value[index]);
     }
 
-    const loading = ref(false);
+    const uploading = ref(false);
     function handleAssetUpload(event: InputEvent) {
       // eslint-disable-next-line @typescript-eslint/ban-ts-ignore
       // @ts-ignore
       const [file]: File = event.target.files;
 
       if (!file || !projectsState.currentProject?.metadata?.id) return;
-      loading.value = true;
+      uploading.value = true;
       uploadAsset(file, projectsState.currentProject.metadata.id)
         .catch((error) => displayError(error))
-        .then(() => { loading.value = false; });
+        .then(() => { uploading.value = false; });
     }
 
     return {
@@ -82,6 +110,7 @@ export default defineComponent({
       openInfoPanel,
       assetInfoPanel,
       handleAssetUpload,
+      uploading,
       loading,
     };
   },
@@ -90,9 +119,19 @@ export default defineComponent({
 
 <style lang="scss" scoped>
 .assets {
-    height: 100vh;
-    overflow-y: scroll;
-    padding-bottom: 4rem;
+  height: 100vh;
+  overflow-y: scroll;
+  padding-bottom: 4rem;
+
+  .no-assets, .loading {
+    display: flex;
+    height: 100%;
+    width: 100%;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    gap: 2rem;
+  }
 
   .asset-grid {
     display: grid;
