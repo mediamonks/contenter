@@ -49,8 +49,6 @@ export default defineComponent({
   setup(props) {
     const name = toRef(props, 'name');
     const fileType = computed(() => {
-      console.log(name);
-
       const nameSplit = name.value.split('.');
 
       return nameSplit[nameSplit.length - 1];

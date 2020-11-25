@@ -60,6 +60,14 @@
             </li>
           </ul>
         </main>
+        <footer>
+          <Button
+            flat
+            @click="handleAssetDownload"
+          >
+            Download Asset
+          </Button>
+        </footer>
       </template>
     </aside>
   </div>
@@ -71,9 +79,14 @@ import {
 } from 'vue';
 import gsap from 'gsap';
 import { Asset } from '@/store/assets';
+import Button from '@/components/Button.vue';
+import { downloadFile } from '@/util';
 
 export default defineComponent({
   name: 'AssetInfoPanel',
+  components: {
+    Button,
+  },
   setup() {
     const active = ref(false);
     const root = ref<HTMLDivElement | null>(null);
@@ -130,12 +143,18 @@ export default defineComponent({
       toggleTimeline = getToggleTimeline();
     });
 
+    function handleAssetDownload() {
+      if (!data.value) return;
+      downloadFile(data.value.remoteURL, data.value.name);
+    }
+
     return {
       active,
       root,
       closeView,
       openView,
       data,
+      handleAssetDownload,
     };
   },
 });
@@ -206,6 +225,14 @@ export default defineComponent({
 
       .warn {
         color: $colorError;
+      }
+    }
+
+    footer {
+      padding: 2rem;
+
+      > * {
+        width: 100%;
       }
     }
   }

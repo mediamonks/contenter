@@ -12,6 +12,7 @@ import {
   loadFirebaseStorage,
 } from '@/firebase';
 import firebase from 'firebase/app';
+import { downloadFile } from '@/util';
 
 interface ProjectMetadata<T>{
   name: string;
@@ -325,12 +326,7 @@ function getCurrentProjectContent(code: string): object | any[] | undefined {
 
 function downloadData(data: object | any[], name = 'content') {
   const dataString = `data:text/json;charset=utf-8,${encodeURIComponent(JSON.stringify(data))}`;
-  const anchorNode = document.createElement('a');
-  anchorNode.setAttribute('style', 'display: hidden;');
-  anchorNode.setAttribute('href', dataString);
-  anchorNode.setAttribute('download', `${name}.json`);
-  anchorNode.click();
-  anchorNode.remove();
+  downloadFile(dataString, `${name}.json`);
 }
 
 function onProjectUpdate(callback: Function) {
