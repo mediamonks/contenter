@@ -38,7 +38,7 @@ import SearchSelector from '@/components/SearchSelector.vue';
 import { createNewProject, projectsState, syncProjectsMetadata } from '@/store/projects';
 import { User, userState } from '@/store/user';
 import router from '@/router';
-import { displayError } from '@/store/error';
+import { displayError } from '@/store/message';
 import { loadFirebaseAnalytics } from '@/firebase';
 
 export default defineComponent({

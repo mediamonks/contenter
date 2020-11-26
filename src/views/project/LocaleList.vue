@@ -113,7 +113,7 @@ import Download from '@/assets/icons/Download.vue';
 import {
   createNewLocale, downloadData, getCurrentProjectContent, projectsState,
 } from '@/store/projects';
-import { displayError } from '@/store/error';
+import { displayError } from '@/store/message';
 import router from '@/router';
 
 export default defineComponent({

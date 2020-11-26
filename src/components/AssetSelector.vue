@@ -56,7 +56,7 @@ import PhotoVideo from '@/assets/icons/PhotoVideo.vue';
 import AssetCard from '@/components/AssetCard.vue';
 import AssetInfo from '@/components/AssetInfo.vue';
 import { projectsState } from '@/store/projects';
-import { displayError } from '@/store/error';
+import { displayError } from '@/store/message';
 import Close from '@/assets/icons/Close.vue';
 import ArrowToLeft from '@/assets/icons/ArrowToLeft.vue';
 

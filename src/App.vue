@@ -11,7 +11,7 @@
 <script lang="ts">
 import { defineComponent } from 'vue';
 import NavigationPanel from '@/components/NavigationPanel.vue';
-import ErrorDisplay from '@/components/ErrorDisplay.vue';
+import ErrorDisplay from '@/components/MessageDisplay.vue';
 import { loadFirebaseAnalytics } from '@/firebase';
 
 export default defineComponent({

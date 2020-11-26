@@ -115,7 +115,7 @@ import Database from '@/assets/icons/Database.vue';
 import Cogs from '@/assets/icons/Cogs.vue';
 import GitHub from '@/assets/icons/GitHub.vue';
 import router from '@/router';
-import { displayError } from '@/store/error';
+import { displayError } from '@/store/message';
 import { loadFirebaseAnalytics } from '@/firebase';
 
 export default defineComponent({

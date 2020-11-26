@@ -63,7 +63,7 @@ import AssetInfoPanel from '@/components/AssetInfoPanel.vue';
 import Button from '@/components/Button.vue';
 import { assets, getProjectAssets, uploadAsset } from '@/store/assets';
 import { projectsState } from '@/store/projects';
-import { displayError } from '@/store/error';
+import { displayError } from '@/store/message';
 
 export default defineComponent({
   name: 'Assets',

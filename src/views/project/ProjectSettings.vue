@@ -76,7 +76,7 @@ import SearchSelector from '@/components/SearchSelector.vue';
 import Button from '@/components/Button.vue';
 import { projectsState, updateProjectsMetadata } from '@/store/projects';
 import { userState, User, updateUser } from '@/store/user';
-import { displayError } from '@/store/error';
+import { displayError } from '@/store/message';
 
 interface ProjectSettingsFormState {
   name: string | null;

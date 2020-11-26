@@ -13,11 +13,15 @@
         <ul>
           <li>
             <label>Remote URL</label>
-            <p>{{ data.remoteURL }}</p>
+            <p @click="copyValue(data.remoteURL)">
+              {{ data.remoteURL }}
+            </p>
           </li>
           <li>
             <label>Relative path</label>
-            <p>{{ basePath }}{{ data.relativePath }}</p>
+            <p @click="copyValue(basePath + data.name)">
+              {{ basePath }}{{ data.name }}
+            </p>
           </li>
           <li>
             <label>Type</label>
@@ -62,8 +66,9 @@
 <script lang="ts">
 import { defineComponent, toRef, computed } from 'vue';
 import Button from '@/components/Button.vue';
-import { downloadFile } from '@/util';
+import { copyValueToClipboard, downloadFile } from '@/util';
 import { projectsState } from '@/store/projects';
+import { displayError, displayMessage } from '@/store/message';
 
 export default defineComponent({
   name: 'AssetInfo',
@@ -89,9 +94,16 @@ export default defineComponent({
       return path || '/';
     });
 
+    function copyValue(value: string) {
+      copyValueToClipboard(value)
+        .then(() => displayMessage('Copied value to clipboard', undefined, 1500))
+        .catch((error) => displayError(error));
+    }
+
     return {
       handleAssetDownload,
       basePath,
+      copyValue,
     };
   },
 });
@@ -106,7 +118,7 @@ export default defineComponent({
   width: 100%;
   height: 100%;
   background: $colorGrey050;
-  box-shadow: 0 0 3rem 1rem rgba(black, 0.3);
+  box-shadow: 0 0 3rem 1rem rgba(black, 0.15), 0 0 4rem rgba(black, 0.15);
   display: flex;
   flex-direction: column;
   justify-content: space-between;

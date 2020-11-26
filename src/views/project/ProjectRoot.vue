@@ -16,7 +16,7 @@
 import { defineComponent, onUnmounted } from 'vue';
 import { syncCurrentProject, projectsState, resetCurrentProjectState } from '@/store/projects';
 import router from '@/router';
-import { displayError } from '@/store/error';
+import { displayError } from '@/store/message';
 
 export default defineComponent({
   name: 'Project',
