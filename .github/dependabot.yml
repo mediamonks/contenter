@@ -5,7 +5,7 @@
 
 version: 2
 updates:
-  - package-ecosystem: "yarn"
+  - package-ecosystem: "npm"
     directory: "/"
     target-branch: "develop"
     schedule:
@@ -14,4 +14,4 @@ updates:
     directory: "/"
     target-branch: "develop"
     schedule:
-      interval: "daily"      
+      interval: "daily"
