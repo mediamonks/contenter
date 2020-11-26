@@ -76,6 +76,7 @@ export default defineComponent({
   background: $colorBlue400;
   transition: 0.2s ease-out;
   cursor: pointer;
+  border: solid 1px $colorGrey100;
 
   > * {
     z-index: 2;

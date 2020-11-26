@@ -21,6 +21,7 @@
       </Button>
     </ProjectBar>
     <main v-if="projectsState.currentProject.schemaURL">
+      <AssetSelector />
       <router-link
         class="back-button"
         :to="{ name: 'ProjectLocaleList', params: { projectId: metadata.id } }"
@@ -96,6 +97,7 @@ import Sync from '@/assets/icons/Sync.vue';
 import { displayError } from '@/store/error';
 import { loadFirebaseAnalytics } from '@/firebase';
 import { User } from '@/store/user';
+import AssetSelector from '@/components/AssetSelector.vue';
 
 export default defineComponent({
   name: 'Content',
@@ -104,6 +106,7 @@ export default defineComponent({
     ProjectBar,
     ArrowToLeft,
     Sync,
+    AssetSelector,
   },
   props: {
     locale: {
