@@ -199,7 +199,7 @@ select {
 }
 
 label {
-  font-weight: 700;
+  font-weight: 600;
   color: $colorGrey900;
   text-transform: uppercase;
   letter-spacing: 0.1em;

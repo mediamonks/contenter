@@ -48,13 +48,6 @@ export default defineComponent({
     display: block;
     width: 100%;
 
-    .label-copy {
-      font-weight: 600;
-      color: $colorGrey900;
-      text-transform: uppercase;
-      letter-spacing: 0.1em;
-    }
-
     input {
       display: block;
       width: 100%;

@@ -1,5 +1,8 @@
 <template>
-  <div class="asset-selector">
+  <div
+    v-if="assets.length > 0"
+    class="asset-selector"
+  >
     <button
       class="view-toggle"
       @click="toggleView"

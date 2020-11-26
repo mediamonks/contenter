@@ -17,7 +17,7 @@
           </li>
           <li>
             <label>Relative path</label>
-            <p>{{ data.relativePath }}</p>
+            <p>{{ basePath }}{{ data.relativePath }}</p>
           </li>
           <li>
             <label>Type</label>
@@ -60,9 +60,10 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, toRef } from 'vue';
+import { defineComponent, toRef, computed } from 'vue';
 import Button from '@/components/Button.vue';
 import { downloadFile } from '@/util';
+import { projectsState } from '@/store/projects';
 
 export default defineComponent({
   name: 'AssetInfo',
@@ -83,8 +84,14 @@ export default defineComponent({
       downloadFile(data.value.remoteURL, data.value.name);
     }
 
+    const basePath = computed<string>(() => {
+      const path = projectsState.currentProject?.metadata?.relativeBasePath;
+      return path || '/';
+    });
+
     return {
       handleAssetDownload,
+      basePath,
     };
   },
 });

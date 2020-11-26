@@ -8,7 +8,6 @@ import firebase from 'firebase/app';
 interface Asset {
   name: string;
   remoteURL: string;
-  relativePath: string;
   type: string;
   size: number;
   dimensions?: {
@@ -59,7 +58,6 @@ async function getProjectAssets(projectId: string) {
     const data: Asset = {
       name: item.name,
       remoteURL: downloadURLList[index],
-      relativePath: `img/${item.name}`,
       type: item.contentType,
       size: parseSize(item.size),
     };

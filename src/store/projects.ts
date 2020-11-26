@@ -23,6 +23,7 @@ interface ProjectMetadata<T>{
     code: string;
   }>;
   users: T[];
+  relativeBasePath?: string;
 }
 
 interface ProjectLocale {
@@ -79,6 +80,7 @@ async function getFormattedProjects(ids: string[]): Promise<ProjectMetadata<User
       id: rawProject.id,
       users: projectsUsers,
       locales: rawProject.locales || [],
+      relativeBasePath: rawProject.relativeBasePath,
     };
   });
 }
