@@ -12,12 +12,6 @@
         <h2>{{ data.name }}</h2>
         <ul>
           <li>
-            <label>Remote URL</label>
-            <p @click="copyValue(data.remoteURL)">
-              {{ data.remoteURL }}
-            </p>
-          </li>
-          <li>
             <label>Relative path</label>
             <p @click="copyValue(basePath + data.name)">
               {{ basePath }}{{ data.name }}
