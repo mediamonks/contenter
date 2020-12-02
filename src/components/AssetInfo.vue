@@ -53,11 +53,22 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, toRef, computed } from 'vue';
+import {
+  defineComponent,
+  toRef,
+  computed,
+  PropType,
+} from 'vue';
 import Button from '@/components/Button.vue';
 import { copyValueToClipboard, downloadFile, parseUnitSize } from '@/util';
 import { projectsState } from '@/store/projects';
 import { displayError, displayMessage } from '@/store/message';
+import { Asset } from '@/store/assets';
+
+interface AssetInfoProps {
+  data: Asset | null;
+  fileSizeWarning: number;
+}
 
 export default defineComponent({
   name: 'AssetInfo',
@@ -66,7 +77,7 @@ export default defineComponent({
   },
   props: {
     data: {
-      type: Object,
+      type: Object as PropType<Asset>,
       default: null,
     },
     fileSizeWarning: {
@@ -74,7 +85,7 @@ export default defineComponent({
       default: 2e6,
     },
   },
-  setup(props) {
+  setup(props: AssetInfoProps) {
     const data = toRef(props, 'data');
 
     function handleAssetDownload() {
@@ -90,7 +101,7 @@ export default defineComponent({
     function copyValue(value: string) {
       copyValueToClipboard(value)
         .then(() => displayMessage('Copied value to clipboard', undefined, 1500))
-        .catch((error) => displayError(error));
+        .catch(displayError);
     }
 
     return {
