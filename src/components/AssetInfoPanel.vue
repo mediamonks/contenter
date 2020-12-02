@@ -21,7 +21,7 @@
         class="close-button"
         @click="closeView"
       >
-        <Close class="icon" />
+        <CloseIcon class="icon" />
       </button>
     </div>
   </div>
@@ -35,13 +35,13 @@ import gsap from 'gsap';
 import { Asset } from '@/store/assets';
 import AssetInfo from '@/components/AssetInfo.vue';
 import { downloadFile } from '@/util';
-import Close from '@/assets/icons/Close.vue';
+import CloseIcon from '@/assets/icons/CloseIcon.vue';
 
 export default defineComponent({
   name: 'AssetInfoPanel',
   components: {
     AssetInfo,
-    Close,
+    CloseIcon,
   },
   setup() {
     const active = ref(false);

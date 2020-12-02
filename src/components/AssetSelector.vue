@@ -7,11 +7,11 @@
       class="view-toggle"
       @click="toggleView"
     >
-      <PhotoVideo
+      <PhotoVideoIcon
         v-if="!active"
         class="icon"
       />
-      <Close
+      <CloseIcon
         v-else
         class="icon close"
       />
@@ -52,12 +52,12 @@
 <script lang="ts">
 import { defineComponent, ref } from 'vue';
 import { assets, getProjectAssets } from '@/store/assets';
-import PhotoVideo from '@/assets/icons/PhotoVideo.vue';
+import PhotoVideoIcon from '@/assets/icons/PhotoVideoIcon.vue';
 import AssetCard from '@/components/AssetCard.vue';
 import AssetInfo from '@/components/AssetInfo.vue';
 import { projectsState } from '@/store/projects';
 import { displayError } from '@/store/message';
-import Close from '@/assets/icons/Close.vue';
+import CloseIcon from '@/assets/icons/CloseIcon.vue';
 import ArrowToLeft from '@/assets/icons/ArrowToLeft.vue';
 
 export default defineComponent({
@@ -65,8 +65,8 @@ export default defineComponent({
   components: {
     AssetCard,
     AssetInfo,
-    PhotoVideo,
-    Close,
+    PhotoVideoIcon,
+    CloseIcon,
     ArrowToLeft,
   },
   setup() {

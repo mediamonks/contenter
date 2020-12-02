@@ -45,7 +45,7 @@
                 params: { projectId: router.currentRoute.value.params.projectId },
               }"
             >
-              <PhotoVideo /> Assets
+              <PhotoVideoIcon /> Assets
             </router-link>
           </li>
           <li>
@@ -110,7 +110,7 @@ import ArrowToLeft from '@/assets/icons/ArrowToLeft.vue';
 import Task from '@/assets/icons/Task.vue';
 import LayerPlus from '@/assets/icons/LayersPlus.vue';
 import Edit from '@/assets/icons/Edit.vue';
-import PhotoVideo from '@/assets/icons/PhotoVideo.vue';
+import PhotoVideoIcon from '@/assets/icons/PhotoVideoIcon.vue';
 import Database from '@/assets/icons/Database.vue';
 import Cogs from '@/assets/icons/Cogs.vue';
 import GitHub from '@/assets/icons/GitHub.vue';
@@ -126,7 +126,7 @@ export default defineComponent({
     Task,
     LayerPlus,
     Edit,
-    PhotoVideo,
+    PhotoVideoIcon,
     Database,
     Cogs,
     GitHub,
