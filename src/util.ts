@@ -1,3 +1,6 @@
+import convert from 'convert-units';
+import { Unit } from '@/unitTypes';
+
 function downloadFile(url: string, name: string) {
   const anchorNode = document.createElement('a');
   anchorNode.setAttribute('style', 'display: hidden;');
@@ -18,7 +21,15 @@ async function copyValueToClipboard(value: string) {
   await navigator.clipboard.writeText(value);
 }
 
+function parseUnitSize(value: number, unit: Unit, decimals = 2) {
+  const conversion = convert(value).from(unit).toBest();
+
+  const dm = decimals < 0 ? 0 : decimals;
+  return `${conversion.val.toFixed(dm)}${conversion.unit}`;
+}
+
 export {
   downloadFile,
   copyValueToClipboard,
+  parseUnitSize,
 };

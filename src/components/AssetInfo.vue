@@ -27,20 +27,15 @@
           </li>
           <li>
             <label>Size</label>
-            <p v-if="data.size >= 1000000">
-              {{ data.size / 1000000 }}MB
-            </p>
-            <p v-else-if="data.size >= 1000">
-              {{ data.size / 1000 }}kB
-            </p>
-            <p v-else>
-              {{ data.size / 1000 }}B
+            <p>
+              {{ parseUnitSize(data.size, 'B') }}
             </p>
             <p
-              v-if="data.size >= 2000000"
+              v-if="data.size >= fileSizeWarning"
               class="warn body-small"
             >
-              The size of this file is over 2MB, please consider optimizing this file.
+              The size of this file is over {{ parseUnitSize(fileSizeWarning, 'B', 0) }},
+              please consider optimizing this file.
             </p>
           </li>
         </ul>
@@ -60,7 +55,7 @@
 <script lang="ts">
 import { defineComponent, toRef, computed } from 'vue';
 import Button from '@/components/Button.vue';
-import { copyValueToClipboard, downloadFile } from '@/util';
+import { copyValueToClipboard, downloadFile, parseUnitSize } from '@/util';
 import { projectsState } from '@/store/projects';
 import { displayError, displayMessage } from '@/store/message';
 
@@ -73,6 +68,10 @@ export default defineComponent({
     data: {
       type: Object,
       default: null,
+    },
+    fileSizeWarning: {
+      type: Number,
+      default: 2e6,
     },
   },
   setup(props) {
@@ -98,6 +97,7 @@ export default defineComponent({
       handleAssetDownload,
       basePath,
       copyValue,
+      parseUnitSize,
     };
   },
 });

@@ -34,10 +34,6 @@ interface FirebaseStorageMetadata {
 
 const assets = ref<Asset[]>([]);
 
-function parseSize(size: number) {
-  return Math.round(size / 1000) * 1000;
-}
-
 async function getProjectAssets(projectId: string) {
   const performance = await loadFirebasePerformance();
   const perfTrace = performance.trace('getProjectAsset');
@@ -59,7 +55,7 @@ async function getProjectAssets(projectId: string) {
       name: item.name,
       remoteURL: downloadURLList[index],
       type: item.contentType,
-      size: parseSize(item.size),
+      size: item.size,
     };
 
     if (item.contentType === 'image/png' || item.contentType === 'image/jpeg') {

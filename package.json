@@ -10,6 +10,7 @@
   },
   "dependencies": {
     "@json-editor/json-editor": "^2.4.0",
+    "convert-units": "^2.3.4",
     "core-js": "^3.6.5",
     "easymde": "^2.12.1",
     "firebase": "^8.1.1",
@@ -21,6 +22,7 @@
     "vuex": "^4.0.0-0"
   },
   "devDependencies": {
+    "@types/convert-units": "^2.3.3",
     "@types/lodash": "^4.14.165",
     "@typescript-eslint/eslint-plugin": "^2.33.0",
     "@typescript-eslint/parser": "^2.33.0",
