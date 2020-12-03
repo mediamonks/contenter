@@ -45,7 +45,7 @@ import {
 import TextField from '@/components/TextField.vue';
 import { User, userState, fetchAllUsers } from '@/store/user';
 import Avatar from '@/components/Avatar.vue';
-import { displayError } from '@/store/error';
+import { displayError } from '@/store/message';
 
 export default defineComponent({
   name: 'SearchSelector',

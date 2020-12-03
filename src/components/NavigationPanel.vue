@@ -32,7 +32,8 @@
             <router-link
               :to="{
                 name: 'ProjectLocaleList',
-                params: { projectId: router.currentRoute.value.params.projectId } }"
+                params: { projectId: router.currentRoute.value.params.projectId },
+              }"
             >
               <Edit /> Content
             </router-link>
@@ -40,8 +41,19 @@
           <li>
             <router-link
               :to="{
+                name: 'ProjectAssets',
+                params: { projectId: router.currentRoute.value.params.projectId },
+              }"
+            >
+              <PhotoVideoIcon /> Assets
+            </router-link>
+          </li>
+          <li>
+            <router-link
+              :to="{
                 name: 'ProjectSchema',
-                params: { projectId: router.currentRoute.value.params.projectId } }"
+                params: { projectId: router.currentRoute.value.params.projectId },
+              }"
             >
               <Database /> Schema
             </router-link>
@@ -50,7 +62,8 @@
             <router-link
               :to="{
                 name: 'ProjectSettings',
-                params: { projectId: router.currentRoute.value.params.projectId } }"
+                params: { projectId: router.currentRoute.value.params.projectId },
+              }"
             >
               <Cogs /> Settings
             </router-link>
@@ -97,11 +110,12 @@ import ArrowToLeft from '@/assets/icons/ArrowToLeft.vue';
 import Task from '@/assets/icons/Task.vue';
 import LayerPlus from '@/assets/icons/LayersPlus.vue';
 import Edit from '@/assets/icons/Edit.vue';
+import PhotoVideoIcon from '@/assets/icons/PhotoVideoIcon.vue';
 import Database from '@/assets/icons/Database.vue';
 import Cogs from '@/assets/icons/Cogs.vue';
 import GitHub from '@/assets/icons/GitHub.vue';
 import router from '@/router';
-import { displayError } from '@/store/error';
+import { displayError } from '@/store/message';
 import { loadFirebaseAnalytics } from '@/firebase';
 
 export default defineComponent({
@@ -112,6 +126,7 @@ export default defineComponent({
     Task,
     LayerPlus,
     Edit,
+    PhotoVideoIcon,
     Database,
     Cogs,
     GitHub,

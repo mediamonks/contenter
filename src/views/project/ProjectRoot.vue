@@ -7,7 +7,7 @@
       v-else
       class="loading"
     >
-      <h2>Loading...</h2>
+      <h1>Loading...</h1>
     </div>
   </div>
 </template>
@@ -16,7 +16,7 @@
 import { defineComponent, onUnmounted } from 'vue';
 import { syncCurrentProject, projectsState, resetCurrentProjectState } from '@/store/projects';
 import router from '@/router';
-import { displayError } from '@/store/error';
+import { displayError } from '@/store/message';
 
 export default defineComponent({
   name: 'Project',

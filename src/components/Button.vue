@@ -5,7 +5,10 @@
     class="button"
     :class="{ flat: flat }"
   >
-    <slot />
+    <template v-if="loading">
+      Please wait...
+    </template>
+    <slot v-else />
   </router-link>
   <label
     v-else-if="labelFor"
@@ -13,7 +16,10 @@
     class="button"
     :class="{ flat: flat }"
   >
-    <slot />
+    <template v-if="loading">
+      Please wait...
+    </template>
+    <slot v-else />
   </label>
   <button
     v-else

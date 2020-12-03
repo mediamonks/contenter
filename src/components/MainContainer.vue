@@ -15,6 +15,6 @@ export default defineComponent({
 <style lang="scss" scoped>
 .main-container {
   margin: 0 auto;
-  padding: 3rem 3rem 0;
+  padding: 4rem 4rem 0;
 }
 </style>
