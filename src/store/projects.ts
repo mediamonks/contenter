@@ -12,6 +12,8 @@ import {
   loadFirebaseStorage,
 } from '@/firebase';
 import firebase from 'firebase/app';
+import { downloadFile } from '@/util';
+import { assets } from '@/store/assets';
 
 interface ProjectMetadata<T>{
   name: string;
@@ -21,6 +23,7 @@ interface ProjectMetadata<T>{
     code: string;
   }>;
   users: T[];
+  relativeBasePath?: string;
 }
 
 interface ProjectLocale {
@@ -77,6 +80,7 @@ async function getFormattedProjects(ids: string[]): Promise<ProjectMetadata<User
       id: rawProject.id,
       users: projectsUsers,
       locales: rawProject.locales || [],
+      relativeBasePath: rawProject.relativeBasePath,
     };
   });
 }
@@ -216,6 +220,8 @@ async function resetCurrentProjectState() {
   const database = await loadFirebaseDatabase();
   const projectRef = database.ref(`projects/${id}`);
   projectRef.off('value');
+
+  assets.value = [];
 }
 
 const updateProject = async (projectId: string, newData: Project) => {
@@ -325,12 +331,7 @@ function getCurrentProjectContent(code: string): object | any[] | undefined {
 
 function downloadData(data: object | any[], name = 'content') {
   const dataString = `data:text/json;charset=utf-8,${encodeURIComponent(JSON.stringify(data))}`;
-  const anchorNode = document.createElement('a');
-  anchorNode.setAttribute('style', 'display: hidden;');
-  anchorNode.setAttribute('href', dataString);
-  anchorNode.setAttribute('download', `${name}.json`);
-  anchorNode.click();
-  anchorNode.remove();
+  downloadFile(dataString, `${name}.json`);
 }
 
 function onProjectUpdate(callback: Function) {

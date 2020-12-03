@@ -38,7 +38,7 @@ import { defineComponent, ref } from 'vue';
 import { projectsState, uploadSchema } from '@/store/projects';
 import ProjectBar from '@/components/ProjectBar.vue';
 import Button from '@/components/Button.vue';
-import { displayError } from '@/store/error';
+import { displayError } from '@/store/message';
 import { loadFirebaseAnalytics } from '@/firebase';
 
 export default defineComponent({

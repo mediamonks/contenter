@@ -23,7 +23,7 @@ import { defineComponent, ref } from 'vue';
 import router from '@/router';
 import { signIn } from '@/store/user';
 import Button from '@/components/Button.vue';
-import { displayError } from '@/store/error';
+import { displayError } from '@/store/message';
 
 export default defineComponent({
   name: 'SignIn',

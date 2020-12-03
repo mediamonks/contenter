@@ -19,7 +19,7 @@
           v-if="projectsState.currentProject.metadata.users.length > 1"
           class="input-wrapper"
         >
-          <h4>Users</h4>
+          <label>Users</label>
           <ul class="user-list">
             <template
               v-for="user in projectsState.currentProject.metadata.users"
@@ -46,9 +46,13 @@
           placeholder="Search for a name"
           @update-users="updateSelectedUsers"
         />
+        <TextField
+          v-model="formState.assetBasePath"
+          label="Asset relative base path"
+          placeholder="/static/img/"
+        />
         <Button
           type="submit"
-          :disabled="!isChanged"
           :loading="isLoading"
         >
           Save changes
@@ -60,7 +64,9 @@
 
 <script lang="ts">
 import {
-  defineComponent, reactive, ref, watch,
+  defineComponent,
+  reactive,
+  ref,
 } from 'vue';
 import ProjectBar from '@/components/ProjectBar.vue';
 import TextField from '@/components/TextField.vue';
@@ -70,11 +76,12 @@ import SearchSelector from '@/components/SearchSelector.vue';
 import Button from '@/components/Button.vue';
 import { projectsState, updateProjectsMetadata } from '@/store/projects';
 import { userState, User, updateUser } from '@/store/user';
-import { displayError } from '@/store/error';
+import { displayError } from '@/store/message';
 
 interface ProjectSettingsFormState {
   name: string | null;
   users: User[] | null;
+  assetBasePath: string | null;
 }
 
 export default defineComponent({
@@ -91,30 +98,20 @@ export default defineComponent({
     const formState = reactive<ProjectSettingsFormState>({
       name: null,
       users: null,
+      assetBasePath: null,
     });
-    const isChanged = ref(false);
     const isLoading = ref(false);
     const searchSelector = ref<typeof SearchSelector | null>(null);
-
-    watch(formState, (oldValue, newValue) => {
-      if (!newValue.name) return;
-      if (!projectsState.currentProject || !projectsState.currentProject.metadata) return;
-      const { metadata } = projectsState.currentProject;
-      if (metadata.name === newValue.name) return;
-
-      isChanged.value = true;
-      console.log(newValue.name, projectsState.currentProject.metadata.name);
-    });
 
     if (projectsState.currentProject && projectsState.currentProject.metadata) {
       const { metadata } = projectsState.currentProject;
       formState.name = metadata.name;
       formState.users = metadata.users;
+      formState.assetBasePath = metadata.relativeBasePath || null;
     }
 
     function updateSelectedUsers(users: User[]) {
       formState.users = users;
-      isChanged.value = true;
     }
 
     function handleSavingChanges() {
@@ -125,11 +122,12 @@ export default defineComponent({
 
       updateProjectsMetadata({
         ...currentMetadata,
-        name: formState.name ? formState.name : currentMetadata.name,
+        name: formState.name || currentMetadata.name,
         users:
           formState.users
             ? [...new Set([...formState.users, ...currentMetadata.users])]
             : [...currentMetadata.users],
+        relativeBasePath: formState.assetBasePath || currentMetadata.relativeBasePath,
       }).then((newMetadata) => Promise.all(newMetadata.users.map((user) => {
         let projects: string[] = [];
 
@@ -144,7 +142,6 @@ export default defineComponent({
       })))
         .then(() => {
           isLoading.value = false;
-          isChanged.value = false;
 
           if (searchSelector.value) {
             searchSelector.value.resetFields();
@@ -161,14 +158,12 @@ export default defineComponent({
       if (index <= -1) throw displayError(new Error('This project has no other users'));
 
       formState.users.splice(index, 1);
-      isChanged.value = true;
     }
 
     return {
       projectsState,
       userState,
       searchSelector,
-      isChanged,
       isLoading,
       formState,
       updateSelectedUsers,
@@ -240,6 +235,10 @@ export default defineComponent({
             }
           }
         }
+      }
+
+      button[type="submit"] {
+        margin-top: 3rem;
       }
     }
   }

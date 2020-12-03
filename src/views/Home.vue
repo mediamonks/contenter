@@ -36,7 +36,7 @@ import { signOut, userState } from '@/store/user';
 import ProjectCard from '@/components/ProjectCard.vue';
 import { projectsState, syncProjectsMetadata } from '@/store/projects';
 import router from '@/router';
-import { displayError } from '@/store/error';
+import { displayError } from '@/store/message';
 
 export default defineComponent({
   name: 'Home',
