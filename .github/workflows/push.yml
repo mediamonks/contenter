@@ -2,10 +2,11 @@ name: Verify commits
 on:
   push:
     branches:
-      - 'feature/*'
-      - 'bugfix/*'
-      - 'hotfix/*'
-      - 'release/*'
+      - 'feature/**'
+      - 'bugfix/**'
+      - 'hotfix/**'
+      - 'release/**'
+      - 'dependabot/**'
 jobs:
   test_pull_request:
     runs-on: ubuntu-latest
