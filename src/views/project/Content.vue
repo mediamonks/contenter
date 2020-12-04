@@ -181,11 +181,10 @@ export default defineComponent({
     }
 
     function resetMarkdownEditors() {
-      return new Promise((resolve) => {
+      return new Promise<void>((resolve) => {
         setTimeout(() => {
           mdEditors.forEach((mdEditor) => {
             mdEditor.toTextArea();
-            // eslint-disable-next-line @typescript-eslint/ban-ts-ignore
             // @ts-ignore
             // eslint-disable-next-line no-param-reassign
             mdEditor = null;
