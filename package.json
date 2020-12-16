@@ -13,7 +13,7 @@
     "convert-units": "^2.3.4",
     "core-js": "^3.6.5",
     "easymde": "^2.12.1",
-    "firebase": "^8.1.2",
+    "firebase": "^8.2.0",
     "gsap": "^3.5.1",
     "lodash": "^4.17.20",
     "register-service-worker": "^1.7.1",
