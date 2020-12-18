@@ -2,7 +2,6 @@
   <div class="assets">
     <ProjectBar>
       <Button
-        v-if="!loading"
         flat
         :loading="uploading"
         label-for="asset-uploader"
@@ -17,12 +16,12 @@
       <h1>Loading...</h1>
     </main>
     <template v-else>
-      <template v-if="assets.length > 0">
+      <template v-if="currentProject.assets.length > 0">
         <MainContainer>
           <h1>Assets</h1>
           <div class="asset-grid">
             <AssetCard
-              v-for="(asset, index) in assets"
+              v-for="(asset, index) in currentProject.assets"
               :key="`asset-${index}`"
               :name="asset.name"
               :thumbnail="asset.thumbnail"
@@ -61,8 +60,7 @@ import MainContainer from '@/components/MainContainer.vue';
 import AssetCard from '@/components/AssetCard.vue';
 import AssetInfoPanel from '@/components/AssetInfoPanel.vue';
 import Button from '@/components/Button.vue';
-import { assets, getProjectAssets, uploadAsset } from '@/store/assets';
-import { projectsState } from '@/store/projects';
+import { projectsState, getProjectAssets, uploadAsset } from '@/store/projects';
 import { displayError } from '@/store/message';
 
 export default defineComponent({
@@ -76,20 +74,18 @@ export default defineComponent({
   },
   setup() {
     const loading = ref(true);
-    const projectId = projectsState.currentProject?.metadata?.id;
-    if (projectId) {
-      if (assets.value.length > 0) {
-        loading.value = false;
-      }
-      getProjectAssets(projectId)
-        .catch((error) => displayError(error))
-        .then(() => { loading.value = false; });
+    if (projectsState.currentProject?.assets
+      && projectsState.currentProject?.assets?.length > 0) {
+      loading.value = false;
     }
+    getProjectAssets()
+      .catch((error) => displayError(error))
+      .then(() => { loading.value = false; });
 
     const assetInfoPanel = ref<(typeof AssetInfoPanel) | null>(null);
     function openInfoPanel(index: number) {
       if (!assetInfoPanel.value) return;
-      assetInfoPanel.value.openView(assets.value[index]);
+      assetInfoPanel.value.openView(projectsState.currentProject?.assets?.[index]);
     }
 
     const uploading = ref(false);
@@ -106,7 +102,7 @@ export default defineComponent({
     }
 
     return {
-      assets,
+      currentProject: projectsState.currentProject,
       openInfoPanel,
       assetInfoPanel,
       handleAssetUpload,

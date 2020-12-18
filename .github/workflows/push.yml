@@ -2,20 +2,30 @@ name: Verify commits
 on:
   push:
     branches:
-      - 'feature/*'
-      - 'bugfix/*'
-      - 'hotfix/*'
-      - 'release/*'
+      - 'feature/**'
+      - 'bugfix/**'
+      - 'hotfix/**'
+      - 'release/**'
+      - 'dependabot/**'
 jobs:
   test_pull_request:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
-      - uses: actions/setup-node@v1
+      - name: Checkout repository
+        uses: actions/checkout@v2
+
+      - name: Setup Node v10
+        uses: actions/setup-node@v2.1.4
         with:
           node-version: 10
-      - run: yarn
-      - run: yarn lint
-      - run: yarn build --modern
+
+      - name: Install dependencies
+        run: yarn
+
+      - name: Check code style
+        run: yarn lint
+
+      - name: Build package
+        run: yarn build --modern
     env:
       CI: true

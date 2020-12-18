@@ -20,7 +20,7 @@
         Export to JSON
       </Button>
     </ProjectBar>
-    <main v-if="projectsState.currentProject.schemaURL">
+    <main v-if="currentProject.schemaURL">
       <AssetSelector />
       <router-link
         class="back-button"
@@ -36,7 +36,7 @@
           name="Reference Locale"
         >
           <template
-            v-for="localeOption in projectsState.currentProject.metadata.locales"
+            v-for="localeOption in currentProject.metadata.locales"
             :key="localeOption.code"
           >
             <option
@@ -57,13 +57,13 @@
       class="no-schema"
     >
       <h2>
-        You first need to define a schema for {{ projectsState.currentProject.metadata.name }}
+        You first need to define a schema for {{ currentProject.metadata.name }}
       </h2>
       <Button
         class="button"
         :to="{
           name: 'ProjectSchema',
-          params: { projectId: projectsState.currentProject.metadata.id }
+          params: { projectId: currentProject.metadata.id }
         }"
       >
         Go to schema
@@ -163,8 +163,7 @@ export default defineComponent({
       updateProject(projectsState.currentProject.metadata.id, newData)
         .catch((error) => displayError(error));
 
-      const analytics = await loadFirebaseAnalytics();
-      analytics.logEvent('changeContent', {
+      (await loadFirebaseAnalytics()).logEvent('changeContent', {
         projectId: projectsState.currentProject.metadata.id,
       });
 
@@ -181,11 +180,10 @@ export default defineComponent({
     }
 
     function resetMarkdownEditors() {
-      return new Promise((resolve) => {
+      return new Promise<void>((resolve) => {
         setTimeout(() => {
           mdEditors.forEach((mdEditor) => {
             mdEditor.toTextArea();
-            // eslint-disable-next-line @typescript-eslint/ban-ts-ignore
             // @ts-ignore
             // eslint-disable-next-line no-param-reassign
             mdEditor = null;
@@ -275,9 +273,7 @@ export default defineComponent({
       if (!projectData.value) return;
       downloadData(projectData.value, props.locale);
 
-      const analytics = await loadFirebaseAnalytics();
-
-      analytics.logEvent('exportJSON', {
+      (await loadFirebaseAnalytics()).logEvent('exportJSON', {
         projectId: projectsState.currentProject?.metadata?.id,
       });
     }
@@ -325,7 +321,6 @@ export default defineComponent({
     });
 
     return {
-      projectsState,
       jsonEditor,
       exportToJSON,
       localeName,
@@ -333,6 +328,7 @@ export default defineComponent({
       projectData,
       referenceLocale,
       syncIcon,
+      currentProject: projectsState.currentProject,
     };
   },
 });

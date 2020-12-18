@@ -61,9 +61,8 @@ import {
 } from 'vue';
 import Button from '@/components/Button.vue';
 import { copyValueToClipboard, downloadFile, parseUnitSize } from '@/util';
-import { projectsState } from '@/store/projects';
+import { projectsState, Asset } from '@/store/projects';
 import { displayError, displayMessage } from '@/store/message';
-import { Asset } from '@/store/assets';
 
 interface AssetInfoProps {
   data: Asset | null;

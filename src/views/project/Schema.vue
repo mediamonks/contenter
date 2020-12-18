@@ -11,15 +11,15 @@
       </Button>
     </ProjectBar>
     <main>
-      <div v-if="projectsState.currentProject.schemaURL">
+      <div v-if="currentProject.schemaURL">
         <h1>Schema</h1>
-        <pre><code>{{ projectsState.currentProjectSchema }}</code></pre>
+        <pre><code>{{ currentProjectSchema }}</code></pre>
       </div>
       <div
         v-else
         class="no-schema"
       >
-        <h2>There is no schema defined for {{ projectsState.currentProject.metadata.name }}</h2>
+        <h2>There is no schema defined for {{ currentProject.metadata.name }}</h2>
       </div>
     </main>
     <input
@@ -75,7 +75,8 @@ export default defineComponent({
     }
 
     return {
-      projectsState,
+      currentProject: projectsState.currentProject,
+      currentProjectSchema: projectsState.currentProjectSchema,
       loading,
       handleSchemaUpload,
     };
