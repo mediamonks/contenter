@@ -2,9 +2,11 @@ import { createRouter, createWebHistory, RouteRecordRaw } from 'vue-router';
 import { checkIfUserIsSignedIn } from '@/store/user';
 import { loadFirebaseAnalytics } from '@/firebase';
 
+// TODO: this should be a ReadonlyArray
 const routes: Array<RouteRecordRaw> = [
   {
     path: '/',
+    // TODO: use consts for the names instead of strings
     name: 'Home',
     component: () => import(/* webpackChunkName: "home" */ '@/views/Home.vue'),
     meta: { requiresAuth: true },
@@ -24,6 +26,7 @@ const routes: Array<RouteRecordRaw> = [
     },
   },
   {
+    // TODO: projectId should come from a const
     path: '/project/:projectId',
     name: 'ProjectDetails',
     component: () => import(/* webpackChunkName: "projectDetail" */ '@/views/project/ProjectRoot.vue'),
