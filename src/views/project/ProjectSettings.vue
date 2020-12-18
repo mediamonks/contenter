@@ -8,21 +8,21 @@
           <TextField
             v-model="formState.name"
             label="Name"
-            :placeholder="projectsState.currentProject.metadata.name"
+            :placeholder="currentProject.metadata.name"
           />
           <p class="body-small">
             Please note that you cannot change the ID of a project. The ID of this project will
-            remain <code>{{ projectsState.currentProject.metadata.id }}</code>
+            remain <code>{{ currentProject.metadata.id }}</code>
           </p>
         </div>
         <div
-          v-if="projectsState.currentProject.metadata.users.length > 1"
+          v-if="currentProject.metadata.users.length > 1"
           class="input-wrapper"
         >
           <label>Users</label>
           <ul class="user-list">
             <template
-              v-for="user in projectsState.currentProject.metadata.users"
+              v-for="user in currentProject.metadata.users"
               :key="`user-id=${user.uid}`"
             >
               <li
@@ -161,7 +161,7 @@ export default defineComponent({
     }
 
     return {
-      projectsState,
+      currentProject: projectsState.currentProject,
       userState,
       searchSelector,
       isLoading,

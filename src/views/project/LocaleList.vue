@@ -39,7 +39,7 @@
     </form>
     <ProjectBar>
       <Button
-        v-if="projectsState.currentProject.metadata.locales.length > 0"
+        v-if="currentProject.metadata.locales.length > 0"
         class="button"
         flat
         @click="openCreateLocaleModal"
@@ -48,7 +48,7 @@
       </Button>
     </ProjectBar>
     <MainContainer
-      v-if="projectsState.currentProject.metadata.locales.length > 0"
+      v-if="currentProject.metadata.locales.length > 0"
       class="locales"
     >
       <table>
@@ -64,7 +64,7 @@
           </th>
         </tr>
         <tr
-          v-for="locale in projectsState.currentProject?.metadata?.locales"
+          v-for="locale in currentProject?.metadata?.locales"
           :key="`locale-list-${locale.code}`"
           class="locale-row"
         >
@@ -218,7 +218,7 @@ export default defineComponent({
       modalVisible,
       localeCreationFormData,
       handleFormSubmit,
-      projectsState,
+      currentProject: projectsState.currentProject,
       navigateToLocalePage,
       duplicateLocale,
       downloadLocale,
