@@ -25,6 +25,7 @@ import { defineComponent } from 'vue';
 export default defineComponent({
   name: 'Modal',
   props: {
+    // TODO: booleans should start with is, has, will etc.
     visible: {
       type: Boolean,
       default: false,
@@ -41,6 +42,7 @@ export default defineComponent({
     background: rgba(black, 0.5);
     width: calc(100% - 38rem);
     height: 100vh;
+    // TODO: NOOOOOO, use a utils for this (zIndex of seng-scss)
     z-index: 100;
     display: flex;
     align-items: center;

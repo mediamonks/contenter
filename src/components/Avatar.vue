@@ -27,10 +27,12 @@ import { defineComponent } from 'vue';
 
 export default defineComponent({
   props: {
+    // TODO: booleans should start with is, has, will, etc.
     inverted: {
       type: Boolean,
       default: false,
     },
+    // TODO: booleans should start with is, has, will, etc.
     colorInverted: {
       type: Boolean,
       default: false,

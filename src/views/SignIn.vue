@@ -31,10 +31,12 @@ export default defineComponent({
     Button,
   },
   setup() {
+    // TODO: booleans should start with is, has or will etc.
     const loading = ref(false);
 
     function handleSignIn() {
       loading.value = true;
+      // TODO: you should return this
       signIn()
         .then(() => {
           router.push('/');

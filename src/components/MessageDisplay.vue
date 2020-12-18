@@ -17,6 +17,7 @@ import { defineComponent, ref, watch } from 'vue';
 import { messageState, DisplayMessage } from '@/store/message';
 
 export default defineComponent({
+  // TODO: is this name correct? It's not matching the class name
   name: 'ErrorDisplay',
   setup() {
     const latestMessage = ref<DisplayMessage | null>(null);
@@ -42,6 +43,7 @@ export default defineComponent({
     position: fixed;
     bottom: 5rem;
     right: 5rem;
+    // TODO: NOOOOOO, use a utils for this (zIndex of seng-scss)
     z-index: 100;
     padding: 1rem 2rem 0.5rem;
     color: $colorBlue050;

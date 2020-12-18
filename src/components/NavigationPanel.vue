@@ -133,11 +133,13 @@ export default defineComponent({
   },
   setup() {
     function handleSignOut() {
+      // TODO: you should return this
       signOut()
         .then(() => router.push('/sign-in'))
         .catch((error) => displayError(error));
     }
 
+    // TODO: align name with handleSignOut (btw, Github is 1 word)
     async function logGitHubClick(event: Event) {
       const element = event.currentTarget as HTMLAnchorElement;
       (await loadFirebaseAnalytics()).logEvent('click_link', {

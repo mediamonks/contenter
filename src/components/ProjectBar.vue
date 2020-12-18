@@ -47,6 +47,7 @@ export default defineComponent({
     position: sticky;
     top: 0;
     background: $colorGrey050;
+    // TODO: use zIndex of seng-scss
     z-index: 10;
     height: 13rem;
     width: 100%;

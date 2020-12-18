@@ -102,6 +102,7 @@ export default defineComponent({
 
 .asset-selector {
   position: fixed;
+  // TODO: can we use zIndex of seng-scss here?
   z-index: 10;
   right: 4rem;
   bottom: 4rem;
@@ -154,12 +155,14 @@ export default defineComponent({
     }
 
     .info {
+      // TODO: can we use zIndex of seng-scss here?
       z-index: 10;
       position: absolute;
     }
 
     .back-button {
       position: absolute;
+      // TODO: can we use zIndex of seng-scss here?
       z-index: 11;
       top: 2rem;
       left: 2rem;

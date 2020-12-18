@@ -87,11 +87,13 @@ export default defineComponent({
       if (!toggleTimeline) return;
       data.value = asset;
 
+      // TODO: you should return the next line. So you could use the outcome
       toggleTimeline.play();
     }
 
     function closeView() {
       if (!toggleTimeline) return;
+      // TODO: you should return the next line. So you could use the outcome
       toggleTimeline.reverse().then(() => { data.value = null; });
     }
 
@@ -101,6 +103,7 @@ export default defineComponent({
 
     function handleAssetDownload() {
       if (!data.value) return;
+      // TODO: you should return the next line. So you could use the outcome
       downloadFile(data.value.remoteURL, data.value.name);
     }
 

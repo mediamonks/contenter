@@ -39,15 +39,18 @@ import { defineComponent } from 'vue';
 
 export default defineComponent({
   props: {
+    // TODO: booleans should start with is, has, will, etc.
     loading: {
       type: Boolean,
       default: false,
     },
+    // TODO: booleans should start with is, has, will, etc.
     flat: {
       type: Boolean,
       default: false,
     },
     to: {
+      // TODO: is it possible to create a type for Object?
       type: [Object, String],
       default: () => null,
     },

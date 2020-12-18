@@ -14,6 +14,7 @@
         :image="user.photoURL"
         :title="user.name"
       />
+      <!-- TODO: Why 6? Don't use magic numbers     -->
       <p
         v-if="filteredUsers.length === 6"
         class="body-normal"
@@ -44,6 +45,7 @@ export default defineComponent({
       required: true,
     },
     users: {
+      // TODO: is it possible to specify the type of the items in the Array?
       type: Array,
       required: true,
     },
@@ -51,6 +53,7 @@ export default defineComponent({
   setup(props) {
     const users = ref<User[]>(props.users as User[]);
 
+    // TODO: 6 again? (3 times on this page, -> put it in a const)
     const filteredUsers = computed<User[]>(() => users.value.slice(0, 6));
 
     return {
