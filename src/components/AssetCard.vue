@@ -41,6 +41,7 @@ export default defineComponent({
       type: String,
       required: true,
     },
+    // TODO: booleans should start with is, has, will etc.
     selected: {
       type: Boolean,
       default: false,
@@ -48,6 +49,7 @@ export default defineComponent({
   },
   setup(props) {
     const name = toRef(props, 'name');
+    // TODO: this is not really the type, but the extension
     const fileType = computed(() => {
       const nameSplit = name.value.split('.');
 

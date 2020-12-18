@@ -26,6 +26,7 @@ async function copyValueToClipboard(value: string) {
 function parseUnitSize(value: number, unit: Unit, decimals = 2) {
   const conversion = convert(value).from(unit).toBest();
 
+  // TODO: const dm = Math.max(decimals, 0);
   const dm = decimals < 0 ? 0 : decimals;
   return `${conversion.val.toFixed(dm)}${conversion.unit}`;
 }

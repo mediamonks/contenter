@@ -98,6 +98,7 @@ export default defineComponent({
     });
 
     function copyValue(value: string) {
+      // TODO: add return
       copyValueToClipboard(value)
         .then(() => displayMessage('Copied value to clipboard', undefined, 1500))
         .catch(displayError);

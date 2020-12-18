@@ -2,12 +2,15 @@ import { reactive } from 'vue';
 
 interface MessageState {
   currentMessage: DisplayMessage | null;
+  // TODO: Array<Error>
+  // TODO: this field can be readonly
   errorLog: Error[];
 }
 
 interface DisplayMessage {
   message: string;
   time: Date;
+  // TODO: booleans should start with is, has, will etc.
   error: boolean;
 }
 
