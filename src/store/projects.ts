@@ -15,7 +15,7 @@ import firebase from 'firebase/app';
 import { downloadFile } from '@/util';
 import { assets } from '@/store/assets';
 
-interface ProjectMetadata<T>{
+interface ProjectMetadata<T extends string | User>{
   name: string;
   id: string;
   locales?: Array<{
@@ -56,9 +56,11 @@ const projectEventElement = document.createElement('div');
 async function getRawUserProjects(ids: string[]): Promise<ProjectMetadata<string>[]> {
   const database = await loadFirebaseDatabase();
 
-  const projectRefs = ids.map((projectId) => database.ref(`projectMetadata/${projectId}`).once('value'));
-  const projectsDataPromise = Promise.all<firebase.database.DataSnapshot>(projectRefs);
-  const projectsDataSnapshots = await projectsDataPromise;
+  const projectsDataSnapshots = await Promise.all<firebase.database.DataSnapshot>(
+    ids.map((projectId) => database
+      .ref(`projectMetadata/${projectId}`)
+      .once('value')),
+  );
 
   return [...projectsDataSnapshots.map(
     (projectSnapshot) => projectSnapshot.val(),
@@ -86,8 +88,9 @@ async function getFormattedProjects(ids: string[]): Promise<ProjectMetadata<User
 }
 
 async function getAllProjectIds(): Promise<string[]> {
-  const database = await loadFirebaseDatabase();
-  const snapshot = await database.ref('projectIds').once('value');
+  const snapshot = await (await loadFirebaseDatabase())
+    .ref('projectIds')
+    .once('value');
   const val = snapshot.val();
 
   if (!val) {
@@ -102,8 +105,7 @@ async function syncProjectsMetadata(): Promise<ProjectMetadata<User>[]> {
   projectsState.projectIds = await getAllProjectIds();
 
   if (!userState.currentUser.projects) return [];
-  const performance = await loadFirebasePerformance();
-  const perfTrace = performance.trace('syncAllProjects');
+  const perfTrace = (await loadFirebasePerformance()).trace('syncAllProjects');
   perfTrace.start();
 
   const formattedProjects = await getFormattedProjects(userState.currentUser.projects);
@@ -115,14 +117,10 @@ async function syncProjectsMetadata(): Promise<ProjectMetadata<User>[]> {
 
 async function createNewProject(name: string, id: string, uid: string, users: User[] = []) {
   if (!userState.currentUser) throw new Error('User is not defined');
-  const performance = await loadFirebasePerformance();
-  const perfTrace = performance.trace('createProject');
+  const perfTrace = (await loadFirebasePerformance()).trace('createProject');
   perfTrace.start();
 
-  const database = await loadFirebaseDatabase();
-
-  const projectRef = database.ref(`projectMetadata/${id}`);
-
+  const projectRef = (await loadFirebaseDatabase()).ref(`projectMetadata/${id}`);
   let currentUserProjects: string[] = [];
   if (userState.currentUser.projects) {
     currentUserProjects = userState.currentUser.projects;
@@ -148,7 +146,7 @@ async function createNewProject(name: string, id: string, uid: string, users: Us
       id,
       users: [uid, ...userIds],
     } as ProjectMetadata<string>),
-    database.ref(`projectIds/${projectsState.projectIds.length}`).set(id),
+    (await loadFirebaseDatabase()).ref(`projectIds/${projectsState.projectIds.length}`).set(id),
     syncProjectsMetadata(),
     updateUser({
       ...userState.currentUser,
@@ -157,8 +155,7 @@ async function createNewProject(name: string, id: string, uid: string, users: Us
     ...userUpdatePromises,
   ]);
 
-  const analytics = await loadFirebaseAnalytics();
-  analytics.logEvent('create_project', {
+  (await loadFirebaseAnalytics()).logEvent('create_project', {
     userAmount: userIds.length + 1,
   });
 
@@ -184,9 +181,8 @@ function handleProjectUpdate() {
   projectEventElement.dispatchEvent(event);
 }
 
-async function syncCurrentProject(id: string) {
-  const database = await loadFirebaseDatabase();
-  const projectRef = database.ref(`projects/${id}`);
+async function setCurrentProject(id: string) {
+  const projectRef = (await loadFirebaseDatabase()).ref(`projects/${id}`);
 
   projectRef.on('value', async (snapshot) => {
     const data: null | {
@@ -225,15 +221,13 @@ async function resetCurrentProjectState() {
 }
 
 const updateProject = async (projectId: string, newData: Project) => {
-  const performance = await loadFirebasePerformance();
-  const perfTrace = performance.trace('updateProject');
+  const perfTrace = (await loadFirebasePerformance()).trace('updateProject');
   perfTrace.start();
 
-  const database = await loadFirebaseDatabase();
-  const ref = database.ref(`projects/${projectId}`);
-
-  await ref.update(newData);
-
+  await ((await loadFirebaseDatabase())
+    .ref(`projects/${projectId}`)
+  )
+    .update(newData);
   await syncProjectsMetadata();
 
   perfTrace.stop();
@@ -241,13 +235,10 @@ const updateProject = async (projectId: string, newData: Project) => {
 
 async function uploadSchema(schemaFile: File, project: Project) {
   if (!project.metadata) throw new Error('Project has no metadata');
-  const performance = await loadFirebasePerformance();
-  const perfTrace = performance.trace('uploadSchema');
+  const perfTrace = (await loadFirebasePerformance()).trace('uploadSchema');
   perfTrace.start();
 
-  const storage = await loadFirebaseStorage();
-  const ref = storage.ref(`${project.metadata?.id}/schema.json`);
-
+  const ref = (await loadFirebaseStorage()).ref(`${project.metadata?.id}/schema.json`);
   const snapshot = await ref.put(schemaFile);
   const downloadUrl = await snapshot.ref.getDownloadURL();
   const jsonSchema = await fetchJSONSchema(downloadUrl);
@@ -263,15 +254,13 @@ async function uploadSchema(schemaFile: File, project: Project) {
   projectsState.currentProjectSchema = jsonSchema;
 
   perfTrace.stop();
-
   return jsonSchema;
 }
 
 async function updateProjectsMetadata(newMetadata: ProjectMetadata<User>):
   Promise<ProjectMetadata<User>> {
   if (!projectsState.currentProject) throw new Error('No current project defined');
-  const performance = await loadFirebasePerformance();
-  const perfTrace = performance.trace('updateProjectMetadata');
+  const perfTrace = (await loadFirebasePerformance()).trace('updateProjectMetadata');
   perfTrace.start();
 
   const userIds = newMetadata.users.map((user) => user.uid);
@@ -293,8 +282,7 @@ async function updateProjectsMetadata(newMetadata: ProjectMetadata<User>):
 
 async function createNewLocale(code: string, name: string, content?: object | any[]) {
   if (!projectsState.currentProject?.metadata) throw new Error('No current project defined');
-  const performance = await loadFirebasePerformance();
-  const perfTrace = performance.trace('createNewLocale');
+  const perfTrace = (await loadFirebasePerformance()).trace('createNewLocale');
   perfTrace.start();
 
   const { metadata } = projectsState.currentProject;
@@ -342,7 +330,7 @@ export {
   projectsState,
   syncProjectsMetadata,
   createNewProject,
-  syncCurrentProject,
+  setCurrentProject,
   resetCurrentProjectState,
   uploadSchema,
   fetchJSONSchema,

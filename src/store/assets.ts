@@ -35,20 +35,16 @@ interface FirebaseStorageMetadata {
 const assets = ref<Asset[]>([]);
 
 async function getProjectAssets(projectId: string) {
-  const performance = await loadFirebasePerformance();
-  const perfTrace = performance.trace('getProjectAsset');
+  const perfTrace = (await loadFirebasePerformance()).trace('getProjectAsset');
   perfTrace.start();
 
-  const storage = await loadFirebaseStorage();
-  const storageRef = storage.ref(`${projectId}/assets`);
+  const storageRef = (await loadFirebaseStorage()).ref(`${projectId}/assets`);
+  const assetItems = (await storageRef.listAll()).items;
 
-  const assetListResult = await storageRef.listAll();
-  const assetItems = assetListResult.items;
-
-  const metadataList: FirebaseStorageMetadata[] = await Promise
-    .all(assetItems.map((item) => item.getMetadata()));
-  const downloadURLList: string[] = await Promise
-    .all(assetItems.map((item) => item.getDownloadURL()));
+  const [metadataList, downloadURLList] = await Promise.all([
+    Promise.all<FirebaseStorageMetadata>(assetItems.map((item) => item.getMetadata())),
+    Promise.all<string>(assetItems.map((item) => item.getDownloadURL())),
+  ]);
 
   assets.value = metadataList.map((item, index) => {
     const data: Asset = {
@@ -69,14 +65,11 @@ async function getProjectAssets(projectId: string) {
 }
 
 async function uploadAsset(file: File, projectId: string) {
-  const performance = await loadFirebasePerformance();
-  const perfTrace = performance.trace('uploadAsset');
+  const perfTrace = (await loadFirebasePerformance()).trace('uploadAsset');
   perfTrace.start();
 
-  const storage = await loadFirebaseStorage();
-  const storageRef = storage.ref(`${projectId}/assets/${file.name}`);
-
-  await storageRef.put(file);
+  const storageRef = (await loadFirebaseStorage()).ref(`${projectId}/assets/${file.name}`);
+  await (storageRef).put(file);
   await getProjectAssets(projectId);
 
   perfTrace.stop();

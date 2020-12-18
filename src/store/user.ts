@@ -28,8 +28,7 @@ const userState = reactive<UserState>({
 });
 
 async function setUser(properties: User): Promise<User> {
-  const database = await loadFirebaseDatabase();
-  const snapshot = await database
+  const snapshot = await (await loadFirebaseDatabase())
     .ref(`users/${properties.uid}`)
     .once('value');
 
@@ -39,9 +38,7 @@ async function setUser(properties: User): Promise<User> {
 }
 
 async function createNewUser(properties: User) {
-  const database = await loadFirebaseDatabase();
-
-  await database
+  await (await loadFirebaseDatabase())
     .ref(`users/${properties.uid}`)
     .set({
       ...properties,
@@ -50,8 +47,7 @@ async function createNewUser(properties: User) {
 }
 
 async function parseUser(authUser: firebase.User, isNewUser = false) {
-  const performance = await loadFirebasePerformance();
-  const perfTrace = performance.trace('parseUser');
+  const perfTrace = (await loadFirebasePerformance()).trace('parseUser');
   perfTrace.start();
 
   const {
@@ -62,8 +58,7 @@ async function parseUser(authUser: firebase.User, isNewUser = false) {
   } = authUser;
 
   if (!displayName || !email || !photoURL) {
-    const auth = await loadFirebaseAuth();
-    await auth.signOut();
+    await (await loadFirebaseAuth()).signOut();
     throw new Error('Some user information is missing');
   }
 
@@ -92,9 +87,9 @@ async function parseUser(authUser: firebase.User, isNewUser = false) {
 }
 
 async function signIn() {
-  const auth = await loadFirebaseAuth();
   const provider = new firebase.auth.GoogleAuthProvider();
-  const authUser = await auth.signInWithPopup(provider);
+  const authUser = await (await loadFirebaseAuth())
+    .signInWithPopup(provider);
   if (!authUser.user || !authUser.additionalUserInfo) throw new Error('No user defined');
 
   return parseUser(authUser.user, authUser.additionalUserInfo.isNewUser);
@@ -110,19 +105,6 @@ async function signOut() {
 
   userState.currentUser = null;
   projectsState.userProjects = [];
-}
-
-async function fetchUser(uid: string): Promise<User> {
-  const performance = await loadFirebasePerformance();
-  const perfTrace = performance.trace('userFetch');
-  perfTrace.start();
-
-  const database = await loadFirebaseDatabase();
-
-  const snapshot = await database.ref(`users/${uid}`).once('value');
-  perfTrace.stop();
-
-  return snapshot.val();
 }
 
 async function checkIfUserIsSignedIn() {
@@ -145,9 +127,9 @@ async function checkIfUserIsSignedIn() {
 }
 
 async function updateUser(properties: User) {
-  const database = await loadFirebaseDatabase();
-
-  await database.ref(`users/${properties.uid}`).update(properties);
+  await (await loadFirebaseDatabase())
+    .ref(`users/${properties.uid}`)
+    .update(properties);
   if (userState.currentUser && userState.currentUser.uid === properties.uid) {
     await setUser(properties);
   }
@@ -156,8 +138,9 @@ async function updateUser(properties: User) {
 }
 
 async function fetchAllUsers() {
-  const database = await loadFirebaseDatabase();
-  const snapshot = await database.ref('users').once('value');
+  const snapshot = await (await loadFirebaseDatabase())
+    .ref('users')
+    .once('value');
 
   if (!snapshot.val()) {
     return [];
@@ -177,7 +160,6 @@ export {
   userState,
   signOut,
   signIn,
-  fetchUser,
   checkIfUserIsSignedIn,
   updateUser,
   fetchAllUsers,
