@@ -68,6 +68,8 @@ export default defineComponent({
 
       if (projectsState.projectIds.includes(id.value)) {
         idError.value = 'ID already exists';
+        // TODO: use .includes(' ')
+        // Or /\s/.test(id.value) so you also check for new lines, tabs etc.
       } else if (id.value.split(' ').length > 1) {
         idError.value = 'Spaces are not allowed';
       } else {
@@ -78,6 +80,7 @@ export default defineComponent({
     function handleFormSubmit() {
       if (!userState.currentUser) return;
       isLoading.value = true;
+      // TODO: return this
       createNewProject(
         name.value,
         id.value,
@@ -94,6 +97,7 @@ export default defineComponent({
         });
     }
 
+    // TODO: Array<User>
     function updateSelectedUsers(users: User[]) {
       selectedUsers.value = users;
     }

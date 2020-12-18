@@ -64,6 +64,7 @@ import { projectsState, getProjectAssets, uploadAsset } from '@/store/projects';
 import { displayError } from '@/store/message';
 
 export default defineComponent({
+  // TODO: the plural name `Assets` is a bit unclear
   name: 'Assets',
   components: {
     ProjectBar,
@@ -73,6 +74,7 @@ export default defineComponent({
     Button,
   },
   setup() {
+    // TODO: booleans should start with is, has, will, etc.
     const loading = ref(true);
     if (projectsState.currentProject?.assets
       && projectsState.currentProject?.assets?.length > 0) {
@@ -88,8 +90,10 @@ export default defineComponent({
       assetInfoPanel.value.openView(projectsState.currentProject?.assets?.[index]);
     }
 
+    // TODO: booleans should start with is, has, will, etc.
     const uploading = ref(false);
     function handleAssetUpload(event: InputEvent) {
+      // TODO: refactor this so you don't have to use ts-ignore
       // eslint-disable-next-line @typescript-eslint/ban-ts-ignore
       // @ts-ignore
       const [file]: File = event.target.files;

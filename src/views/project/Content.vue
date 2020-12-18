@@ -119,6 +119,7 @@ export default defineComponent({
   }) {
     const jsonEditor = ref<HTMLDivElement | null>(null);
     const contentData = ref<object | null>(null);
+    // TODO: avoid any
     let editor: any = null;
     let mdEditors: EasyMDE[] = [];
 

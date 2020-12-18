@@ -48,6 +48,7 @@ export default defineComponent({
 
     async function handleSignOut() {
       await signOut();
+      // TODO: use a const
       await router.push('/sign-in');
     }
 
