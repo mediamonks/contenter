@@ -1,6 +1,6 @@
 <template>
   <div
-    v-if="assets.length > 0"
+    v-if="currentProject && currentProject.assets.length > 0"
     class="asset-selector"
   >
     <button
@@ -25,7 +25,7 @@
       </header>
       <main>
         <AssetCard
-          v-for="(asset, index) in assets"
+          v-for="(asset, index) in currentProject.assets"
           :key="`asset-${index}`"
           :name="asset.name"
           :thumbnail="asset.thumbnail"
@@ -34,9 +34,8 @@
       </main>
       <template v-if="activeIndex !== null">
         <AssetInfo
-
           class="info"
-          :data="assets[activeIndex]"
+          :data="currentProject.assets[activeIndex]"
         />
         <button
           class="back-button"
@@ -51,11 +50,10 @@
 
 <script lang="ts">
 import { defineComponent, ref } from 'vue';
-import { assets, getProjectAssets } from '@/store/assets';
 import PhotoVideoIcon from '@/assets/icons/PhotoVideoIcon.vue';
 import AssetCard from '@/components/AssetCard.vue';
 import AssetInfo from '@/components/AssetInfo.vue';
-import { projectsState } from '@/store/projects';
+import { projectsState, getProjectAssets } from '@/store/projects';
 import { displayError } from '@/store/message';
 import CloseIcon from '@/assets/icons/CloseIcon.vue';
 import ArrowToLeft from '@/assets/icons/ArrowToLeft.vue';
@@ -70,10 +68,7 @@ export default defineComponent({
     ArrowToLeft,
   },
   setup() {
-    const projectId = projectsState.currentProject?.metadata?.id;
-    if (projectId) {
-      getProjectAssets(projectId).catch((error) => displayError(error));
-    }
+    getProjectAssets().catch((error) => displayError(error));
 
     const activeIndex = ref<number | null>(null);
     function showDetails(index: number) {
@@ -91,7 +86,7 @@ export default defineComponent({
     }
 
     return {
-      assets,
+      currentProject: projectsState.currentProject,
       activeIndex,
       showDetails,
       hideDetails,

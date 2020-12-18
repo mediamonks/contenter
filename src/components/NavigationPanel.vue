@@ -140,8 +140,7 @@ export default defineComponent({
 
     async function logGitHubClick(event: Event) {
       const element = event.currentTarget as HTMLAnchorElement;
-      const analytics = await loadFirebaseAnalytics();
-      analytics.logEvent('click_link', {
+      (await loadFirebaseAnalytics()).logEvent('click_link', {
         to: element.attributes.getNamedItem('href'),
       });
     }
