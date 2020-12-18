@@ -13,7 +13,6 @@ import {
 } from '@/firebase';
 import firebase from 'firebase/app';
 import { downloadFile } from '@/util';
-import { assets } from '@/store/assets';
 
 interface ProjectMetadata<T extends string | User>{
   name: string;
@@ -26,6 +25,33 @@ interface ProjectMetadata<T extends string | User>{
   relativeBasePath?: string;
 }
 
+interface Asset {
+  name: string;
+  remoteURL: string;
+  type: string;
+  size: number;
+  dimensions?: {
+    width: string;
+    height: string;
+  };
+  thumbnail?: string;
+}
+
+interface FirebaseStorageMetadata {
+  bucket: string;
+  contentDisposition: string;
+  contentType: string;
+  fullPath: string;
+  generation: string;
+  metageneration: string;
+  name: string;
+  size: number;
+  timeCreated: string;
+  type: string;
+  updated: string;
+  ref: firebase.storage.Reference;
+}
+
 interface ProjectLocale {
   name: string;
   content?: any[] | Record<string, any>;
@@ -35,6 +61,7 @@ interface Project {
   metadata?: ProjectMetadata<User>;
   schemaURL?: string;
   locales?: Record<string, ProjectLocale>;
+  assets: Asset[];
 }
 
 interface ProjectState {
@@ -200,6 +227,7 @@ async function setCurrentProject(id: string) {
     projectsState.currentProject = {
       metadata: projectMetadata[0],
       ...data,
+      assets: [],
     };
 
     handleProjectUpdate();
@@ -216,8 +244,6 @@ async function resetCurrentProjectState() {
   const database = await loadFirebaseDatabase();
   const projectRef = database.ref(`projects/${id}`);
   projectRef.off('value');
-
-  assets.value = [];
 }
 
 const updateProject = async (projectId: string, newData: Project) => {
@@ -326,6 +352,54 @@ function onProjectUpdate(callback: Function) {
   projectEventElement.addEventListener('updateProject', () => { callback(); });
 }
 
+async function getProjectAssets() {
+  if (!projectsState.currentProject) throw new Error('No current project defined');
+
+  const projectId = projectsState.currentProject.metadata?.id;
+  if (!projectId) throw new Error('Project has no ID');
+
+  const perfTrace = (await loadFirebasePerformance()).trace('getProjectAsset');
+  perfTrace.start();
+
+  const storageRef = (await loadFirebaseStorage()).ref(`${projectId}/assets`);
+  const assetItems = (await storageRef.listAll()).items;
+
+  const [metadataList, downloadURLList] = await Promise.all([
+    Promise.all<FirebaseStorageMetadata>(assetItems.map((item) => item.getMetadata())),
+    Promise.all<string>(assetItems.map((item) => item.getDownloadURL())),
+  ]);
+
+  const assets = metadataList.map((item, index) => {
+    const data: Asset = {
+      name: item.name,
+      remoteURL: downloadURLList[index],
+      type: item.contentType,
+      size: item.size,
+    };
+
+    if (item.contentType === 'image/png' || item.contentType === 'image/jpeg') {
+      data.thumbnail = downloadURLList[index];
+    }
+
+    return data;
+  });
+
+  projectsState.currentProject.assets = assets;
+  perfTrace.stop();
+  return assets;
+}
+
+async function uploadAsset(file: File, projectId: string) {
+  const perfTrace = (await loadFirebasePerformance()).trace('uploadAsset');
+  perfTrace.start();
+
+  const storageRef = (await loadFirebaseStorage()).ref(`${projectId}/assets/${file.name}`);
+  await (storageRef).put(file);
+  await getProjectAssets();
+
+  perfTrace.stop();
+}
+
 export {
   projectsState,
   syncProjectsMetadata,
@@ -340,6 +414,9 @@ export {
   getCurrentProjectContent,
   downloadData,
   onProjectUpdate,
+  getProjectAssets,
+  uploadAsset,
   Project,
   ProjectMetadata,
+  Asset,
 };

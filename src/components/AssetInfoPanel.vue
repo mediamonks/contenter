@@ -32,7 +32,7 @@ import {
   defineComponent, ref, onMounted,
 } from 'vue';
 import gsap from 'gsap';
-import { Asset } from '@/store/assets';
+import { Asset } from '@/store/projects';
 import AssetInfo from '@/components/AssetInfo.vue';
 import { downloadFile } from '@/util';
 import CloseIcon from '@/assets/icons/CloseIcon.vue';
