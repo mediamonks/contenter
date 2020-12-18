@@ -1,3 +1,6 @@
+// TODO: these util functions are not related so they should not be put in the same file
+// TODO: this file is not important enough to be in the root of the src.
+//  Please move to a sub directory
 import convert from 'convert-units';
 import { Unit } from '@/unitTypes';
 
