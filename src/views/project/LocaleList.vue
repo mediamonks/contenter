@@ -63,6 +63,7 @@
             <Download @click="downloadAllContent" />
           </th>
         </tr>
+        <!-- TODO: make the whole row clickable       -->
         <tr
           v-for="locale in currentProject?.metadata?.locales"
           :key="`locale-list-${locale.code}`"
@@ -75,6 +76,7 @@
             {{ locale.name }}
           </td>
           <td class="controls">
+            <!-- TODO: these buttons could use a tool tip  -->
             <Edit @click="navigateToLocalePage(locale.code)" />
             <Copy @click="duplicateLocale(locale.code)" />
             <Download @click="downloadLocale(locale.code)" />
