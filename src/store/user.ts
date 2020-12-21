@@ -9,10 +9,14 @@ import {
 import { projectsState } from '@/store/projects';
 
 interface User {
+  // TODO: you could use a Branded type for this to make is stricter
   uid: string;
   displayName: string;
   email: string;
+  // TODO: photoUrl
   photoURL: string;
+  // TODO: what kind of value is this? If this is the projectId then maybe the name projectIds
+  //  would be better (and use a branded type)
   projects?: string[];
   role?: 'editor' | 'developer' | 'admin';
 }
@@ -116,6 +120,8 @@ async function checkIfUserIsSignedIn() {
           parseUser(state)
             .then((result) => resolve(result))
             .catch((err) => reject(err));
+          // TODO: avoid returns halfway the code because they are easily overlooked.
+          //  Better use an else here
           return;
         }
         resolve(userState.currentUser);
@@ -126,6 +132,7 @@ async function checkIfUserIsSignedIn() {
   }));
 }
 
+// TODO: rename properties to user
 async function updateUser(properties: User) {
   await (await loadFirebaseDatabase())
     .ref(`users/${properties.uid}`)
@@ -146,10 +153,12 @@ async function fetchAllUsers() {
     return [];
   }
 
+  // TODO: type as Record<string, User>
   const data: {
     [key: string]: User;
   } = snapshot.val();
 
+  // TODO: Object.values()
   const users: User[] = Object.keys(data).map((key) => data[key]);
 
   userState.users = users;

@@ -16,9 +16,11 @@ import { downloadFile } from '@/util';
 
 interface ProjectMetadata<T extends string | User>{
   name: string;
+  // TODO: use a brand type for this to make it stricter
   id: string;
   locales?: Array<{
     name: string;
+    // TODO: use a brand type for this to make it stricter
     code: string;
   }>;
   users: T[];
@@ -27,6 +29,7 @@ interface ProjectMetadata<T extends string | User>{
 
 interface Asset {
   name: string;
+  // TODO: remoteUrl
   remoteURL: string;
   type: string;
   size: number;
