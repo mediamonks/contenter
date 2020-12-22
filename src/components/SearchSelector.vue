@@ -124,6 +124,7 @@ export default defineComponent({
 
 <style lang="scss" scoped>
   @import '~@/assets/scss/variables';
+  @import "~seng-scss";
 
   .search-selector {
     width: 100%;
@@ -133,7 +134,7 @@ export default defineComponent({
     .result-wrapper {
       position: absolute;
       width: 100%;
-      z-index: 10;
+      z-index: zindex($zLayout, zBoost);
     }
 
     .results {

@@ -68,6 +68,7 @@ export default defineComponent({
 
 <style lang="scss" scoped>
 @import '~@/assets/scss/variables';
+@import "~seng-scss";
 
 .asset-card {
   display: flex;
@@ -84,7 +85,7 @@ export default defineComponent({
   border: solid 1px $colorGrey100;
 
   > * {
-    z-index: 2;
+    z-index: zindex($zLayout, zBoost);
     color: $colorGrey050;
   }
 

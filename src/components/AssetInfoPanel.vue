@@ -119,6 +119,7 @@ export default defineComponent({
 
 <style lang="scss" scoped>
 @import '~@/assets/scss/variables';
+@import "~seng-scss";
 
 .asset-info-panel {
   position: fixed;
@@ -126,7 +127,7 @@ export default defineComponent({
   left: 0;
   width: 100%;
   height: 100%;
-  z-index: 10;
+  z-index: zindex($zLayout, modal);
   pointer-events: none;
 
   .overlay-box {

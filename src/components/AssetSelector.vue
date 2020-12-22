@@ -99,11 +99,11 @@ export default defineComponent({
 
 <style lang="scss" scoped>
 @import '~@/assets/scss/variables';
+@import "~seng-scss";
 
 .asset-selector {
   position: fixed;
-  // TODO: can we use zIndex of seng-scss here?
-  z-index: 10;
+  z-index: zindex($zLayout, modal);
   right: 4rem;
   bottom: 4rem;
 
@@ -155,15 +155,13 @@ export default defineComponent({
     }
 
     .info {
-      // TODO: can we use zIndex of seng-scss here?
-      z-index: 10;
+      z-index: zindex($zLayout, modal);
       position: absolute;
     }
 
     .back-button {
       position: absolute;
-      // TODO: can we use zIndex of seng-scss here?
-      z-index: 11;
+      z-index: zindex($zLayout, modal);
       top: 2rem;
       left: 2rem;
       background: transparent;

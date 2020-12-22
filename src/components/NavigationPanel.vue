@@ -157,6 +157,7 @@ export default defineComponent({
 
 <style lang="scss" scoped>
   @import "~@/assets/scss/variables";
+  @import "~seng-scss";
 
   .navigation-panel {
     max-width: 38rem;
@@ -166,7 +167,7 @@ export default defineComponent({
     color: $colorGrey050;
     display: grid;
     grid-template-rows: 13rem auto 15rem 12rem;
-    z-index: 10;
+    z-index: zindex($zLayout, navigation);
 
     > * {
       width: 100%;

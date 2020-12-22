@@ -42,13 +42,13 @@ export default defineComponent({
 
 <style lang="scss" scoped>
   @import '~@/assets/scss/variables';
+  @import "~seng-scss";
 
   .project-bar {
     position: sticky;
     top: 0;
     background: $colorGrey050;
-    // TODO: use zIndex of seng-scss
-    z-index: 10;
+    z-index: zindex($zLayout, projectBar);
     height: 13rem;
     width: 100%;
     border-bottom: 1px solid $colorGrey500;

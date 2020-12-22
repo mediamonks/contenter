@@ -37,13 +37,13 @@ export default defineComponent({
 
 <style lang="scss" scoped>
   @import '~@/assets/scss/variables';
+  @import "~seng-scss";
 
   .message-display {
     position: fixed;
     bottom: 5rem;
     right: 5rem;
-    // TODO: NOOOOOO, use a utils for this (zIndex of seng-scss)
-    z-index: 100;
+    z-index: zindex($zLayout, messageDisplay);
     padding: 1rem 2rem 0.5rem;
     color: $colorBlue050;
     font-weight: 500;

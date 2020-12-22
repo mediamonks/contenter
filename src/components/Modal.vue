@@ -35,14 +35,14 @@ export default defineComponent({
 
 <style lang="scss" scoped>
   @import "~@/assets/scss/variables";
+  @import "~seng-scss";
 
   .modal {
     position: fixed;
     background: rgba(black, 0.5);
     width: calc(100% - 38rem);
     height: 100vh;
-    // TODO: NOOOOOO, use a utils for this (zIndex of seng-scss)
-    z-index: 100;
+    z-index: zindex($zLayout, modal);
     display: flex;
     align-items: center;
     justify-content: center;
