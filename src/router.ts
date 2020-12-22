@@ -16,12 +16,12 @@ export const RouteNames = {
     SETTINGS: 'ProjectSettings',
     CONTENT: 'ProjectContent',
   },
-};
+} as const;
 
 export const RouteProperties = {
   PROJECT_ID: 'projectId',
   LOCALE: 'locale',
-};
+} as const;
 
 const routes: ReadonlyArray<RouteRecordRaw> = [
   {
