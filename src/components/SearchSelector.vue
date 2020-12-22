@@ -16,7 +16,7 @@
           :key="`selected-result-${result.uid}`"
           @click="removeUser(index)"
         >
-          <Avatar :image="result.photoURL" />
+          <Avatar :image="result.photoUrl" />
         </li>
       </ul>
       <ul
@@ -29,7 +29,7 @@
           @click="addUserToSelection(result)"
         >
           <Avatar
-            :image="result.photoURL"
+            :image="result.photoUrl"
             :name="result.displayName"
           />
         </li>

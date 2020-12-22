@@ -36,6 +36,7 @@ import { Asset } from '@/store/projects';
 import AssetInfo from '@/components/AssetInfo.vue';
 import { downloadFile } from '@/util';
 import CloseIcon from '@/assets/icons/CloseIcon.vue';
+import { displayError } from '@/store/message';
 
 export default defineComponent({
   name: 'AssetInfoPanel',
@@ -84,17 +85,15 @@ export default defineComponent({
     }
 
     function openView(asset: Asset) {
-      if (!toggleTimeline) return;
+      if (!toggleTimeline) throw displayError(new Error('No timeline defined'));
       data.value = asset;
 
-      // TODO: you should return the next line. So you could use the outcome
-      toggleTimeline.play();
+      return toggleTimeline.play();
     }
 
     function closeView() {
-      if (!toggleTimeline) return;
-      // TODO: you should return the next line. So you could use the outcome
-      toggleTimeline.reverse().then(() => { data.value = null; });
+      if (!toggleTimeline) throw displayError(new Error('No timeline defined'));
+      return toggleTimeline.reverse().then(() => { data.value = null; });
     }
 
     onMounted(() => {
@@ -102,9 +101,8 @@ export default defineComponent({
     });
 
     function handleAssetDownload() {
-      if (!data.value) return;
-      // TODO: you should return the next line. So you could use the outcome
-      downloadFile(data.value.remoteURL, data.value.name);
+      if (!data.value) throw displayError(new Error('No asset to download'));
+      return downloadFile(data.value.remoteUrl, data.value.name);
     }
 
     return {

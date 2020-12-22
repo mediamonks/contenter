@@ -1,7 +1,7 @@
 <template>
   <transition name="fade">
     <div
-      v-if="visible"
+      v-if="isVisible"
       class="modal"
     >
       <section class="content">
@@ -25,8 +25,7 @@ import { defineComponent } from 'vue';
 export default defineComponent({
   name: 'Modal',
   props: {
-    // TODO: booleans should start with is, has, will etc.
-    visible: {
+    isVisible: {
       type: Boolean,
       default: false,
     },

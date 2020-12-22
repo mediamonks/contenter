@@ -9,7 +9,7 @@
       </h2>
       <Button
         class="button"
-        :loading="loading"
+        :is-loading="isLoading"
         @click="handleSignIn"
       >
         Sign in with Google
@@ -20,7 +20,7 @@
 
 <script lang="ts">
 import { defineComponent, ref } from 'vue';
-import router from '@/router';
+import router, { RouteNames } from '@/router';
 import { signIn } from '@/store/user';
 import Button from '@/components/Button.vue';
 import { displayError } from '@/store/message';
@@ -31,25 +31,23 @@ export default defineComponent({
     Button,
   },
   setup() {
-    // TODO: booleans should start with is, has or will etc.
-    const loading = ref(false);
+    const isLoading = ref(false);
 
     function handleSignIn() {
-      loading.value = true;
-      // TODO: you should return this
-      signIn()
+      isLoading.value = true;
+      return signIn()
         .then(() => {
-          router.push('/');
+          router.push({ name: RouteNames.HOME });
         })
         .catch((error: Error) => displayError(error))
         .finally(() => {
-          loading.value = false;
+          isLoading.value = false;
         });
     }
 
     return {
       handleSignIn,
-      loading,
+      isLoading,
     };
   },
 });

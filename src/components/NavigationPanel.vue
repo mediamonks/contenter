@@ -73,8 +73,8 @@
     </main>
     <footer>
       <Avatar
-        color-inverted
-        :image="userState.currentUser.photoURL"
+        is-color-inverted
+        :image="userState.currentUser.photoUrl"
         :name="userState.currentUser.displayName"
         :role="userState.currentUser.role"
       />
@@ -96,7 +96,7 @@
         href="https://github.com/MickJasker/MM-Content-Manager/issues"
         target="_blank"
         referrerpolicy="no-referrer"
-        @click="logGitHubClick"
+        @click="handleGithubClick"
       ><GitHub /></a>
     </section>
   </aside>
@@ -114,7 +114,7 @@ import PhotoVideoIcon from '@/assets/icons/PhotoVideoIcon.vue';
 import Database from '@/assets/icons/Database.vue';
 import Cogs from '@/assets/icons/Cogs.vue';
 import GitHub from '@/assets/icons/GitHub.vue';
-import router from '@/router';
+import router, { RouteNames } from '@/router';
 import { displayError } from '@/store/message';
 import { loadFirebaseAnalytics } from '@/firebase';
 
@@ -133,14 +133,12 @@ export default defineComponent({
   },
   setup() {
     function handleSignOut() {
-      // TODO: you should return this
-      signOut()
-        .then(() => router.push('/sign-in'))
+      return signOut()
+        .then(() => router.push({ name: RouteNames.SIGN_IN }))
         .catch((error) => displayError(error));
     }
 
-    // TODO: align name with handleSignOut (btw, Github is 1 word)
-    async function logGitHubClick(event: Event) {
+    async function handleGithubClick(event: Event) {
       const element = event.currentTarget as HTMLAnchorElement;
       (await loadFirebaseAnalytics()).logEvent('click_link', {
         to: element.attributes.getNamedItem('href'),
@@ -151,7 +149,7 @@ export default defineComponent({
       userState,
       router,
       handleSignOut,
-      logGitHubClick,
+      handleGithubClick,
     };
   },
 });

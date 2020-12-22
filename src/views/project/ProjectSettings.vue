@@ -30,7 +30,7 @@
                 class="user-item"
               >
                 <Avatar
-                  :image="user.photoURL"
+                  :image="user.photoUrl"
                   :name="user.displayName"
                 />
                 <button @click="deleteUserFromProject(user.uid)">
@@ -53,7 +53,7 @@
         />
         <Button
           type="submit"
-          :loading="isLoading"
+          :is-loading="isLoading"
         >
           Save changes
         </Button>
@@ -74,8 +74,10 @@ import Avatar from '@/components/Avatar.vue';
 import Trash from '@/assets/icons/Trash.vue';
 import SearchSelector from '@/components/SearchSelector.vue';
 import Button from '@/components/Button.vue';
-import { projectsState, updateProjectsMetadata } from '@/store/projects';
-import { userState, User, updateUser } from '@/store/user';
+import { projectsState, updateProjectsMetadata, ProjectId } from '@/store/projects';
+import {
+  userState, User, updateUser,
+} from '@/store/user';
 import { displayError } from '@/store/message';
 
 interface ProjectSettingsFormState {
@@ -129,15 +131,15 @@ export default defineComponent({
             : [...currentMetadata.users],
         relativeBasePath: formState.assetBasePath || currentMetadata.relativeBasePath,
       }).then((newMetadata) => Promise.all(newMetadata.users.map((user) => {
-        let projects: string[] = [];
+        let projects: Array<ProjectId> = [];
 
-        if (user.projects) {
-          projects = user.projects;
+        if (user.projectIds) {
+          projects = user.projectIds;
         }
 
         return updateUser({
           ...user,
-          projects: [...new Set([...projects, newMetadata.id])],
+          projectIds: [...new Set([...projects, newMetadata.id])],
         });
       })))
         .then(() => {

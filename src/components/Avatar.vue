@@ -1,7 +1,7 @@
 <template>
   <div
     class="avatar"
-    :class="{ inverted: inverted, 'color-inverted': colorInverted }"
+    :class="{ 'inverted': isInverted, 'color-inverted': isColorInverted }"
   >
     <img
       :src="image"
@@ -27,13 +27,11 @@ import { defineComponent } from 'vue';
 
 export default defineComponent({
   props: {
-    // TODO: booleans should start with is, has, will, etc.
-    inverted: {
+    isInverted: {
       type: Boolean,
       default: false,
     },
-    // TODO: booleans should start with is, has, will, etc.
-    colorInverted: {
+    isColorInverted: {
       type: Boolean,
       default: false,
     },

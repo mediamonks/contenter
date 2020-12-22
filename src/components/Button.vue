@@ -3,9 +3,9 @@
     v-if="to"
     :to="to"
     class="button"
-    :class="{ flat: flat }"
+    :class="{ flat: isFlat }"
   >
-    <template v-if="loading">
+    <template v-if="isLoading">
       Please wait...
     </template>
     <slot v-else />
@@ -14,9 +14,9 @@
     v-else-if="labelFor"
     :for="labelFor"
     class="button"
-    :class="{ flat: flat }"
+    :class="{ flat: isFlat }"
   >
-    <template v-if="loading">
+    <template v-if="isLoading">
       Please wait...
     </template>
     <slot v-else />
@@ -24,10 +24,10 @@
   <button
     v-else
     class="button"
-    :class="{ flat: flat }"
-    :disabled="loading"
+    :class="{ flat: isFlat }"
+    :disabled="isLoading"
   >
-    <template v-if="loading">
+    <template v-if="isLoading">
       Please wait...
     </template>
     <slot v-else />
@@ -35,23 +35,21 @@
 </template>
 
 <script lang="ts">
-import { defineComponent } from 'vue';
+import { defineComponent, PropType } from 'vue';
+import { RouteLocationNormalized } from 'vue-router';
 
 export default defineComponent({
   props: {
-    // TODO: booleans should start with is, has, will, etc.
-    loading: {
+    isLoading: {
       type: Boolean,
       default: false,
     },
-    // TODO: booleans should start with is, has, will, etc.
-    flat: {
+    isFlat: {
       type: Boolean,
       default: false,
     },
     to: {
-      // TODO: is it possible to create a type for Object?
-      type: [Object, String],
+      type: [Object, String] as PropType<RouteLocationNormalized | string>,
       default: () => null,
     },
     labelFor: {

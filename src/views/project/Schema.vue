@@ -3,7 +3,7 @@
     <ProjectBar>
       <Button
         class="button"
-        :loading="loading"
+        :is-loading="loading"
         label-for="schema-file-selector"
         flat
       >

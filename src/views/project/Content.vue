@@ -14,7 +14,7 @@
       </template>
       <Button
         v-if="projectData"
-        flat
+        is-flat
         @click="exportToJSON"
       >
         Export to JSON
@@ -119,7 +119,7 @@ export default defineComponent({
   }) {
     const jsonEditor = ref<HTMLDivElement | null>(null);
     const contentData = ref<object | null>(null);
-    // TODO: avoid any
+    // Necessary any because the JSON editor doesn't support TS properly
     let editor: any = null;
     let mdEditors: EasyMDE[] = [];
 

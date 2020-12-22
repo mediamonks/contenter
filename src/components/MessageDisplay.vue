@@ -3,7 +3,7 @@
     class="message-display"
     :class="{
       hidden: !messageState.currentMessage,
-      error: messageState.currentMessage?.error
+      error: messageState.currentMessage?.isError
     }"
   >
     <template v-if="latestMessage?.message">
@@ -17,8 +17,7 @@ import { defineComponent, ref, watch } from 'vue';
 import { messageState, DisplayMessage } from '@/store/message';
 
 export default defineComponent({
-  // TODO: is this name correct? It's not matching the class name
-  name: 'ErrorDisplay',
+  name: 'MessageDisplay',
   setup() {
     const latestMessage = ref<DisplayMessage | null>(null);
 

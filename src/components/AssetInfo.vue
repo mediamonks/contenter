@@ -42,7 +42,7 @@
       </main>
       <footer>
         <Button
-          flat
+          is-flat
           @click="handleAssetDownload"
         >
           Download Asset
@@ -89,7 +89,7 @@ export default defineComponent({
 
     function handleAssetDownload() {
       if (!data.value) return;
-      downloadFile(data.value.remoteURL, data.value.name);
+      downloadFile(data.value.remoteUrl, data.value.name);
     }
 
     const basePath = computed<string>(() => {
@@ -98,8 +98,7 @@ export default defineComponent({
     });
 
     function copyValue(value: string) {
-      // TODO: add return
-      copyValueToClipboard(value)
+      return copyValueToClipboard(value)
         .then(() => displayMessage('Copied value to clipboard', undefined, 1500))
         .catch(displayError);
     }
