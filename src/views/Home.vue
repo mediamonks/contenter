@@ -35,7 +35,7 @@ import { defineComponent } from 'vue';
 import { signOut, userState } from '@/store/user';
 import ProjectCard from '@/components/ProjectCard.vue';
 import { projectsState, syncProjectsMetadata } from '@/store/projects';
-import router from '@/router';
+import router, { RouteNames } from '@/router';
 import { displayError } from '@/store/message';
 
 export default defineComponent({
@@ -48,7 +48,7 @@ export default defineComponent({
 
     async function handleSignOut() {
       await signOut();
-      await router.push('/sign-in');
+      await router.push({ name: RouteNames.SIGN_IN });
     }
 
     return {

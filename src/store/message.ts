@@ -2,13 +2,13 @@ import { reactive } from 'vue';
 
 interface MessageState {
   currentMessage: DisplayMessage | null;
-  errorLog: Error[];
+  readonly errorLog: Array<Error>;
 }
 
 interface DisplayMessage {
   message: string;
   time: Date;
-  error: boolean;
+  isError: boolean;
 }
 
 const messageState = reactive<MessageState>({
@@ -21,7 +21,7 @@ function displayMessage(message: string, error?: Error, delay = 5000) {
   messageState.currentMessage = {
     message,
     time: new Date(),
-    error: !!error,
+    isError: !!error,
   };
 
   if (error) console.error(error);

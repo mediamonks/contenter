@@ -3,7 +3,7 @@
     class="message-display"
     :class="{
       hidden: !messageState.currentMessage,
-      error: messageState.currentMessage?.error
+      error: messageState.currentMessage?.isError
     }"
   >
     <template v-if="latestMessage?.message">
@@ -17,7 +17,7 @@ import { defineComponent, ref, watch } from 'vue';
 import { messageState, DisplayMessage } from '@/store/message';
 
 export default defineComponent({
-  name: 'ErrorDisplay',
+  name: 'MessageDisplay',
   setup() {
     const latestMessage = ref<DisplayMessage | null>(null);
 
@@ -37,12 +37,13 @@ export default defineComponent({
 
 <style lang="scss" scoped>
   @import '~@/assets/scss/variables';
+  @import "~seng-scss";
 
   .message-display {
     position: fixed;
     bottom: 5rem;
     right: 5rem;
-    z-index: 100;
+    z-index: zindex($zLayout, messageDisplay);
     padding: 1rem 2rem 0.5rem;
     color: $colorBlue050;
     font-weight: 500;

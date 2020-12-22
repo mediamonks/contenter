@@ -15,7 +15,7 @@
 <script lang="ts">
 import { defineComponent, onUnmounted } from 'vue';
 import { setCurrentProject, projectsState, resetCurrentProjectState } from '@/store/projects';
-import router from '@/router';
+import router, { RouteNames } from '@/router';
 import { displayError } from '@/store/message';
 
 export default defineComponent({
@@ -29,7 +29,7 @@ export default defineComponent({
   setup(props) {
     setCurrentProject(props.projectId)
       .catch((error) => {
-        router.push('/');
+        router.push({ name: RouteNames.HOME });
         displayError(error);
       });
 

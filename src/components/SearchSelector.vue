@@ -16,7 +16,7 @@
           :key="`selected-result-${result.uid}`"
           @click="removeUser(index)"
         >
-          <Avatar :image="result.photoURL" />
+          <Avatar :image="result.photoUrl" />
         </li>
       </ul>
       <ul
@@ -29,7 +29,7 @@
           @click="addUserToSelection(result)"
         >
           <Avatar
-            :image="result.photoURL"
+            :image="result.photoUrl"
             :name="result.displayName"
           />
         </li>
@@ -124,6 +124,7 @@ export default defineComponent({
 
 <style lang="scss" scoped>
   @import '~@/assets/scss/variables';
+  @import "~seng-scss";
 
   .search-selector {
     width: 100%;
@@ -133,7 +134,7 @@ export default defineComponent({
     .result-wrapper {
       position: absolute;
       width: 100%;
-      z-index: 10;
+      z-index: zindex($zLayout, zBoost);
     }
 
     .results {

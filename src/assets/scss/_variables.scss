@@ -1,3 +1,5 @@
+@import "~seng-scss";
+
 $colorGrey900: #01071A;
 $colorGrey800: #1A2030;
 $colorGrey700: #343947;
@@ -21,3 +23,5 @@ $colorBlue100: #BDDDFF;
 $colorBlue050: #F2FAFF;
 
 $colorError: #FF1B36;
+
+$zLayout: default, zBoost, projectBar, navigation, modal, messageDisplay;

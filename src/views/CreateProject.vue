@@ -18,7 +18,7 @@
           placeholder="Search for a name"
           @update-users="updateSelectedUsers"
         />
-        <Button :loading="isLoading">
+        <Button :is-loading="isLoading">
           Create
         </Button>
       </form>
@@ -37,7 +37,7 @@ import TextField from '@/components/TextField.vue';
 import SearchSelector from '@/components/SearchSelector.vue';
 import { createNewProject, projectsState, syncProjectsMetadata } from '@/store/projects';
 import { User, userState } from '@/store/user';
-import router from '@/router';
+import router, { RouteNames } from '@/router';
 import { displayError } from '@/store/message';
 import { loadFirebaseAnalytics } from '@/firebase';
 
@@ -51,7 +51,7 @@ export default defineComponent({
   setup() {
     const name = ref('');
     const id = ref('');
-    const selectedUsers = ref<User[]>([]);
+    const selectedUsers = ref<Array<User>>([]);
 
     const isLoading = ref(false);
 
@@ -68,7 +68,7 @@ export default defineComponent({
 
       if (projectsState.projectIds.includes(id.value)) {
         idError.value = 'ID already exists';
-      } else if (id.value.split(' ').length > 1) {
+      } else if (/\s/.test(id.value)) {
         idError.value = 'Spaces are not allowed';
       } else {
         idError.value = '';
@@ -76,25 +76,20 @@ export default defineComponent({
     });
 
     function handleFormSubmit() {
-      if (!userState.currentUser) return;
+      if (!userState.currentUser) throw displayError(new Error('No user defined'));
       isLoading.value = true;
-      createNewProject(
+      return createNewProject(
         name.value,
         id.value,
         userState.currentUser.uid,
         selectedUsers.value,
       )
-        .then(() => {
-          router.push('/');
-          isLoading.value = false;
-        })
-        .catch((error) => {
-          displayError(error);
-          isLoading.value = false;
-        });
+        .then(() => { router.push({ name: RouteNames.HOME }); })
+        .catch((error) => { displayError(error); })
+        .then(() => { isLoading.value = false; });
     }
 
-    function updateSelectedUsers(users: User[]) {
+    function updateSelectedUsers(users: Array<User>) {
       selectedUsers.value = users;
     }
 

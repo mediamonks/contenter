@@ -11,23 +11,34 @@
         v-for="(user, index) in filteredUsers"
         :key="`project-${id}-avatar-${index}`"
         class="avatar"
-        :image="user.photoURL"
+        :image="user.photoUrl"
         :title="user.name"
       />
       <p
-        v-if="filteredUsers.length === 6"
+        v-if="filteredUsers.length === MAX_VISIBLE_USER"
         class="body-normal"
       >
-        +{{ users.length - 6 }}
+        +{{ users.length - MAX_VISIBLE_USER }}
       </p>
     </footer>
   </section>
 </template>
 
 <script lang="ts">
-import { computed, defineComponent, ref } from 'vue';
+import {
+  computed,
+  defineComponent,
+  PropType,
+  toRef,
+} from 'vue';
 import Avatar from '@/components/Avatar.vue';
 import { User } from '@/store/user';
+
+interface ProjectCardProps {
+  name: string;
+  id: string;
+  users: Array<User>;
+}
 
 export default defineComponent({
   name: 'ProjectCard',
@@ -44,17 +55,19 @@ export default defineComponent({
       required: true,
     },
     users: {
-      type: Array,
+      type: Array as PropType<Array<User>>,
       required: true,
     },
   },
-  setup(props) {
-    const users = ref<User[]>(props.users as User[]);
+  setup(props: ProjectCardProps) {
+    const MAX_VISIBLE_USER = 6;
+    const users = toRef<ProjectCardProps, 'users'>(props, 'users');
 
-    const filteredUsers = computed<User[]>(() => users.value.slice(0, 6));
+    const filteredUsers = computed<Array<User>>(() => users.value.slice(0, MAX_VISIBLE_USER));
 
     return {
       filteredUsers,
+      MAX_VISIBLE_USER,
     };
   },
 });

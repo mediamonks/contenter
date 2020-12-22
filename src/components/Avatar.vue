@@ -1,7 +1,7 @@
 <template>
   <div
     class="avatar"
-    :class="{ inverted: inverted, 'color-inverted': colorInverted }"
+    :class="{ 'inverted': isInverted, 'color-inverted': isColorInverted }"
   >
     <img
       :src="image"
@@ -23,15 +23,16 @@
 </template>
 
 <script lang="ts">
-import { defineComponent } from 'vue';
+import { defineComponent, PropType } from 'vue';
+import { Role } from '@/store/user';
 
 export default defineComponent({
   props: {
-    inverted: {
+    isInverted: {
       type: Boolean,
       default: false,
     },
-    colorInverted: {
+    isColorInverted: {
       type: Boolean,
       default: false,
     },
@@ -44,7 +45,7 @@ export default defineComponent({
       default: null,
     },
     role: {
-      type: String,
+      type: String as PropType<Role>,
       default: null,
     },
   },

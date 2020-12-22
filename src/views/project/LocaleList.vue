@@ -1,7 +1,7 @@
 <template>
   <div class="locale-list">
     <form @submit.prevent="handleFormSubmit">
-      <Modal :visible="modalVisible">
+      <Modal :is-visible="modalVisible">
         <template #header>
           <template v-if="localeCreationFormData.duplicate">
             <h1>Duplicate locale</h1>
@@ -27,7 +27,7 @@
         </template>
         <template #footer>
           <Button
-            flat
+            is-flat
             type="button"
             @click="closeCreateLocaleModal"
           >
@@ -41,7 +41,7 @@
       <Button
         v-if="currentProject.metadata.locales.length > 0"
         class="button"
-        flat
+        is-flat
         @click="openCreateLocaleModal"
       >
         Create a Locale

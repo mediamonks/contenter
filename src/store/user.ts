@@ -6,28 +6,34 @@ import {
   loadFirebaseDatabase,
   loadFirebasePerformance,
 } from '@/firebase';
-import { projectsState } from '@/store/projects';
+import { ProjectId, projectsState } from '@/store/projects';
+import { Brand } from '@/types/Brand';
+import { URI } from '@/types/URI';
+import { Email } from '@/types/Email';
 
-interface User {
-  uid: string;
+export type UserId = Brand<'UserId', string>;
+export type Role = 'editor' | 'developer' | 'admin';
+
+export interface User {
+  uid: UserId;
   displayName: string;
-  email: string;
-  photoURL: string;
-  projects?: string[];
+  email: Email;
+  photoUrl: URI;
+  projectIds?: Array<ProjectId>;
   role?: 'editor' | 'developer' | 'admin';
 }
 
-interface UserState {
+export interface UserState {
   currentUser: User | null;
-  users: User[];
+  users: Array<User>;
 }
 
-const userState = reactive<UserState>({
+export const userState = reactive<UserState>({
   currentUser: null,
   users: [],
 });
 
-async function setUser(properties: User): Promise<User> {
+export async function setUser(properties: User): Promise<User> {
   const snapshot = await (await loadFirebaseDatabase())
     .ref(`users/${properties.uid}`)
     .once('value');
@@ -37,7 +43,7 @@ async function setUser(properties: User): Promise<User> {
   return snapshot.val();
 }
 
-async function createNewUser(properties: User) {
+export async function createNewUser(properties: User) {
   await (await loadFirebaseDatabase())
     .ref(`users/${properties.uid}`)
     .set({
@@ -46,7 +52,7 @@ async function createNewUser(properties: User) {
     } as User);
 }
 
-async function parseUser(authUser: firebase.User, isNewUser = false) {
+export async function parseUser(authUser: firebase.User, isNewUser = false) {
   const perfTrace = (await loadFirebasePerformance()).trace('parseUser');
   perfTrace.start();
 
@@ -64,9 +70,9 @@ async function parseUser(authUser: firebase.User, isNewUser = false) {
 
   const userData: User = {
     displayName,
-    email,
-    photoURL,
-    uid,
+    email: email as Email,
+    photoUrl: photoURL as URI,
+    uid: uid as UserId,
   };
 
   if (isNewUser) {
@@ -86,7 +92,7 @@ async function parseUser(authUser: firebase.User, isNewUser = false) {
   return user;
 }
 
-async function signIn() {
+export async function signIn() {
   const provider = new firebase.auth.GoogleAuthProvider();
   const authUser = await (await loadFirebaseAuth())
     .signInWithPopup(provider);
@@ -95,7 +101,7 @@ async function signIn() {
   return parseUser(authUser.user, authUser.additionalUserInfo.isNewUser);
 }
 
-async function signOut() {
+export async function signOut() {
   const auth = await loadFirebaseAuth();
   if (!auth.currentUser) throw new Error('No user defined');
   await auth.signOut();
@@ -107,7 +113,7 @@ async function signOut() {
   projectsState.userProjects = [];
 }
 
-async function checkIfUserIsSignedIn() {
+export async function checkIfUserIsSignedIn() {
   const auth = await loadFirebaseAuth();
   return new Promise<User>(((resolve, reject) => {
     auth.onAuthStateChanged((state) => {
@@ -116,9 +122,9 @@ async function checkIfUserIsSignedIn() {
           parseUser(state)
             .then((result) => resolve(result))
             .catch((err) => reject(err));
-          return;
+        } else {
+          resolve(userState.currentUser);
         }
-        resolve(userState.currentUser);
       } else {
         reject(new Error('Not allowed: not signed in'));
       }
@@ -126,18 +132,18 @@ async function checkIfUserIsSignedIn() {
   }));
 }
 
-async function updateUser(properties: User) {
+export async function updateUser(user: User) {
   await (await loadFirebaseDatabase())
-    .ref(`users/${properties.uid}`)
-    .update(properties);
-  if (userState.currentUser && userState.currentUser.uid === properties.uid) {
-    await setUser(properties);
+    .ref(`users/${user.uid}`)
+    .update(user);
+  if (userState.currentUser && userState.currentUser.uid === user.uid) {
+    await setUser(user);
   }
 
-  return properties;
+  return user;
 }
 
-async function fetchAllUsers() {
+export async function fetchAllUsers(): Promise<Array<User>> {
   const snapshot = await (await loadFirebaseDatabase())
     .ref('users')
     .once('value');
@@ -146,23 +152,9 @@ async function fetchAllUsers() {
     return [];
   }
 
-  const data: {
-    [key: string]: User;
-  } = snapshot.val();
-
-  const users: User[] = Object.keys(data).map((key) => data[key]);
+  const data: Record<string, User> = snapshot.val();
+  const users: Array<User> = Object.values(data);
 
   userState.users = users;
   return users;
 }
-
-export {
-  userState,
-  signOut,
-  signIn,
-  checkIfUserIsSignedIn,
-  updateUser,
-  fetchAllUsers,
-  User,
-  UserState,
-};

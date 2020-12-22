@@ -6075,6 +6075,11 @@ isexe@^2.0.0:
   resolved "https://registry.yarnpkg.com/isexe/-/isexe-2.0.0.tgz#e8fbf374dc556ff8947a10dcb0572d633f2cfa10"
   integrity sha1-6PvzdNxVb/iUehDcsFctYz8s+hA=
 
+isntnt@^1.4.4:
+  version "1.4.4"
+  resolved "https://registry.yarnpkg.com/isntnt/-/isntnt-1.4.4.tgz#b1c9b217478b1a9964bf312ed7fe7dfca0501566"
+  integrity sha512-2zjHFz6i04BFBOPltVKhLS+XoOLcPpWPvYHdEc4OCZxqMY1J8He7IbwflYAAYaHfjjPLIZ6pOnxsfufxGIqWIA==
+
 isobject@^2.0.0:
   version "2.1.0"
   resolved "https://registry.yarnpkg.com/isobject/-/isobject-2.1.0.tgz#f065561096a3f1da2ef46272f815c840d87e0c89"
@@ -8839,6 +8844,11 @@ send@0.17.1:
     on-finished "~2.3.0"
     range-parser "~1.2.1"
     statuses "~1.5.0"
+
+seng-scss@^1.2.5:
+  version "1.2.5"
+  resolved "https://registry.yarnpkg.com/seng-scss/-/seng-scss-1.2.5.tgz#3acc63baa918d701dcff55d5e9aac75da587f1c4"
+  integrity sha512-OtbYvMLFUUTvNidDhclOS3ufhKbd3tjjhRMQu2SErTtotSdhb+3lR7JOl2/N2C9749etNhdcvQTra4nLq0LM5g==
 
 serialize-javascript@^4.0.0:
   version "4.0.0"

@@ -3,7 +3,7 @@
     class="asset-card"
     :class="{
       thumbnail: thumbnail || null,
-      selected: selected || null,
+      'is-selected': isSelected || null,
     }"
   >
     <img
@@ -15,9 +15,9 @@
     >
     <h1
       v-else
-      class="file-type-large"
+      class="file-extension-large"
     >
-      {{ fileType }}
+      {{ fileExtension }}
     </h1>
     <h4>{{ name }}</h4>
   </div>
@@ -41,21 +41,26 @@ export default defineComponent({
       type: String,
       required: true,
     },
-    selected: {
+    isSelected: {
       type: Boolean,
       default: false,
     },
   },
-  setup(props) {
+  setup(props: {
+    thumbnail: string | null;
+    name: string;
+    isSelected: boolean;
+  }) {
     const name = toRef(props, 'name');
-    const fileType = computed(() => {
+    const fileExtension = computed(() => {
+      if (!name.value) return '';
       const nameSplit = name.value.split('.');
 
       return nameSplit[nameSplit.length - 1];
     });
 
     return {
-      fileType,
+      fileExtension,
     };
   },
 });
@@ -63,6 +68,7 @@ export default defineComponent({
 
 <style lang="scss" scoped>
 @import '~@/assets/scss/variables';
+@import "~seng-scss";
 
 .asset-card {
   display: flex;
@@ -79,7 +85,7 @@ export default defineComponent({
   border: solid 1px $colorGrey100;
 
   > * {
-    z-index: 2;
+    z-index: zindex($zLayout, zBoost);
     color: $colorGrey050;
   }
 
@@ -103,7 +109,7 @@ export default defineComponent({
     }
   }
 
-  .file-type-large {
+  .file-extension-large {
     position: absolute;
     display: flex;
     justify-content: center;
@@ -121,7 +127,7 @@ export default defineComponent({
     }
   }
 
-  &.selected {
+  &.is-selected {
     box-shadow: 0 0 0 2px $colorGrey050, 0 0 0 4px $colorBlue400;
   }
 }

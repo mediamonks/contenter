@@ -1,7 +1,7 @@
 <template>
   <transition name="fade">
     <div
-      v-if="visible"
+      v-if="isVisible"
       class="modal"
     >
       <section class="content">
@@ -25,7 +25,7 @@ import { defineComponent } from 'vue';
 export default defineComponent({
   name: 'Modal',
   props: {
-    visible: {
+    isVisible: {
       type: Boolean,
       default: false,
     },
@@ -35,13 +35,14 @@ export default defineComponent({
 
 <style lang="scss" scoped>
   @import "~@/assets/scss/variables";
+  @import "~seng-scss";
 
   .modal {
     position: fixed;
     background: rgba(black, 0.5);
     width: calc(100% - 38rem);
     height: 100vh;
-    z-index: 100;
+    z-index: zindex($zLayout, modal);
     display: flex;
     align-items: center;
     justify-content: center;

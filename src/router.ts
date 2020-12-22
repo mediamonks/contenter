@@ -1,58 +1,79 @@
-import { createRouter, createWebHistory, RouteRecordRaw } from 'vue-router';
+import {
+  createRouter, createWebHistory, RouteRecordRaw, RouterOptions,
+} from 'vue-router';
 import { checkIfUserIsSignedIn } from '@/store/user';
 import { loadFirebaseAnalytics } from '@/firebase';
 
-const routes: Array<RouteRecordRaw> = [
+export const RouteNames = {
+  HOME: 'Home',
+  CREATE_PROJECT: 'CreateProject',
+  SIGN_IN: 'SignIn',
+  PROJECT: {
+    DETAILS: 'ProjectDetails',
+    LOCALE_LIST: 'ProjectLocaleList',
+    SCHEMA: 'ProjectSchema',
+    ASSETS: 'ProjectAssets',
+    SETTINGS: 'ProjectSettings',
+    CONTENT: 'ProjectContent',
+  },
+} as const;
+
+export const RouteProperties = {
+  PROJECT_ID: 'projectId',
+  LOCALE: 'locale',
+} as const;
+
+const routes: ReadonlyArray<RouteRecordRaw> = [
   {
     path: '/',
-    name: 'Home',
+    name: RouteNames.HOME,
     component: () => import(/* webpackChunkName: "home" */ '@/views/Home.vue'),
     meta: { requiresAuth: true },
   },
   {
     path: '/create-project',
-    name: 'CreateProject',
+    name: RouteNames.CREATE_PROJECT,
     component: () => import(/* webpackChunkName: "createProject" */ '@/views/CreateProject.vue'),
     meta: { requiresAuth: true },
   },
   {
     path: '/sign-in',
-    name: 'SignIn',
+    name: RouteNames.SIGN_IN,
     component: () => import(/* webpackChunkName: "signIn" */ '@/views/SignIn.vue'),
     beforeEnter: (to, from, next) => {
       checkIfUserIsSignedIn().then(() => next({ path: '/' })).catch(() => next());
     },
   },
   {
-    path: '/project/:projectId',
-    name: 'ProjectDetails',
+    path: `/project/:${RouteProperties.PROJECT_ID}`,
+    name: RouteNames.PROJECT.DETAILS,
     component: () => import(/* webpackChunkName: "projectDetail" */ '@/views/project/ProjectRoot.vue'),
     meta: { requiresAuth: true },
     props: true,
     children: [
       {
-        path: '/project/:projectId/content',
-        name: 'ProjectLocaleList',
+        path: `/project/:${RouteProperties.PROJECT_ID}/content`,
+        name: RouteNames.PROJECT.LOCALE_LIST,
         component: () => import(/* webpackChunkName: "projectDetailLocales" */ '@/views/project/LocaleList.vue'),
       },
       {
-        path: '/project/:projectId/schema',
-        name: 'ProjectSchema',
+        path: `/project/:${RouteProperties.PROJECT_ID}/schema`,
+        name: RouteNames.PROJECT.SCHEMA,
         component: () => import(/* webpackChunkName: "projectDetailSchema" */ '@/views/project/Schema.vue'),
       },
       {
-        path: '/project/:projectId/assets',
-        name: 'ProjectAssets',
-        component: () => import(/* webpackChunkName: "projectAssets" */ '@/views/project/Assets.vue'),
+        path: `/project/:${RouteProperties.PROJECT_ID}/assets`,
+        name: RouteNames.PROJECT.ASSETS,
+        component: () => import(/* webpackChunkName: "projectAssets" */ '@/views/project/AssetView.vue'),
       },
       {
-        path: '/project/:projectId/settings',
-        name: 'ProjectSettings',
+        path: `/project/:${RouteProperties.PROJECT_ID}/settings`,
+        name: RouteNames.PROJECT.SETTINGS,
         component: () => import(/* webpackChunkName: "projectSettings" */ '@/views/project/ProjectSettings.vue'),
       },
       {
-        path: '/project/:projectId/content/:locale',
-        name: 'ProjectContent',
+        path: `/project/:${RouteProperties.PROJECT_ID}/content/:${RouteProperties.LOCALE}`,
+        name: RouteNames.PROJECT.CONTENT,
         component: () => import(/* webpackChunkName: "projectDetailContent" */ '@/views/project/Content.vue'),
         props: true,
       },
@@ -63,7 +84,7 @@ const routes: Array<RouteRecordRaw> = [
 const router = createRouter({
   history: createWebHistory(process.env.BASE_URL),
   routes,
-});
+} as RouterOptions);
 
 router.beforeEach((to, from, next) => {
   loadFirebaseAnalytics().then((analytics) => {

@@ -1,16 +1,16 @@
 <template>
-  <div class="assets">
+  <div class="asset-view">
     <ProjectBar>
       <Button
-        flat
-        :loading="uploading"
+        is-flat
+        :loading="isUploading"
         label-for="asset-uploader"
       >
         Upload an asset
       </Button>
     </ProjectBar>
     <main
-      v-if="loading"
+      v-if="isLoading"
       class="loading"
     >
       <h1>Loading...</h1>
@@ -36,7 +36,7 @@
         class="no-assets"
       >
         <h1>This project has no assets</h1><Button
-          :loading="loading"
+          :loading="isLoading"
           label-for="asset-uploader"
         >
           Upload the first asset
@@ -64,7 +64,7 @@ import { projectsState, getProjectAssets, uploadAsset } from '@/store/projects';
 import { displayError } from '@/store/message';
 
 export default defineComponent({
-  name: 'Assets',
+  name: 'AssetView',
   components: {
     ProjectBar,
     MainContainer,
@@ -73,14 +73,14 @@ export default defineComponent({
     Button,
   },
   setup() {
-    const loading = ref(true);
+    const isLoading = ref(true);
     if (projectsState.currentProject?.assets
       && projectsState.currentProject?.assets?.length > 0) {
-      loading.value = false;
+      isLoading.value = false;
     }
     getProjectAssets()
       .catch((error) => displayError(error))
-      .then(() => { loading.value = false; });
+      .then(() => { isLoading.value = false; });
 
     const assetInfoPanel = ref<(typeof AssetInfoPanel) | null>(null);
     function openInfoPanel(index: number) {
@@ -88,17 +88,17 @@ export default defineComponent({
       assetInfoPanel.value.openView(projectsState.currentProject?.assets?.[index]);
     }
 
-    const uploading = ref(false);
-    function handleAssetUpload(event: InputEvent) {
-      // eslint-disable-next-line @typescript-eslint/ban-ts-ignore
-      // @ts-ignore
-      const [file]: File = event.target.files;
+    const isUploading = ref(false);
+    function handleAssetUpload(event: Event) {
+      const fileList = (event.target as HTMLInputElement).files;
 
-      if (!file || !projectsState.currentProject?.metadata?.id) return;
-      uploading.value = true;
-      uploadAsset(file, projectsState.currentProject.metadata.id)
+      if (!fileList) throw displayError(new Error('There is no file selected'));
+      if (!projectsState.currentProject?.metadata?.id) throw displayError(new Error('There is no project defined'));
+
+      isUploading.value = true;
+      return uploadAsset(fileList[0], projectsState.currentProject.metadata.id)
         .catch((error) => displayError(error))
-        .then(() => { uploading.value = false; });
+        .then(() => { isUploading.value = false; });
     }
 
     return {
@@ -106,15 +106,15 @@ export default defineComponent({
       openInfoPanel,
       assetInfoPanel,
       handleAssetUpload,
-      uploading,
-      loading,
+      isUploading,
+      isLoading,
     };
   },
 });
 </script>
 
 <style lang="scss" scoped>
-.assets {
+.asset-view {
   height: 100vh;
   overflow-y: scroll;
   padding-bottom: 4rem;
