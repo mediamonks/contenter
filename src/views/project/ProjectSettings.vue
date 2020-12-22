@@ -79,11 +79,12 @@ import {
   userState, User, updateUser,
 } from '@/store/user';
 import { displayError } from '@/store/message';
+import { URI } from '@/types/URI';
 
 interface ProjectSettingsFormState {
   name: string | null;
-  users: User[] | null;
-  assetBasePath: string | null;
+  users: Array<User> | null;
+  assetBasePath: URI | null;
 }
 
 export default defineComponent({
@@ -129,7 +130,7 @@ export default defineComponent({
           formState.users
             ? [...new Set([...formState.users, ...currentMetadata.users])]
             : [...currentMetadata.users],
-        relativeBasePath: formState.assetBasePath || currentMetadata.relativeBasePath,
+        relativeBasePath: formState.assetBasePath || currentMetadata.relativeBasePath as URI,
       }).then((newMetadata) => Promise.all(newMetadata.users.map((user) => {
         let projects: Array<ProjectId> = [];
 

@@ -2,7 +2,7 @@ import { reactive } from 'vue';
 import {
   fetchAllUsers,
   updateUser,
-  User,
+  User, UserId,
   userState,
 } from '@/store/user';
 import {
@@ -13,31 +13,35 @@ import {
 } from '@/firebase';
 import firebase from 'firebase/app';
 import { downloadFile } from '@/util';
+import { Byte } from '@/types/Byte';
+import { URI } from '@/types/URI';
 
 export type ProjectId = string;
 export type LocaleCode = string;
 
-export interface ProjectMetadata<T extends string | User>{
+export interface Locale {
+  name: string;
+  code: LocaleCode;
+}
+
+export interface ProjectMetadata<T extends UserId | User>{
   name: string;
   id: ProjectId;
-  locales?: Array<{
-    name: string;
-    code: LocaleCode;
-  }>;
+  locales?: Array<Locale>;
   users: T[];
-  relativeBasePath?: string;
+  relativeBasePath?: URI;
 }
 
 export interface Asset {
   name: string;
-  remoteUrl: string;
+  remoteUrl: URI;
   type: string;
-  size: number;
+  size: Byte;
   dimensions?: {
     width: string;
     height: string;
   };
-  thumbnail?: string;
+  thumbnail?: URI;
 }
 
 export interface FirebaseStorageMetadata {
@@ -70,7 +74,7 @@ export interface Project {
 export interface ProjectState {
   userProjects: ProjectMetadata<User>[];
   currentProject: Project | null;
-  projectIds: string[];
+  projectIds: Array<ProjectId>;
   currentProjectSchema: Record<string, unknown> | null;
 }
 
@@ -83,7 +87,7 @@ export const projectsState = reactive<ProjectState>({
 
 const projectEventElement = document.createElement('div');
 
-export async function getRawUserProjects(ids: string[]): Promise<ProjectMetadata<string>[]> {
+export async function getRawUserProjects(ids: string[]): Promise<ProjectMetadata<UserId>[]> {
   const database = await loadFirebaseDatabase();
 
   const projectsDataSnapshots = await Promise.all<firebase.database.DataSnapshot>(
@@ -133,15 +137,11 @@ export async function getAllProjectIds(): Promise<string[]> {
 export async function syncProjectsMetadata(): Promise<ProjectMetadata<User>[]> {
   if (!userState.currentUser) throw new Error('No user defined');
   projectsState.projectIds = await getAllProjectIds();
-  console.log(userState.currentUser.projectIds);
   if (!userState.currentUser.projectIds) return [];
   const perfTrace = (await loadFirebasePerformance()).trace('syncAllProjects');
   perfTrace.start();
 
   const formattedProjects = await getFormattedProjects(userState.currentUser.projectIds);
-
-  console.log({ formattedProjects });
-
   projectsState.userProjects = formattedProjects;
 
   perfTrace.stop();
@@ -161,31 +161,29 @@ export async function createNewProject(name: string, id: string, uid: string, us
 
   const userIds = users.map((user) => user.uid);
 
-  const userUpdatePromises = users.map((user) => {
-    let currentProjects = user.projectIds;
-    if (!currentProjects) {
-      currentProjects = [];
-    }
-
-    return updateUser({
-      ...user,
-      projectIds: [...currentProjects, id],
-    });
-  });
-
   await Promise.all<void>([
     projectRef.set({
       name,
       id,
       users: [uid, ...userIds],
-    } as ProjectMetadata<string>),
+    } as ProjectMetadata<UserId>),
     (await loadFirebaseDatabase()).ref(`projectIds/${projectsState.projectIds.length}`).set(id),
     syncProjectsMetadata(),
     updateUser({
       ...userState.currentUser,
       projectIds: [...currentUserProjects, id],
     }),
-    ...userUpdatePromises,
+    ...users.map((user) => {
+      let currentProjects = user.projectIds;
+      if (!currentProjects) {
+        currentProjects = [];
+      }
+
+      return updateUser({
+        ...user,
+        projectIds: [...currentProjects, id],
+      });
+    }),
   ]);
 
   (await loadFirebaseAnalytics()).logEvent('create_project', {
@@ -372,7 +370,7 @@ export async function getProjectAssets() {
 
   const [metadataList, downloadURLList] = await Promise.all([
     Promise.all<FirebaseStorageMetadata>(assetItems.map((item) => item.getMetadata())),
-    Promise.all<string>(assetItems.map((item) => item.getDownloadURL())),
+    Promise.all<URI>(assetItems.map((item) => item.getDownloadURL())),
   ]);
 
   const assets = metadataList.map((item, index) => {
@@ -380,7 +378,7 @@ export async function getProjectAssets() {
       name: item.name,
       remoteUrl: downloadURLList[index],
       type: item.contentType,
-      size: item.size,
+      size: item.size as Byte,
     };
 
     if (item.contentType === 'image/png' || item.contentType === 'image/jpeg') {

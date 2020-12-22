@@ -7,14 +7,18 @@ import {
   loadFirebasePerformance,
 } from '@/firebase';
 import { ProjectId, projectsState } from '@/store/projects';
+import { Brand } from '@/types/Brand';
+import { URI } from '@/types/URI';
+import { Email } from '@/types/Email';
 
-export type UserId = string;
+export type UserId = Brand<'UserId', string>;
+export type Role = 'editor' | 'developer' | 'admin';
 
 export interface User {
   uid: UserId;
   displayName: string;
-  email: string;
-  photoUrl: string;
+  email: Email;
+  photoUrl: URI;
   projectIds?: Array<ProjectId>;
   role?: 'editor' | 'developer' | 'admin';
 }
@@ -66,9 +70,9 @@ export async function parseUser(authUser: firebase.User, isNewUser = false) {
 
   const userData: User = {
     displayName,
-    email,
-    photoUrl: photoURL,
-    uid,
+    email: email as Email,
+    photoUrl: photoURL as URI,
+    uid: uid as UserId,
   };
 
   if (isNewUser) {

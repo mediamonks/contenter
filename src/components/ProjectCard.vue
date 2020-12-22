@@ -63,7 +63,7 @@ export default defineComponent({
     const MAX_VISIBLE_USER = 6;
     const users = toRef<ProjectCardProps, 'users'>(props, 'users');
 
-    const filteredUsers = computed<User[]>(() => users.value.slice(0, MAX_VISIBLE_USER));
+    const filteredUsers = computed<Array<User>>(() => users.value.slice(0, MAX_VISIBLE_USER));
 
     return {
       filteredUsers,

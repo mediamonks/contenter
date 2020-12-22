@@ -4,7 +4,6 @@ module.exports = {
     node: true,
   },
   extends: [
-    // TODO: use @mediamonks
     'plugin:vue/vue3-recommended',
     '@vue/airbnb',
     '@vue/typescript/recommended',

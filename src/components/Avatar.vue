@@ -23,7 +23,8 @@
 </template>
 
 <script lang="ts">
-import { defineComponent } from 'vue';
+import { defineComponent, PropType } from 'vue';
+import { Role } from '@/store/user';
 
 export default defineComponent({
   props: {
@@ -44,7 +45,7 @@ export default defineComponent({
       default: null,
     },
     role: {
-      type: String,
+      type: String as PropType<Role>,
       default: null,
     },
   },

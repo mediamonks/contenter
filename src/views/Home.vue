@@ -46,8 +46,6 @@ export default defineComponent({
   setup() {
     syncProjectsMetadata().catch((error) => displayError(error));
 
-    console.log(projectsState, userState);
-
     async function handleSignOut() {
       await signOut();
       await router.push({ name: RouteNames.SIGN_IN });
