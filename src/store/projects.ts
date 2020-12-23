@@ -346,7 +346,7 @@ export function downloadData(data: object | Array<any>, name = 'content') {
   downloadFile(dataString, `${name}.json`);
 }
 
-export function onProjectUpdate(callback: Function) {
+export function onProjectUpdate(callback: () => void) {
   projectEventElement.addEventListener('updateProject', () => {
     callback();
   });
