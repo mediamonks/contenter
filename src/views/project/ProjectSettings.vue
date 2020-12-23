@@ -73,12 +73,12 @@ import Button from '@/components/Button.vue';
 import { projectsState, updateProjectsMetadata, ProjectId } from '@/store/projects';
 import { userState, User, updateUser } from '@/store/user';
 import { displayError } from '@/store/message';
-import { URI } from '@/types/URI';
+import { Uri } from '@/types/Uri';
 
 interface ProjectSettingsFormState {
   name: string | null;
   users: Array<User> | null;
-  assetBasePath: URI | null;
+  assetBasePath: Uri | null;
 }
 
 export default defineComponent({
@@ -123,7 +123,7 @@ export default defineComponent({
         users: formState.users
           ? [...new Set([...formState.users, ...currentMetadata.users])]
           : [...currentMetadata.users],
-        relativeBasePath: formState.assetBasePath || (currentMetadata.relativeBasePath as URI),
+        relativeBasePath: formState.assetBasePath || (currentMetadata.relativeBasePath as Uri),
       })
         .then((newMetadata) => Promise.all(
           newMetadata.users.map((user) => {

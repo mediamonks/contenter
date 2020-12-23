@@ -9,7 +9,7 @@ import {
 import firebase from 'firebase/app';
 import { downloadFile } from '@/util';
 import { Byte } from '@/types/Byte';
-import { URI } from '@/types/URI';
+import { Uri } from '@/types/Uri';
 
 export type ProjectId = string;
 export type LocaleCode = string;
@@ -24,19 +24,19 @@ export interface ProjectMetadata<T extends UserId | User> {
   id: ProjectId;
   locales?: Array<Locale>;
   users: Array<T>;
-  relativeBasePath?: URI;
+  relativeBasePath?: Uri;
 }
 
 export interface Asset {
   name: string;
-  remoteUrl: URI;
+  remoteUrl: Uri;
   type: string;
   size: Byte;
   dimensions?: {
     width: string;
     height: string;
   };
-  thumbnail?: URI;
+  thumbnail?: Uri;
 }
 
 export interface FirebaseStorageMetadata {
@@ -364,21 +364,21 @@ export async function getProjectAssets() {
   const storageRef = (await loadFirebaseStorage()).ref(`${projectId}/assets`);
   const assetItems = (await storageRef.listAll()).items;
 
-  const [metadataList, downloadURLList] = await Promise.all([
+  const [metadataList, downloadUrlList] = await Promise.all([
     Promise.all<FirebaseStorageMetadata>(assetItems.map((item) => item.getMetadata())),
-    Promise.all<URI>(assetItems.map((item) => item.getDownloadURL())),
+    Promise.all<Uri>(assetItems.map((item) => item.getDownloadURL())),
   ]);
 
   const assets = metadataList.map((item, index) => {
     const data: Asset = {
       name: item.name,
-      remoteUrl: downloadURLList[index],
+      remoteUrl: downloadUrlList[index],
       type: item.contentType,
       size: item.size as Byte,
     };
 
     if (item.contentType === 'image/png' || item.contentType === 'image/jpeg') {
-      data.thumbnail = downloadURLList[index];
+      data.thumbnail = downloadUrlList[index];
     }
 
     return data;

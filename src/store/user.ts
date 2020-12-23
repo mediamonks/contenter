@@ -8,7 +8,7 @@ import {
 } from '@/firebase';
 import { ProjectId, projectsState } from '@/store/projects';
 import { Brand } from '@/types/Brand';
-import { URI } from '@/types/URI';
+import { Uri } from '@/types/Uri';
 import { Email } from '@/types/Email';
 
 export type UserId = Brand<'UserId', string>;
@@ -18,7 +18,7 @@ export interface User {
   uid: UserId;
   displayName: string;
   email: Email;
-  photoUrl: URI;
+  photoUrl: Uri;
   projectIds?: Array<ProjectId>;
   role?: 'editor' | 'developer' | 'admin';
 }
@@ -54,9 +54,9 @@ export async function parseUser(authUser: firebase.User, isNewUser = false) {
   const perfTrace = (await loadFirebasePerformance()).trace('parseUser');
   perfTrace.start();
 
-  const { displayName, email, photoURL, uid } = authUser;
+  const { displayName, email, photoUrl, uid } = authUser;
 
-  if (!displayName || !email || !photoURL) {
+  if (!displayName || !email || !photoUrl) {
     await (await loadFirebaseAuth()).signOut();
     throw new Error('Some user information is missing');
   }
@@ -64,7 +64,7 @@ export async function parseUser(authUser: firebase.User, isNewUser = false) {
   const userData: User = {
     displayName,
     email: email as Email,
-    photoUrl: photoURL as URI,
+    photoUrl: photoUrl as Uri,
     uid: uid as UserId,
   };
 
