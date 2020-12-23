@@ -61,7 +61,7 @@ export interface ProjectLocale {
 
 export interface Project {
   metadata?: ProjectMetadata<User>;
-  schemaURL?: string;
+  schemaUrl?: string;
   locales?: Record<string, ProjectLocale>;
   assets: Array<Asset>;
 }
@@ -213,15 +213,15 @@ export async function setCurrentProject(id: string) {
 
   projectRef.on('value', async (snapshot) => {
     const data: null | {
-      schemaURL?: string;
+      schemaUrl?: string;
       locales?: Record<string, ProjectLocale>;
     } = snapshot.val();
 
     const projectMetadata = await getFormattedProjects([id]);
 
-    const oldSchemaURL = projectsState.currentProject?.schemaURL;
-    if (oldSchemaURL !== data?.schemaURL && data?.schemaURL) {
-      projectsState.currentProjectSchema = await fetchJSONSchema(data?.schemaURL);
+    const oldSchemaUrl = projectsState.currentProject?.schemaUrl;
+    if (oldSchemaUrl !== data?.schemaUrl && data?.schemaUrl) {
+      projectsState.currentProjectSchema = await fetchJSONSchema(data?.schemaUrl);
     }
 
     projectsState.currentProject = {
@@ -263,12 +263,12 @@ export async function uploadSchema(schemaFile: File, project: Project) {
 
   const ref = (await loadFirebaseStorage()).ref(`${project.metadata?.id}/schema.json`);
   const snapshot = await ref.put(schemaFile);
-  const downloadUrl = await snapshot.ref.getDownloadURL();
+  const downloadUrl = await snapshot.ref.getDownloadUrl();
   const jsonSchema = await fetchJSONSchema(downloadUrl);
 
   const newData = {
     ...project,
-    schemaURL: downloadUrl,
+    schemaUrl: downloadUrl,
   };
 
   delete newData.metadata;
@@ -366,7 +366,7 @@ export async function getProjectAssets() {
 
   const [metadataList, downloadUrlList] = await Promise.all([
     Promise.all<FirebaseStorageMetadata>(assetItems.map((item) => item.getMetadata())),
-    Promise.all<Uri>(assetItems.map((item) => item.getDownloadURL())),
+    Promise.all<Uri>(assetItems.map((item) => item.getDownloadUrl())),
   ]);
 
   const assets = metadataList.map((item, index) => {

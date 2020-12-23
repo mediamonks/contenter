@@ -18,7 +18,7 @@
         Export to JSON
       </Button>
     </ProjectBar>
-    <main v-if="currentProject.schemaURL">
+    <main v-if="currentProject.schemaUrl">
       <AssetSelector />
       <router-link
         class="back-button"

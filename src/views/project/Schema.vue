@@ -11,7 +11,7 @@
       </Button>
     </ProjectBar>
     <main>
-      <div v-if="currentProject.schemaURL">
+      <div v-if="currentProject.schemaUrl">
         <h1>Schema</h1>
         <pre><code>{{ currentProjectSchema }}</code></pre>
       </div>

@@ -3,7 +3,7 @@ import firebase from 'firebase/app';
 const firebaseConfig = {
   apiKey: 'AIzaSyBzUQlDoNldhv3wHyNAAAREsNxty6KQhQM',
   authDomain: 'mm-content-manager.firebaseapp.com',
-  databaseURL: 'https://mm-content-manager.firebaseio.com',
+  databaseUrl: 'https://mm-content-manager.firebaseio.com',
   projectId: 'mm-content-manager',
   storageBucket: 'mm-content-manager.appspot.com',
   messagingSenderId: '169876474748',
