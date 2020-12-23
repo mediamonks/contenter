@@ -40,15 +40,8 @@
             <option
               v-if="localeOption.code !== locale"
               :value="localeOption.code"
-              {{
-              localeOption.name
-              }}
-              ({{
-              localeOption.code
-              }})
-              <
-              option
-            /></template>
+            >{{ localeOption.name }} ({{ localeOption.code }})</option>
+          </template>
           <option :value="null">None</option>
         </select>
       </label>
