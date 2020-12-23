@@ -1,6 +1,7 @@
 import { Some } from 'isntnt';
 
 declare class BrandMark<T extends string> {
+  // eslint-disable-next-line @typescript-eslint/naming-convention
   private readonly __brand__: T;
 }
 
