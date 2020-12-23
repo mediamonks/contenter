@@ -189,9 +189,9 @@ export async function createNewProject(
   perfTrace.stop();
 }
 
-export async function fetchJSONSchema(url: string) {
+export async function fetchJsonSchema(url: string) {
   const performance = await loadFirebasePerformance();
-  const perfTrace = performance.trace('fetchJSONSchema');
+  const perfTrace = performance.trace('fetchJsonSchema');
   perfTrace.start();
 
   const result = await fetch(url);
@@ -221,7 +221,7 @@ export async function setCurrentProject(id: string) {
 
     const oldSchemaUrl = projectsState.currentProject?.schemaUrl;
     if (oldSchemaUrl !== data?.schemaUrl && data?.schemaUrl) {
-      projectsState.currentProjectSchema = await fetchJSONSchema(data?.schemaUrl);
+      projectsState.currentProjectSchema = await fetchJsonSchema(data?.schemaUrl);
     }
 
     projectsState.currentProject = {
@@ -264,7 +264,7 @@ export async function uploadSchema(schemaFile: File, project: Project) {
   const ref = (await loadFirebaseStorage()).ref(`${project.metadata?.id}/schema.json`);
   const snapshot = await ref.put(schemaFile);
   const downloadUrl = await snapshot.ref.getDownloadUrl();
-  const jsonSchema = await fetchJSONSchema(downloadUrl);
+  const jsonSchema = await fetchJsonSchema(downloadUrl);
 
   const newData = {
     ...project,
