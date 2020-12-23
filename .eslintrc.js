@@ -17,11 +17,6 @@ module.exports = {
     'object-curly-newline': ['off'],
     'implicit-arrow-linebreak': ['off'],
     'operator-linebreak': ['off'],
-    'no-console': process.env.NODE_ENV === 'production' ? 'warn' : 'off',
-    'no-debugger': process.env.NODE_ENV === 'production' ? 'error' : 'off',
-    'import/no-cycle': process.env.NODE_ENV === 'production' ? 'warn' : 'off',
-    '@typescript-eslint/ban-ts-ignore': process.env.NODE_ENV === 'production' ? 'warn' : 'off',
     'import/prefer-default-export': 'off',
-    '@typescript-eslint/no-explicit-any': 'off',
   },
 };
