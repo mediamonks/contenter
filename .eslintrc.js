@@ -4,9 +4,9 @@ module.exports = {
     node: true,
   },
   extends: [
+    '@mediamonks',
     'plugin:vue/vue3-recommended',
-    '@vue/airbnb',
-    '@vue/typescript/recommended',
+    '@vue/typescript/recommended'
   ],
   parserOptions: {
     ecmaVersion: 2020,
