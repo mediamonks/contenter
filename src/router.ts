@@ -2,6 +2,7 @@ import { createRouter, createWebHistory, RouteRecordRaw, RouterOptions } from 'v
 import { checkIfUserIsSignedIn } from '@/store/user';
 import { loadFirebaseAnalytics } from '@/firebase';
 
+/* eslint-disable @typescript-eslint/naming-convention */
 export const RouteNames = {
   HOME: 'Home',
   CREATE_PROJECT: 'CreateProject',
@@ -20,6 +21,7 @@ export const RouteProperties = {
   PROJECT_ID: 'projectId',
   LOCALE: 'locale',
 } as const;
+/* eslint-enable @typescript-eslint/naming-convention */
 
 const routes: ReadonlyArray<RouteRecordRaw> = [
   {
