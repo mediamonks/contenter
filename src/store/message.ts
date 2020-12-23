@@ -1,14 +1,14 @@
 import { reactive } from 'vue';
 
-interface MessageState {
-  currentMessage: DisplayMessage | null;
-  readonly errorLog: Array<Error>;
-}
-
 interface DisplayMessage {
   message: string;
   time: Date;
   isError: boolean;
+}
+
+interface MessageState {
+  currentMessage: DisplayMessage | null;
+  readonly errorLog: Array<Error>;
 }
 
 const messageState = reactive<MessageState>({
