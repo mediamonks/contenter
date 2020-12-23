@@ -3,11 +3,7 @@ module.exports = {
   env: {
     node: true,
   },
-  extends: [
-    '@mediamonks',
-    'plugin:vue/vue3-recommended',
-    '@vue/typescript/recommended'
-  ],
+  extends: ['@mediamonks'],
   parserOptions: {
     ecmaVersion: 2020,
   },
