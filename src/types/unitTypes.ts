@@ -1,7 +1,7 @@
-type uDistance = 'mm' | 'cm' | 'm' | 'km' | 'in' | 'ft-us' | 'ft' | 'mi'; // Distance
-type uArea = 'mm2' | 'cm2' | 'm2' | 'ha' | 'km2' | 'in2' | 'ft2' | 'ac' | 'mi2'; // Area
-type uMass = 'mcg' | 'mg' | 'g' | 'kg' | 'oz' | 'lb' | 'mt' | 't'; // Mass
-type uVolume =
+type Distance = 'mm' | 'cm' | 'm' | 'km' | 'in' | 'ft-us' | 'ft' | 'mi'; // Distance
+type Area = 'mm2' | 'cm2' | 'm2' | 'ha' | 'km2' | 'in2' | 'ft2' | 'ac' | 'mi2'; // Area
+type Mass = 'mcg' | 'mg' | 'g' | 'kg' | 'oz' | 'lb' | 'mt' | 't'; // Mass
+type Volume =
   | 'mm3'
   | 'cm3'
   | 'ml'
@@ -19,7 +19,7 @@ type uVolume =
   | 'gal'
   | 'ft3'
   | 'yd3'; // Volume
-type uVolumeFlowRate =
+type VolumeFlowRate =
   | 'mm3/s'
   | 'cm3/s'
   | 'ml/s'
@@ -57,47 +57,47 @@ type uVolumeFlowRate =
   | 'yd3/s'
   | 'yd3/min'
   | 'yd3/h'; // Volume Flow Rate
-type uTemperature = 'C' | 'F' | 'K' | 'R'; // Temperature
-type uTime = 'ns' | 'mu' | 'ms' | 's' | 'min' | 'h' | 'd' | 'week' | 'month' | 'year'; // Time
-type uFrequency = 'Hz' | 'mHz' | 'kHz' | 'MHz' | 'GHz' | 'THz' | 'rpm' | 'deg/s' | 'rad/s'; // Frequency
-type uSpeed = 'm/s' | 'km/h' | 'm/h' | 'knot' | 'ft/s'; // Speed
-type uPace = 's/m' | 'min/km' | 's/ft' | 'min/km'; // Pace
-type uPressure = 'Pa' | 'hPa' | 'kPa' | 'MPa' | 'bar' | 'torr' | 'psi' | 'ksi'; // Pressure
-type uDitgital = 'b' | 'Kb' | 'Mb' | 'Gb' | 'Tb' | 'B' | 'KB' | 'MB' | 'GB' | 'TB'; // Digital
-type uIlluminance = 'lx' | 'ft-cd'; // Illumunance
-type uPartsPer = 'ppm' | 'ppb' | 'ppt' | 'ppq'; // Parts-Per
-type uVoltage = 'V' | 'mV' | 'kV'; // Voltage
-type uCurrent = 'A' | 'mA' | 'kA'; // Current
-type uPower = 'W' | 'mW' | 'kW' | 'MW' | 'GW';
-type uApparentPower = 'VA' | 'mVA' | 'kVA' | 'MVA' | 'GVA'; // Apparent Power
-type uReactivePower = 'VAR' | 'mVAR' | 'kVAR' | 'MVAR' | 'GVAR'; // Reactive Power
-type uEnergy = 'Wh' | 'mWh' | 'kWh' | 'MWh' | 'GWh' | 'J' | 'kJ'; // Energy
-type uReactiveEnergy = 'VARh' | 'mVARh' | 'kVARh' | 'MVARh' | 'GVARH'; // Reactive Energy
-type uAngle = 'deg' | 'rad' | 'grad' | 'arcmin' | 'arcsec'; // Angle
+type Temperature = 'C' | 'F' | 'K' | 'R'; // Temperature
+type Time = 'ns' | 'mu' | 'ms' | 's' | 'min' | 'h' | 'd' | 'week' | 'month' | 'year'; // Time
+type Frequency = 'Hz' | 'mHz' | 'kHz' | 'MHz' | 'GHz' | 'THz' | 'rpm' | 'deg/s' | 'rad/s'; // Frequency
+type Speed = 'm/s' | 'km/h' | 'm/h' | 'knot' | 'ft/s'; // Speed
+type Pace = 's/m' | 'min/km' | 's/ft' | 'min/km'; // Pace
+type Pressure = 'Pa' | 'hPa' | 'kPa' | 'MPa' | 'bar' | 'torr' | 'psi' | 'ksi'; // Pressure
+type Ditgital = 'b' | 'Kb' | 'Mb' | 'Gb' | 'Tb' | 'B' | 'KB' | 'MB' | 'GB' | 'TB'; // Digital
+type Illuminance = 'lx' | 'ft-cd'; // Illumunance
+type PartsPer = 'ppm' | 'ppb' | 'ppt' | 'ppq'; // Parts-Per
+type Voltage = 'V' | 'mV' | 'kV'; // Voltage
+type Current = 'A' | 'mA' | 'kA'; // Current
+type Power = 'W' | 'mW' | 'kW' | 'MW' | 'GW';
+type ApparentPower = 'VA' | 'mVA' | 'kVA' | 'MVA' | 'GVA'; // Apparent Power
+type ReactivePower = 'VAR' | 'mVAR' | 'kVAR' | 'MVAR' | 'GVAR'; // Reactive Power
+type Energy = 'Wh' | 'mWh' | 'kWh' | 'MWh' | 'GWh' | 'J' | 'kJ'; // Energy
+type ReactiveEnergy = 'VARh' | 'mVARh' | 'kVARh' | 'MVARh' | 'GVARH'; // Reactive Energy
+type Angle = 'deg' | 'rad' | 'grad' | 'arcmin' | 'arcsec'; // Angle
 
 type Unit =
-  | uDistance
-  | uArea
-  | uMass
-  | uVolume
-  | uVolumeFlowRate
-  | uTemperature
-  | uTime
-  | uFrequency
-  | uSpeed
-  | uPace
-  | uPressure
-  | uDitgital
-  | uIlluminance
-  | uPartsPer
-  | uVoltage
-  | uCurrent
-  | uPower
-  | uApparentPower
-  | uReactivePower
-  | uEnergy
-  | uReactiveEnergy
-  | uAngle;
+  | Distance
+  | Area
+  | Mass
+  | Volume
+  | VolumeFlowRate
+  | Temperature
+  | Time
+  | Frequency
+  | Speed
+  | Pace
+  | Pressure
+  | Ditgital
+  | Illuminance
+  | PartsPer
+  | Voltage
+  | Current
+  | Power
+  | ApparentPower
+  | ReactivePower
+  | Energy
+  | ReactiveEnergy
+  | Angle;
 
 type Measure =
   | 'length'
