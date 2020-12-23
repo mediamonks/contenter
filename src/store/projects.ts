@@ -1,4 +1,6 @@
 import { reactive } from 'vue';
+// TODO: Fix this
+// eslint-disable-next-line import/no-cycle
 import { fetchAllUsers, updateUser, User, UserId, userState } from '@/store/user';
 import {
   loadFirebaseAnalytics,

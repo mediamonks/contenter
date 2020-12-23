@@ -6,6 +6,8 @@ import {
   loadFirebaseDatabase,
   loadFirebasePerformance,
 } from '@/firebase';
+// TODO: Fix this
+// eslint-disable-next-line import/no-cycle
 import { ProjectId, projectsState } from '@/store/projects';
 import { Brand } from '@/types/Brand';
 import { Uri } from '@/types/Uri';
