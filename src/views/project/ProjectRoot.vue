@@ -3,8 +3,10 @@
     <template v-if="projectsState.currentProject">
       <router-view />
     </template>
-    <div v-else
-class="loading">
+    <div
+      v-else
+      class="loading"
+    >
       <h1>Loading...</h1>
     </div>
   </div>

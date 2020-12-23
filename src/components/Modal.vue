@@ -1,7 +1,9 @@
 <template>
   <transition name="fade">
-    <div v-if="isVisible"
-class="modal">
+    <div
+      v-if="isVisible"
+      class="modal"
+    >
       <section class="content">
         <header>
           <slot name="header" />

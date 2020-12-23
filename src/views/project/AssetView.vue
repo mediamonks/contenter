@@ -2,10 +2,17 @@
   <div class="asset-view">
     <ProjectBar>
       <Button
-is-flat :loading="isUploading" label-for="asset-uploader"> Upload an asset </Button>
+        is-flat
+        :loading="isUploading"
+        label-for="asset-uploader"
+      >
+        Upload an asset
+      </Button>
     </ProjectBar>
-    <main v-if="isLoading"
-class="loading">
+    <main
+      v-if="isLoading"
+      class="loading"
+    >
       <h1>Loading...</h1>
     </main>
     <template v-else>
@@ -24,11 +31,17 @@ class="loading">
         </MainContainer>
         <AssetInfoPanel ref="assetInfoPanel" />
       </template>
-      <main v-else
-class="no-assets">
+      <main
+        v-else
+        class="no-assets"
+      >
         <h1>This project has no assets</h1>
         <Button
-:loading="isLoading" label-for="asset-uploader"> Upload the first asset </Button>
+          :loading="isLoading"
+          label-for="asset-uploader"
+        >
+          Upload the first asset
+        </Button>
       </main>
       <input
         id="asset-uploader"
@@ -36,7 +49,7 @@ class="no-assets">
         type="file"
         class="upload-input"
         @change="handleAssetUpload"
-      />
+      >
     </template>
   </div>
 </template>
@@ -82,8 +95,7 @@ export default defineComponent({
       const fileList = (event.target as HTMLInputElement).files;
 
       if (!fileList) throw displayError(new Error('There is no file selected'));
-      if (!projectsState.currentProject?.metadata?.id)
-        throw displayError(new Error('There is no project defined'));
+      if (!projectsState.currentProject?.metadata?.id) throw displayError(new Error('There is no project defined'));
 
       isUploading.value = true;
       return uploadAsset(fileList[0], projectsState.currentProject.metadata.id)

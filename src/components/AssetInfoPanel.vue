@@ -1,15 +1,24 @@
 <template>
-  <div ref="root"
-class="asset-info-panel">
-    <div class="overlay-box"
-@click="closeView">
+  <div
+    ref="root"
+    class="asset-info-panel"
+  >
+    <div
+      class="overlay-box"
+      @click="closeView"
+    >
       <img
-v-if="data && data.thumbnail" :src="data.thumbnail" :alt="data.name" />
+        v-if="data && data.thumbnail"
+        :src="data.thumbnail"
+        :alt="data.name"
+      >
     </div>
     <div class="aside">
       <AssetInfo :data="data" />
-      <button class="close-button"
-@click="closeView">
+      <button
+        class="close-button"
+        @click="closeView"
+      >
         <CloseIcon class="icon" />
       </button>
     </div>

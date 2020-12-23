@@ -1,8 +1,12 @@
 <template>
   <div class="schema">
     <ProjectBar>
-      <Button class="button"
-:is-loading="loading" label-for="schema-file-selector" flat>
+      <Button
+        class="button"
+        :is-loading="loading"
+        label-for="schema-file-selector"
+        flat
+      >
         Upload a JSON schema
       </Button>
     </ProjectBar>
@@ -11,8 +15,10 @@
         <h1>Schema</h1>
         <pre><code>{{ currentProjectSchema }}</code></pre>
       </div>
-      <div v-else
-class="no-schema">
+      <div
+        v-else
+        class="no-schema"
+      >
         <h2>There is no schema defined for {{ currentProject.metadata.name }}</h2>
       </div>
     </main>
@@ -23,7 +29,7 @@ class="no-schema">
       accept=".json"
       class="upload-input"
       @change="handleSchemaUpload"
-    />
+    >
   </div>
 </template>
 

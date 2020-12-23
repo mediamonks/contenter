@@ -3,14 +3,19 @@
     <template v-if="data">
       <header>
         <img
-v-if="data.thumbnail" :src="data.thumbnail" :alt="data.name" />
+          v-if="data.thumbnail"
+          :src="data.thumbnail"
+          :alt="data.name"
+        >
       </header>
       <main>
         <h2>{{ data.name }}</h2>
         <ul>
           <li>
             <label>Relative path</label>
-            <p @click="copyValue(basePath + data.name)">{{ basePath }}{{ data.name }}</p>
+            <p @click="copyValue(basePath + data.name)">
+              {{ basePath }}{{ data.name }}
+            </p>
           </li>
           <li>
             <label>Type</label>
@@ -25,8 +30,10 @@ v-if="data.thumbnail" :src="data.thumbnail" :alt="data.name" />
             <p>
               {{ parseUnitSize(data.size, 'B') }}
             </p>
-            <p v-if="data.size >= fileSizeWarning"
-class="warn body-small">
+            <p
+              v-if="data.size >= fileSizeWarning"
+              class="warn body-small"
+            >
               The size of this file is over {{ parseUnitSize(fileSizeWarning, 'B', 0) }}, please
               consider optimizing this file.
             </p>
@@ -35,14 +42,20 @@ class="warn body-small">
       </main>
       <footer>
         <Button
-is-flat @click="handleAssetDownload"> Download Asset </Button>
+          is-flat
+          @click="handleAssetDownload"
+        >
+          Download Asset
+        </Button>
       </footer>
     </template>
   </aside>
 </template>
 
 <script lang="ts">
-import { defineComponent, toRef, computed, PropType } from 'vue';
+import {
+  defineComponent, toRef, computed, PropType,
+} from 'vue';
 import Button from '@/components/Button.vue';
 import { copyValueToClipboard, downloadFile, parseUnitSize } from '@/util';
 import { projectsState, Asset } from '@/store/projects';

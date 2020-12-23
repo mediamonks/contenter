@@ -1,14 +1,21 @@
 <template>
-  <div class="avatar"
-:class="{ inverted: isInverted, 'color-inverted': isColorInverted }">
+  <div
+    class="avatar"
+    :class="{ inverted: isInverted, 'color-inverted': isColorInverted }"
+  >
     <img
-:src="image" :alt="name" referrerpolicy="no-referrer" />
+      :src="image"
+      :alt="name"
+      referrerpolicy="no-referrer"
+    >
     <main>
       <h4 v-if="name">
         {{ name }}
       </h4>
-      <p v-if="role"
-class="body-small">
+      <p
+        v-if="role"
+        class="body-small"
+      >
         {{ role }}
       </p>
     </main>

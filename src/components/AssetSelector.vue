@@ -1,15 +1,25 @@
 <template>
-  <div v-if="currentProject && currentProject.assets.length > 0"
-class="asset-selector">
-    <button class="view-toggle"
-@click="toggleView">
-      <PhotoVideoIcon v-if="!active"
-class="icon" />
-      <CloseIcon v-else
-class="icon close" />
+  <div
+    v-if="currentProject && currentProject.assets.length > 0"
+    class="asset-selector"
+  >
+    <button
+      class="view-toggle"
+      @click="toggleView"
+    >
+      <PhotoVideoIcon
+        v-if="!active"
+        class="icon"
+      />
+      <CloseIcon
+        v-else
+        class="icon close"
+      />
     </button>
-    <section v-if="active"
-class="selector-view">
+    <section
+      v-if="active"
+      class="selector-view"
+    >
       <header>
         <h2>Select an asset</h2>
       </header>
@@ -23,10 +33,16 @@ class="selector-view">
         />
       </main>
       <template v-if="activeIndex !== null">
-        <AssetInfo class="info"
-:data="currentProject.assets[activeIndex]" />
+        <AssetInfo
+          class="info"
+          :data="currentProject.assets[activeIndex]"
+        />
         <button
-class="back-button" @click="hideDetails"><ArrowToLeft class="icon" /> Back</button>
+          class="back-button"
+          @click="hideDetails"
+        >
+          <ArrowToLeft class="icon" /> Back
+        </button>
       </template>
     </section>
   </div>

@@ -7,7 +7,9 @@
             <h1>Duplicate locale</h1>
             <p>Duplicated from: {{ localeCreationFormData.oldLocale }}</p>
           </template>
-          <h1 v-else>Create a locale</h1>
+          <h1 v-else>
+            Create a locale
+          </h1>
         </template>
         <template #main>
           <TextField
@@ -25,7 +27,12 @@
         </template>
         <template #footer>
           <Button
-is-flat type="button" @click="closeCreateLocaleModal"> Cancel </Button>
+            is-flat
+            type="button"
+            @click="closeCreateLocaleModal"
+          >
+            Cancel
+          </Button>
           <Button>Save Changes</Button>
         </template>
       </Modal>
@@ -40,12 +47,18 @@ is-flat type="button" @click="closeCreateLocaleModal"> Cancel </Button>
         Create a Locale
       </Button>
     </ProjectBar>
-    <MainContainer v-if="currentProject.metadata.locales.length > 0"
-class="locales">
+    <MainContainer
+      v-if="currentProject.metadata.locales.length > 0"
+      class="locales"
+    >
       <table>
         <tr>
-          <th class="code-col">Code</th>
-          <th class="name-col">Name</th>
+          <th class="code-col">
+            Code
+          </th>
+          <th class="name-col">
+            Name
+          </th>
           <th class="controls-col">
             <Download @click="downloadAllContent" />
           </th>
@@ -69,13 +82,19 @@ class="locales">
         </tr>
       </table>
     </MainContainer>
-    <MainContainer v-else
-class="no-locales">
+    <MainContainer
+      v-else
+      class="no-locales"
+    >
       <div class="no-locales-content">
         <h1>No Locales Found</h1>
         <p>Create your first locale below</p>
         <Button
-class="button" @click="openCreateLocaleModal"> Create a Locale </Button>
+          class="button"
+          @click="openCreateLocaleModal"
+        >
+          Create a Locale
+        </Button>
       </div>
     </MainContainer>
   </div>

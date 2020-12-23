@@ -8,9 +8,11 @@
       type="text"
       :value="modelValue"
       @input="$emit('update:modelValue', $event.target.value)"
-    />
-    <span v-if="error"
-class="error body-small">{{ error }}</span>
+    >
+    <span
+      v-if="error"
+      class="error body-small"
+    >{{ error }}</span>
   </label>
 </template>
 

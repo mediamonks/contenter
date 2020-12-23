@@ -7,9 +7,16 @@
     }"
   >
     <img
-v-if="thumbnail" :src="thumbnail" :alt="name" class="thumbnail" loading="lazy" />
-    <h1 v-else
-class="file-extension-large">
+      v-if="thumbnail"
+      :src="thumbnail"
+      :alt="name"
+      class="thumbnail"
+      loading="lazy"
+    >
+    <h1
+      v-else
+      class="file-extension-large"
+    >
       {{ fileExtension }}
     </h1>
     <h4>{{ name }}</h4>

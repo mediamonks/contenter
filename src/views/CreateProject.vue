@@ -2,16 +2,25 @@
   <div class="create-project">
     <main>
       <form @submit.prevent="handleFormSubmit">
-        <TextField v-model="name"
-label="Project Name" placeholder="Name" />
-        <TextField v-model="id"
-label="ID" placeholder="some-id" :error="idError" />
+        <TextField
+          v-model="name"
+          label="Project Name"
+          placeholder="Name"
+        />
+        <TextField
+          v-model="id"
+          label="ID"
+          placeholder="some-id"
+          :error="idError"
+        />
         <SearchSelector
           label="Users"
           placeholder="Search for a name"
           @update-users="updateSelectedUsers"
         />
-        <Button :is-loading="isLoading"> Create </Button>
+        <Button :is-loading="isLoading">
+          Create
+        </Button>
       </form>
     </main>
   </div>

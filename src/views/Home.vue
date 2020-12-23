@@ -1,18 +1,27 @@
 <template>
   <div class="home">
     <main>
-      <h1 class="title">Your Projects</h1>
+      <h1 class="title">
+        Your Projects
+      </h1>
       <ul>
-        <li v-for="project in projectsState.userProjects"
-:key="project.id">
+        <li
+          v-for="project in projectsState.userProjects"
+          :key="project.id"
+        >
           <router-link :to="{ name: 'ProjectLocaleList', params: { projectId: project.id } }">
-            <ProjectCard :id="project.id"
-:name="project.name" :users="project.users" />
+            <ProjectCard
+              :id="project.id"
+              :name="project.name"
+              :users="project.users"
+            />
           </router-link>
         </li>
         <li>
-          <router-link to="/create-project"
-class="add-project">
+          <router-link
+            to="/create-project"
+            class="add-project"
+          >
             <h2>Add Project</h2>
           </router-link>
         </li>

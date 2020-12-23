@@ -1,6 +1,8 @@
 <template>
-  <aside v-if="userState.currentUser"
-class="navigation-panel">
+  <aside
+    v-if="userState.currentUser"
+    class="navigation-panel"
+  >
     <header>
       <h3>MM Content Manager</h3>
     </header>
@@ -9,15 +11,21 @@ class="navigation-panel">
         <h3>Global</h3>
         <ul>
           <li>
-            <router-link to="/"> <Task /> Projects </router-link>
+            <router-link to="/">
+              <Task /> Projects
+            </router-link>
           </li>
           <li>
-            <router-link to="/create-project"> <LayerPlus /> Create Project </router-link>
+            <router-link to="/create-project">
+              <LayerPlus /> Create Project
+            </router-link>
           </li>
         </ul>
       </nav>
-      <nav v-if="router.currentRoute.value.params.projectId"
-class="project-navigation">
+      <nav
+        v-if="router.currentRoute.value.params.projectId"
+        class="project-navigation"
+      >
         <h3>Project</h3>
         <ul>
           <li>
@@ -71,22 +79,25 @@ class="project-navigation">
         :role="userState.currentUser.role"
       />
       <div class="options">
-        <ArrowToLeft class="sign-out-icon"
-@click="handleSignOut" />
+        <ArrowToLeft
+          class="sign-out-icon"
+          @click="handleSignOut"
+        />
       </div>
     </footer>
     <section class="issue-reporter-bar">
       <div>
         <h5>Found an issue?</h5>
-        <p class="body-small">Report it on GitHub</p>
+        <p class="body-small">
+          Report it on GitHub
+        </p>
       </div>
       <a
         href="https://github.com/MickJasker/MM-Content-Manager/issues"
         target="_blank"
         referrerpolicy="no-referrer"
         @click="handleGithubClick"
-        ><GitHub
-      /></a>
+      ><GitHub /></a>
     </section>
   </aside>
 </template>

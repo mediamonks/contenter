@@ -14,8 +14,10 @@
         :image="user.photoUrl"
         :title="user.name"
       />
-      <p v-if="filteredUsers.length === MAX_VISIBLE_USER"
-class="body-normal">
+      <p
+        v-if="filteredUsers.length === MAX_VISIBLE_USER"
+        class="body-normal"
+      >
         +{{ users.length - MAX_VISIBLE_USER }}
       </p>
     </footer>
@@ -23,7 +25,9 @@ class="body-normal">
 </template>
 
 <script lang="ts">
-import { computed, defineComponent, PropType, toRef } from 'vue';
+import {
+  computed, defineComponent, PropType, toRef,
+} from 'vue';
 import Avatar from '@/components/Avatar.vue';
 import { User } from '@/store/user';
 

@@ -1,10 +1,16 @@
 <template>
   <div class="search-selector">
-    <TextField v-model="searchInput"
-:label="label" :placeholder="placeholder" :error="error" />
+    <TextField
+      v-model="searchInput"
+      :label="label"
+      :placeholder="placeholder"
+      :error="error"
+    />
     <div class="result-wrapper">
-      <ul v-if="selectedResults.length > 0"
-class="selected-users">
+      <ul
+        v-if="selectedResults.length > 0"
+        class="selected-users"
+      >
         <li
           v-for="(result, index) in selectedResults"
           :key="`selected-result-${result.uid}`"
@@ -13,15 +19,19 @@ class="selected-users">
           <Avatar :image="result.photoUrl" />
         </li>
       </ul>
-      <ul v-if="results.length > 0"
-class="results">
+      <ul
+        v-if="results.length > 0"
+        class="results"
+      >
         <li
           v-for="result in results"
           :key="`result-${result.uid}`"
           @click="addUserToSelection(result)"
         >
-          <Avatar :image="result.photoUrl"
-:name="result.displayName" />
+          <Avatar
+            :image="result.photoUrl"
+            :name="result.displayName"
+          />
         </li>
       </ul>
     </div>

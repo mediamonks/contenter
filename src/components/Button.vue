@@ -1,17 +1,33 @@
 <template>
-  <router-link v-if="to"
-:to="to" class="button" :class="{ flat: isFlat }">
-    <template v-if="isLoading"> Please wait... </template>
+  <router-link
+    v-if="to"
+    :to="to"
+    class="button"
+    :class="{ flat: isFlat }"
+  >
+    <template v-if="isLoading">
+      Please wait...
+    </template>
     <slot v-else />
   </router-link>
-  <label v-else-if="labelFor"
-:for="labelFor" class="button" :class="{ flat: isFlat }">
+  <label
+    v-else-if="labelFor"
+    :for="labelFor"
+    class="button"
+    :class="{ flat: isFlat }"
+  >
     <template v-if="isLoading"> Please wait... </template>
     <slot v-else />
   </label>
-  <button v-else
-class="button" :class="{ flat: isFlat }" :disabled="isLoading">
-    <template v-if="isLoading"> Please wait... </template>
+  <button
+    v-else
+    class="button"
+    :class="{ flat: isFlat }"
+    :disabled="isLoading"
+  >
+    <template v-if="isLoading">
+      Please wait...
+    </template>
     <slot v-else />
   </button>
 </template>

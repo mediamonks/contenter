@@ -3,13 +3,20 @@
     <ProjectBar :subtitle="`${metadata.id} - ${localeName}`">
       <template #main>
         <div class="autosave-message">
-          <Sync ref="syncIcon"
-class="sync-icon" />
+          <Sync
+            ref="syncIcon"
+            class="sync-icon"
+          />
           <p>Your progress is being synchronized to the database</p>
         </div>
       </template>
       <Button
-v-if="projectData" is-flat @click="exportToJSON"> Export to JSON </Button>
+        v-if="projectData"
+        is-flat
+        @click="exportToJSON"
+      >
+        Export to JSON
+      </Button>
     </ProjectBar>
     <main v-if="currentProject.schemaURL">
       <AssetSelector />
@@ -21,8 +28,11 @@ v-if="projectData" is-flat @click="exportToJSON"> Export to JSON </Button>
       </router-link>
       <label>
         Reference Locale
-        <select id="referenceLocale"
-v-model="referenceLocale" name="Reference Locale">
+        <select
+          id="referenceLocale"
+          v-model="referenceLocale"
+          name="Reference Locale"
+        >
           <template
             v-for="localeOption in currentProject.metadata.locales"
             :key="localeOption.code"
@@ -38,15 +48,19 @@ v-model="referenceLocale" name="Reference Locale">
               }})
               <
               option
-          /></template>
+            /></template>
           <option :value="null">None</option>
         </select>
       </label>
-      <div ref="jsonEditor"
-class="json-editor" />
+      <div
+        ref="jsonEditor"
+        class="json-editor"
+      />
     </main>
-    <main v-else
-class="no-schema">
+    <main
+      v-else
+      class="no-schema"
+    >
       <h2>You first need to define a schema for {{ currentProject.metadata.name }}</h2>
       <Button
         class="button"
@@ -62,7 +76,9 @@ class="no-schema">
 </template>
 
 <script lang="ts">
-import { defineComponent, ref, onMounted, watch, onBeforeUnmount, computed } from 'vue';
+import {
+  defineComponent, ref, onMounted, watch, onBeforeUnmount, computed,
+} from 'vue';
 import EasyMDE from 'easymde';
 import 'easymde/dist/easymde.min.css';
 import { debounce, get } from 'lodash';
@@ -105,9 +121,7 @@ export default defineComponent({
     let editor: any = null;
     let mdEditors: EasyMDE[] = [];
 
-    const projectData = computed<object | any[] | undefined>(() =>
-      getCurrentProjectContent(props.locale),
-    );
+    const projectData = computed<object | any[] | undefined>(() => getCurrentProjectContent(props.locale));
 
     const localeName = computed<string | undefined>(
       () => projectsState.currentProject?.locales?.[props.locale].name,
@@ -141,9 +155,7 @@ export default defineComponent({
         },
       };
 
-      updateProject(projectsState.currentProject.metadata.id, newData).catch((error) =>
-        displayError(error),
-      );
+      updateProject(projectsState.currentProject.metadata.id, newData).catch((error) => displayError(error));
 
       (await loadFirebaseAnalytics()).logEvent('changeContent', {
         projectId: projectsState.currentProject.metadata.id,

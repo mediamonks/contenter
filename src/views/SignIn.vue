@@ -1,10 +1,17 @@
 <template>
   <div class="sign-in">
     <main>
-      <h1 class="title">MM Content Editor</h1>
-      <h2 class="subtitle">Sign in with your MediaMonks Google account</h2>
-      <Button class="button"
-:is-loading="isLoading" @click="handleSignIn">
+      <h1 class="title">
+        MM Content Editor
+      </h1>
+      <h2 class="subtitle">
+        Sign in with your MediaMonks Google account
+      </h2>
+      <Button
+        class="button"
+        :is-loading="isLoading"
+        @click="handleSignIn"
+      >
         Sign in with Google
       </Button>
     </main>
