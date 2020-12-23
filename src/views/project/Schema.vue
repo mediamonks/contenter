@@ -51,8 +51,6 @@ export default defineComponent({
     const loading = ref(false);
 
     function handleSchemaUpload(event: InputEvent) {
-      // eslint-disable-next-line @typescript-eslint/ban-ts-ignore
-      // @ts-ignore
       const [file]: File = event.target.files;
 
       if (!file || !projectsState.currentProject) return;

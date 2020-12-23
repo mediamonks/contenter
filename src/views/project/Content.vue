@@ -109,12 +109,12 @@ export default defineComponent({
   },
   setup(props: { locale: string }) {
     const jsonEditor = ref<HTMLDivElement | null>(null);
-    const contentData = ref<object | null>(null);
+    const contentData = ref<Record<string, any> | null>(null);
     // Necessary any because the JSON editor doesn't support TS properly
     let editor: any = null;
     let mdEditors: EasyMDE[] = [];
 
-    const projectData = computed<object | any[] | undefined>(() => getCurrentProjectContent(props.locale));
+    const projectData = computed<Record<string, any> | any[] | undefined>(() => getCurrentProjectContent(props.locale));
 
     const localeName = computed<string | undefined>(
       () => projectsState.currentProject?.locales?.[props.locale].name,
@@ -148,7 +148,8 @@ export default defineComponent({
         },
       };
 
-      updateProject(projectsState.currentProject.metadata.id, newData).catch((error) => displayError(error));
+      updateProject(projectsState.currentProject.metadata.id, newData)
+        .catch((error) => displayError(error));
 
       (await loadFirebaseAnalytics()).logEvent('changeContent', {
         projectId: projectsState.currentProject.metadata.id,
@@ -175,7 +176,6 @@ export default defineComponent({
         setTimeout(() => {
           mdEditors.forEach((mdEditor) => {
             mdEditor.toTextArea();
-            // @ts-ignore
             // eslint-disable-next-line no-param-reassign
             mdEditor = null;
           });
@@ -227,7 +227,6 @@ export default defineComponent({
 
       editor = new JSONEditor(jsonEditor.value, {
         schema: projectsState.currentProjectSchema,
-        // eslint-disable-next-line @typescript-eslint/camelcase
         object_layout: 'tabs',
       });
 
@@ -254,8 +253,6 @@ export default defineComponent({
       await initMarkdownEditor();
 
       mdEditors.forEach((mdEditor) => {
-        // eslint-disable-next-line @typescript-eslint/ban-ts-ignore
-        // @ts-ignore
         const { value } = mdEditor.element;
 
         if (value !== mdEditor.value()) {

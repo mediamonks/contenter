@@ -136,7 +136,7 @@ export default defineComponent({
     const localeCreationFormData = reactive<{
       code: string;
       name: string;
-      content: object | any[] | undefined;
+      content: Record<string, any> | any[] | undefined;
       duplicate: boolean;
       oldLocale: string | null;
     }>({
