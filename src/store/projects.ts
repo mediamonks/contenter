@@ -304,7 +304,11 @@ export async function updateProjectsMetadata(
   return newMetadata;
 }
 
-export async function createNewLocale(code: string, name: string, content?: object | Array<any>) {
+export async function createNewLocale(
+  code: string,
+  name: string,
+  content?: Record<string, any> | Array<any>,
+) {
   if (!projectsState.currentProject?.metadata) throw new Error('No current project defined');
   const perfTrace = (await loadFirebasePerformance()).trace('createNewLocale');
   perfTrace.start();
