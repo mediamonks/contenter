@@ -14,6 +14,7 @@ module.exports = {
   },
   rules: {
     'max-len': ['off'],
+    'object-curly-newline': ['off'],
     'no-console': process.env.NODE_ENV === 'production' ? 'warn' : 'off',
     'no-debugger': process.env.NODE_ENV === 'production' ? 'error' : 'off',
     'import/no-cycle': process.env.NODE_ENV === 'production' ? 'warn' : 'off',
