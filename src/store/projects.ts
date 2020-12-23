@@ -263,7 +263,7 @@ export async function uploadSchema(schemaFile: File, project: Project) {
 
   const ref = (await loadFirebaseStorage()).ref(`${project.metadata?.id}/schema.json`);
   const snapshot = await ref.put(schemaFile);
-  const downloadUrl = await snapshot.ref.getDownloadUrl();
+  const downloadUrl = await snapshot.ref.getDownloadURL();
   const jsonSchema = await fetchJsonSchema(downloadUrl);
 
   const newData = {
