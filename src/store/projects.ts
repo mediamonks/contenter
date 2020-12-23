@@ -368,7 +368,7 @@ export async function getProjectAssets() {
 
   const [metadataList, downloadUrlList] = await Promise.all([
     Promise.all<FirebaseStorageMetadata>(assetItems.map((item) => item.getMetadata())),
-    Promise.all<Uri>(assetItems.map((item) => item.getDownloadUrl())),
+    Promise.all<Uri>(assetItems.map((item) => item.getDownloadURL())),
   ]);
 
   const assets = metadataList.map((item, index) => {
