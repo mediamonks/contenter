@@ -44,24 +44,17 @@ export async function setUser(properties: User): Promise<User> {
 }
 
 export async function createNewUser(properties: User) {
-  await (await loadFirebaseDatabase())
-    .ref(`users/${properties.uid}`)
-    .set({
-      ...properties,
-      role: 'editor',
-    } as User);
+  await (await loadFirebaseDatabase()).ref(`users/${properties.uid}`).set({
+    ...properties,
+    role: 'editor',
+  } as User);
 }
 
 export async function parseUser(authUser: firebase.User, isNewUser = false) {
   const perfTrace = (await loadFirebasePerformance()).trace('parseUser');
   perfTrace.start();
 
-  const {
-    displayName,
-    email,
-    photoURL,
-    uid,
-  } = authUser;
+  const { displayName, email, photoURL, uid } = authUser;
 
   if (!displayName || !email || !photoURL) {
     await (await loadFirebaseAuth()).signOut();
@@ -94,8 +87,7 @@ export async function parseUser(authUser: firebase.User, isNewUser = false) {
 
 export async function signIn() {
   const provider = new firebase.auth.GoogleAuthProvider();
-  const authUser = await (await loadFirebaseAuth())
-    .signInWithPopup(provider);
+  const authUser = await (await loadFirebaseAuth()).signInWithPopup(provider);
   if (!authUser.user || !authUser.additionalUserInfo) throw new Error('No user defined');
 
   return parseUser(authUser.user, authUser.additionalUserInfo.isNewUser);
@@ -115,13 +107,13 @@ export async function signOut() {
 
 export async function checkIfUserIsSignedIn() {
   const auth = await loadFirebaseAuth();
-  return new Promise<User>(((resolve, reject) => {
+  return new Promise<User>((resolve, reject) => {
     auth.onAuthStateChanged((state) => {
       if (state) {
         if (!userState.currentUser) {
           parseUser(state)
             .then((result) => resolve(result))
-            .catch((err) => reject(err));
+            .catch((error) => reject(error));
         } else {
           resolve(userState.currentUser);
         }
@@ -129,13 +121,11 @@ export async function checkIfUserIsSignedIn() {
         reject(new Error('Not allowed: not signed in'));
       }
     });
-  }));
+  });
 }
 
 export async function updateUser(user: User) {
-  await (await loadFirebaseDatabase())
-    .ref(`users/${user.uid}`)
-    .update(user);
+  await (await loadFirebaseDatabase()).ref(`users/${user.uid}`).update(user);
   if (userState.currentUser && userState.currentUser.uid === user.uid) {
     await setUser(user);
   }
@@ -144,9 +134,7 @@ export async function updateUser(user: User) {
 }
 
 export async function fetchAllUsers(): Promise<Array<User>> {
-  const snapshot = await (await loadFirebaseDatabase())
-    .ref('users')
-    .once('value');
+  const snapshot = await (await loadFirebaseDatabase()).ref('users').once('value');
 
   if (!snapshot.val()) {
     return [];

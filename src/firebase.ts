@@ -16,32 +16,32 @@ const firebaseApp = firebase.initializeApp(firebaseConfig);
 export default firebaseApp;
 
 async function loadFirebaseAuth() {
-  await import(/* webpackChunkName: "firebase-auth" */'firebase/auth');
+  await import(/* webpackChunkName: "firebase-auth" */ 'firebase/auth');
 
   return firebase.auth();
 }
 
 async function loadFirebaseDatabase() {
-  await import(/* webpackChunkName: "firebase-database" */'firebase/database');
+  await import(/* webpackChunkName: "firebase-database" */ 'firebase/database');
 
   return firebase.database();
 }
 
 async function loadFirebaseStorage() {
-  await import(/* webpackChunkName: "firebase-storage" */'firebase/storage');
+  await import(/* webpackChunkName: "firebase-storage" */ 'firebase/storage');
 
   return firebase.storage();
 }
 
 async function loadFirebaseAnalytics() {
-  await import(/* webpackChunkName: "firebase-analytics" */'firebase/analytics');
+  await import(/* webpackChunkName: "firebase-analytics" */ 'firebase/analytics');
   firebase.analytics();
 
   return firebase.analytics();
 }
 
 async function loadFirebasePerformance() {
-  await import(/* webpackChunkName: "firebase-performance" */'firebase/performance');
+  await import(/* webpackChunkName: "firebase-performance" */ 'firebase/performance');
   firebase.performance();
 
   return firebase.performance();

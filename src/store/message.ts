@@ -37,9 +37,4 @@ function displayError(error: Error, delay = 5000) {
   displayMessage(error.message, error, delay);
 }
 
-export {
-  messageState,
-  displayError,
-  displayMessage,
-  DisplayMessage,
-};
+export { messageState, displayError, displayMessage, DisplayMessage };

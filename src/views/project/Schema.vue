@@ -1,12 +1,8 @@
 <template>
   <div class="schema">
     <ProjectBar>
-      <Button
-        class="button"
-        :is-loading="loading"
-        label-for="schema-file-selector"
-        flat
-      >
+      <Button class="button"
+:is-loading="loading" label-for="schema-file-selector" flat>
         Upload a JSON schema
       </Button>
     </ProjectBar>
@@ -15,10 +11,8 @@
         <h1>Schema</h1>
         <pre><code>{{ currentProjectSchema }}</code></pre>
       </div>
-      <div
-        v-else
-        class="no-schema"
-      >
+      <div v-else
+class="no-schema">
         <h2>There is no schema defined for {{ currentProject.metadata.name }}</h2>
       </div>
     </main>
@@ -29,7 +23,7 @@
       accept=".json"
       class="upload-input"
       @change="handleSchemaUpload"
-    >
+    />
   </div>
 </template>
 
@@ -85,39 +79,39 @@ export default defineComponent({
 </script>
 
 <style lang="scss" scoped>
-  @import '~@/assets/scss/variables';
+@import '~@/assets/scss/variables';
 
-  .schema {
-    height: 100%;
+.schema {
+  height: 100%;
 
-    main {
-      height: calc(100% - 13rem);
-      width: calc(100vw - 38rem);
-      padding: 4rem;
+  main {
+    height: calc(100% - 13rem);
+    width: calc(100vw - 38rem);
+    padding: 4rem;
 
-      pre {
-        padding: 2rem;
-        background: $colorGrey800;
-        color: $colorGrey050;
-        border-radius: 1rem;
-        overflow-y: auto;
-        overflow-x: auto;
-        max-height: 70vh;
-      }
-    }
-
-    .upload-input {
-      display: none;
-    }
-
-    .no-schema {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-
-      .button {
-        margin-top: 2rem;
-      }
+    pre {
+      padding: 2rem;
+      background: $colorGrey800;
+      color: $colorGrey050;
+      border-radius: 1rem;
+      overflow-y: auto;
+      overflow-x: auto;
+      max-height: 70vh;
     }
   }
+
+  .upload-input {
+    display: none;
+  }
+
+  .no-schema {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+
+    .button {
+      margin-top: 2rem;
+    }
+  }
+}
 </style>

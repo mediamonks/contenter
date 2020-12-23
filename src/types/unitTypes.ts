@@ -1,7 +1,24 @@
 type uDistance = 'mm' | 'cm' | 'm' | 'km' | 'in' | 'ft-us' | 'ft' | 'mi'; // Distance
 type uArea = 'mm2' | 'cm2' | 'm2' | 'ha' | 'km2' | 'in2' | 'ft2' | 'ac' | 'mi2'; // Area
 type uMass = 'mcg' | 'mg' | 'g' | 'kg' | 'oz' | 'lb' | 'mt' | 't'; // Mass
-type uVolume = 'mm3' | 'cm3' | 'ml' | 'l' | 'kl' | 'm3' | 'km3' | 'tsp' | 'Tbs' | 'in3' | 'fl-oz' | 'cup' | 'pnt' | 'qt' | 'gal' | 'ft3' | 'yd3'; // Volume
+type uVolume =
+  | 'mm3'
+  | 'cm3'
+  | 'ml'
+  | 'l'
+  | 'kl'
+  | 'm3'
+  | 'km3'
+  | 'tsp'
+  | 'Tbs'
+  | 'in3'
+  | 'fl-oz'
+  | 'cup'
+  | 'pnt'
+  | 'qt'
+  | 'gal'
+  | 'ft3'
+  | 'yd3'; // Volume
 type uVolumeFlowRate =
   | 'mm3/s'
   | 'cm3/s'
@@ -58,7 +75,8 @@ type uEnergy = 'Wh' | 'mWh' | 'kWh' | 'MWh' | 'GWh' | 'J' | 'kJ'; // Energy
 type uReactiveEnergy = 'VARh' | 'mVARh' | 'kVARh' | 'MVARh' | 'GVARH'; // Reactive Energy
 type uAngle = 'deg' | 'rad' | 'grad' | 'arcmin' | 'arcsec'; // Angle
 
-type Unit = uDistance
+type Unit =
+  | uDistance
   | uArea
   | uMass
   | uVolume
@@ -81,7 +99,8 @@ type Unit = uDistance
   | uReactiveEnergy
   | uAngle;
 
-type Measure = 'length'
+type Measure =
+  | 'length'
   | 'area'
   | 'mass'
   | 'volume'
@@ -104,13 +123,6 @@ type Measure = 'length'
   | 'reactiveEnergy'
   | 'angle';
 
-type System = 'metric'
-  | 'imperial'
-  | 'bits'
-  | 'bytes';
+type System = 'metric' | 'imperial' | 'bits' | 'bytes';
 
-export {
-  Unit,
-  Measure,
-  System,
-};
+export { Unit, Measure, System };

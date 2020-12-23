@@ -2,36 +2,23 @@
   <div class="create-project">
     <main>
       <form @submit.prevent="handleFormSubmit">
-        <TextField
-          v-model="name"
-          label="Project Name"
-          placeholder="Name"
-        />
-        <TextField
-          v-model="id"
-          label="ID"
-          placeholder="some-id"
-          :error="idError"
-        />
+        <TextField v-model="name"
+label="Project Name" placeholder="Name" />
+        <TextField v-model="id"
+label="ID" placeholder="some-id" :error="idError" />
         <SearchSelector
           label="Users"
           placeholder="Search for a name"
           @update-users="updateSelectedUsers"
         />
-        <Button :is-loading="isLoading">
-          Create
-        </Button>
+        <Button :is-loading="isLoading"> Create </Button>
       </form>
     </main>
   </div>
 </template>
 
 <script lang="ts">
-import {
-  defineComponent,
-  watch,
-  ref,
-} from 'vue';
+import { defineComponent, watch, ref } from 'vue';
 import Button from '@/components/Button.vue';
 import TextField from '@/components/TextField.vue';
 import SearchSelector from '@/components/SearchSelector.vue';
@@ -78,15 +65,16 @@ export default defineComponent({
     function handleFormSubmit() {
       if (!userState.currentUser) throw displayError(new Error('No user defined'));
       isLoading.value = true;
-      return createNewProject(
-        name.value,
-        id.value,
-        userState.currentUser.uid,
-        selectedUsers.value,
-      )
-        .then(() => { router.push({ name: RouteNames.HOME }); })
-        .catch((error) => { displayError(error); })
-        .then(() => { isLoading.value = false; });
+      return createNewProject(name.value, id.value, userState.currentUser.uid, selectedUsers.value)
+        .then(() => {
+          router.push({ name: RouteNames.HOME });
+        })
+        .catch((error) => {
+          displayError(error);
+        })
+        .then(() => {
+          isLoading.value = false;
+        });
     }
 
     function updateSelectedUsers(users: Array<User>) {
@@ -111,24 +99,24 @@ export default defineComponent({
 </script>
 
 <style lang="scss" scoped>
-  .create-project {
-    main {
+.create-project {
+  main {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+
+    form {
       display: flex;
-      justify-content: center;
-      align-items: center;
-      height: 100vh;
+      flex-direction: column;
+      align-items: flex-end;
+      width: 100%;
+      max-width: 60rem;
 
-      form {
-        display: flex;
-        flex-direction: column;
-        align-items: flex-end;
-        width: 100%;
-        max-width: 60rem;
-
-        > * {
-          margin-top: 5rem;
-        }
+      > * {
+        margin-top: 5rem;
       }
     }
   }
+}
 </style>

@@ -15,24 +15,16 @@
             remain <code>{{ currentProject.metadata.id }}</code>
           </p>
         </div>
-        <div
-          v-if="currentProject.metadata.users.length > 1"
-          class="input-wrapper"
-        >
+        <div v-if="currentProject.metadata.users.length > 1"
+class="input-wrapper">
           <label>Users</label>
           <ul class="user-list">
-            <template
-              v-for="user in currentProject.metadata.users"
-              :key="`user-id=${user.uid}`"
-            >
-              <li
-                v-if="user.uid !== userState.currentUser.uid"
-                class="user-item"
-              >
-                <Avatar
-                  :image="user.photoUrl"
-                  :name="user.displayName"
-                />
+            <template v-for="user in currentProject.metadata.users"
+:key="`user-id=${user.uid}`">
+              <li v-if="user.uid !== userState.currentUser.uid"
+class="user-item">
+                <Avatar :image="user.photoUrl"
+:name="user.displayName" />
                 <button @click="deleteUserFromProject(user.uid)">
                   <Trash />
                 </button>
@@ -52,22 +44,14 @@
           placeholder="/static/img/"
         />
         <Button
-          type="submit"
-          :is-loading="isLoading"
-        >
-          Save changes
-        </Button>
+type="submit" :is-loading="isLoading"> Save changes </Button>
       </form>
     </main>
   </div>
 </template>
 
 <script lang="ts">
-import {
-  defineComponent,
-  reactive,
-  ref,
-} from 'vue';
+import { defineComponent, reactive, ref } from 'vue';
 import ProjectBar from '@/components/ProjectBar.vue';
 import TextField from '@/components/TextField.vue';
 import Avatar from '@/components/Avatar.vue';
@@ -75,9 +59,7 @@ import Trash from '@/assets/icons/Trash.vue';
 import SearchSelector from '@/components/SearchSelector.vue';
 import Button from '@/components/Button.vue';
 import { projectsState, updateProjectsMetadata, ProjectId } from '@/store/projects';
-import {
-  userState, User, updateUser,
-} from '@/store/user';
+import { userState, User, updateUser } from '@/store/user';
 import { displayError } from '@/store/message';
 import { URI } from '@/types/URI';
 
@@ -118,7 +100,8 @@ export default defineComponent({
     }
 
     function handleSavingChanges() {
-      if (!projectsState.currentProject || !projectsState.currentProject.metadata) throw new Error('No current project defined');
+      if (!projectsState.currentProject || !projectsState.currentProject.metadata)
+        throw new Error('No current project defined');
       isLoading.value = true;
 
       const currentMetadata = projectsState.currentProject.metadata;
@@ -126,23 +109,26 @@ export default defineComponent({
       updateProjectsMetadata({
         ...currentMetadata,
         name: formState.name || currentMetadata.name,
-        users:
-          formState.users
-            ? [...new Set([...formState.users, ...currentMetadata.users])]
-            : [...currentMetadata.users],
-        relativeBasePath: formState.assetBasePath || currentMetadata.relativeBasePath as URI,
-      }).then((newMetadata) => Promise.all(newMetadata.users.map((user) => {
-        let projects: Array<ProjectId> = [];
+        users: formState.users
+          ? [...new Set([...formState.users, ...currentMetadata.users])]
+          : [...currentMetadata.users],
+        relativeBasePath: formState.assetBasePath || (currentMetadata.relativeBasePath as URI),
+      })
+        .then((newMetadata) =>
+          Promise.all(
+          newMetadata.users.map((user) => {
+            let projects: Array<ProjectId> = [];
 
-        if (user.projectIds) {
-          projects = user.projectIds;
-        }
+            if (user.projectIds) {
+              projects = user.projectIds;
+            }
 
-        return updateUser({
-          ...user,
-          projectIds: [...new Set([...projects, newMetadata.id])],
-        });
-      })))
+            return updateUser({
+              ...user,
+              projectIds: [...new Set([...projects, newMetadata.id])],
+            });
+          }),
+        ))
         .then(() => {
           isLoading.value = false;
 
@@ -240,7 +226,7 @@ export default defineComponent({
         }
       }
 
-      button[type="submit"] {
+      button[type='submit'] {
         margin-top: 3rem;
       }
     }

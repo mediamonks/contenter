@@ -2,17 +2,10 @@
   <div class="asset-view">
     <ProjectBar>
       <Button
-        is-flat
-        :loading="isUploading"
-        label-for="asset-uploader"
-      >
-        Upload an asset
-      </Button>
+is-flat :loading="isUploading" label-for="asset-uploader"> Upload an asset </Button>
     </ProjectBar>
-    <main
-      v-if="isLoading"
-      class="loading"
-    >
+    <main v-if="isLoading"
+class="loading">
       <h1>Loading...</h1>
     </main>
     <template v-else>
@@ -31,16 +24,11 @@
         </MainContainer>
         <AssetInfoPanel ref="assetInfoPanel" />
       </template>
-      <main
-        v-else
-        class="no-assets"
-      >
-        <h1>This project has no assets</h1><Button
-          :loading="isLoading"
-          label-for="asset-uploader"
-        >
-          Upload the first asset
-        </Button>
+      <main v-else
+class="no-assets">
+        <h1>This project has no assets</h1>
+        <Button
+:loading="isLoading" label-for="asset-uploader"> Upload the first asset </Button>
       </main>
       <input
         id="asset-uploader"
@@ -48,7 +36,7 @@
         type="file"
         class="upload-input"
         @change="handleAssetUpload"
-      >
+      />
     </template>
   </div>
 </template>
@@ -74,15 +62,16 @@ export default defineComponent({
   },
   setup() {
     const isLoading = ref(true);
-    if (projectsState.currentProject?.assets
-      && projectsState.currentProject?.assets?.length > 0) {
+    if (projectsState.currentProject?.assets && projectsState.currentProject?.assets?.length > 0) {
       isLoading.value = false;
     }
     getProjectAssets()
       .catch((error) => displayError(error))
-      .then(() => { isLoading.value = false; });
+      .then(() => {
+        isLoading.value = false;
+      });
 
-    const assetInfoPanel = ref<(typeof AssetInfoPanel) | null>(null);
+    const assetInfoPanel = ref<typeof AssetInfoPanel | null>(null);
     function openInfoPanel(index: number) {
       if (!assetInfoPanel.value) return;
       assetInfoPanel.value.openView(projectsState.currentProject?.assets?.[index]);
@@ -93,12 +82,15 @@ export default defineComponent({
       const fileList = (event.target as HTMLInputElement).files;
 
       if (!fileList) throw displayError(new Error('There is no file selected'));
-      if (!projectsState.currentProject?.metadata?.id) throw displayError(new Error('There is no project defined'));
+      if (!projectsState.currentProject?.metadata?.id)
+        throw displayError(new Error('There is no project defined'));
 
       isUploading.value = true;
       return uploadAsset(fileList[0], projectsState.currentProject.metadata.id)
         .catch((error) => displayError(error))
-        .then(() => { isUploading.value = false; });
+        .then(() => {
+          isUploading.value = false;
+        });
     }
 
     return {
@@ -119,7 +111,8 @@ export default defineComponent({
   overflow-y: scroll;
   padding-bottom: 4rem;
 
-  .no-assets, .loading {
+  .no-assets,
+  .loading {
     display: flex;
     height: 100%;
     width: 100%;

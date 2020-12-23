@@ -3,10 +3,8 @@
     <template v-if="projectsState.currentProject">
       <router-view />
     </template>
-    <div
-      v-else
-      class="loading"
-    >
+    <div v-else
+class="loading">
       <h1>Loading...</h1>
     </div>
   </div>
@@ -27,11 +25,10 @@ export default defineComponent({
     },
   },
   setup(props) {
-    setCurrentProject(props.projectId)
-      .catch((error) => {
-        router.push({ name: RouteNames.HOME });
-        displayError(error);
-      });
+    setCurrentProject(props.projectId).catch((error) => {
+      router.push({ name: RouteNames.HOME });
+      displayError(error);
+    });
 
     onUnmounted(async () => {
       await resetCurrentProjectState();
@@ -45,19 +42,19 @@ export default defineComponent({
 </script>
 
 <style lang="scss" scoped>
-  @import "~@/assets/scss/variables";
+@import '~@/assets/scss/variables';
 
-  .project {
+.project {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+
+  .loading {
     display: flex;
-    flex-direction: column;
-    height: 100vh;
-
-    .loading {
-      display: flex;
-      width: 100%;
-      height: 100%;
-      align-items: center;
-      justify-content: center;
-    }
+    width: 100%;
+    height: 100%;
+    align-items: center;
+    justify-content: center;
   }
+}
 </style>

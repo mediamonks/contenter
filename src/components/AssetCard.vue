@@ -7,16 +7,9 @@
     }"
   >
     <img
-      v-if="thumbnail"
-      :src="thumbnail"
-      :alt="name"
-      class="thumbnail"
-      loading="lazy"
-    >
-    <h1
-      v-else
-      class="file-extension-large"
-    >
+v-if="thumbnail" :src="thumbnail" :alt="name" class="thumbnail" loading="lazy" />
+    <h1 v-else
+class="file-extension-large">
       {{ fileExtension }}
     </h1>
     <h4>{{ name }}</h4>
@@ -24,11 +17,7 @@
 </template>
 
 <script lang="ts">
-import {
-  defineComponent,
-  computed,
-  toRef,
-} from 'vue';
+import { defineComponent, computed, toRef } from 'vue';
 
 export default defineComponent({
   name: 'AssetCard',
@@ -46,11 +35,7 @@ export default defineComponent({
       default: false,
     },
   },
-  setup(props: {
-    thumbnail: string | null;
-    name: string;
-    isSelected: boolean;
-  }) {
+  setup(props: { thumbnail: string | null; name: string; isSelected: boolean }) {
     const name = toRef(props, 'name');
     const fileExtension = computed(() => {
       if (!name.value) return '';
@@ -68,7 +53,7 @@ export default defineComponent({
 
 <style lang="scss" scoped>
 @import '~@/assets/scss/variables';
-@import "~seng-scss";
+@import '~seng-scss';
 
 .asset-card {
   display: flex;
