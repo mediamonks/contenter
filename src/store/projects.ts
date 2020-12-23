@@ -337,11 +337,13 @@ export async function createNewLocale(code: string, name: string, content?: obje
   perfTrace.stop();
 }
 
-export function getCurrentProjectContent(code: string): object | Array<any> | undefined {
+export function getCurrentProjectContent(
+  code: string,
+): Record<string, any> | Array<any> | undefined {
   return projectsState.currentProject?.locales?.[code].content;
 }
 
-export function downloadData(data: object | Array<any>, name = 'content') {
+export function downloadData(data: Record<string, any> | Array<any>, name = 'content') {
   const dataString = `data:text/json;charset=utf-8,${encodeURIComponent(JSON.stringify(data))}`;
   downloadFile(dataString, `${name}.json`);
 }
