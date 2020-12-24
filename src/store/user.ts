@@ -56,9 +56,10 @@ export async function parseUser(authUser: firebase.User, isNewUser = false) {
   const perfTrace = (await loadFirebasePerformance()).trace('parseUser');
   perfTrace.start();
 
-  const { displayName, email, photoUrl, uid } = authUser;
+  // eslint-disable-next-line @typescript-eslint/naming-convention
+  const { displayName, email, photoURL, uid } = authUser;
 
-  if (!displayName || !email || !photoUrl) {
+  if (!displayName || !email || !photoURL) {
     await (await loadFirebaseAuth()).signOut();
     throw new Error('Some user information is missing');
   }
@@ -66,7 +67,7 @@ export async function parseUser(authUser: firebase.User, isNewUser = false) {
   const userData: User = {
     displayName,
     email: email as Email,
-    photoUrl: photoUrl as Uri,
+    photoUrl: photoURL as Uri,
     uid: uid as UserId,
   };
 
