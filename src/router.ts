@@ -90,7 +90,7 @@ const routes: ReadonlyArray<RouteRecordRaw> = [
 ];
 
 const router = createRouter({
-  history: createWebHistory(process.env.BASE_Url),
+  history: createWebHistory(process.env.BASE_URL),
   routes,
 } as RouterOptions);
 
