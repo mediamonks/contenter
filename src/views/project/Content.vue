@@ -176,10 +176,7 @@ export default defineComponent({
         setTimeout(() => {
           mdEditors.forEach((mdEditor) => {
             mdEditor.toTextArea();
-            // eslint-disable-next-line no-param-reassign
-            mdEditor = null;
           });
-
           mdEditors = [];
           resolve();
         }, 10);
