@@ -51,7 +51,7 @@ export default defineComponent({
     const loading = ref(false);
 
     function handleSchemaUpload(event: InputEvent) {
-      const [file]: File = event.target.files;
+      const file: File | undefined = (event.target as HTMLInputElement).files?.[0];
 
       if (!file || !projectsState.currentProject) return;
       loading.value = true;
