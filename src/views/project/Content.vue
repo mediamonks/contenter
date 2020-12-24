@@ -250,7 +250,7 @@ export default defineComponent({
       await initMarkdownEditor();
 
       mdEditors.forEach((mdEditor) => {
-        const { value } = mdEditor.element;
+        const { value } = (mdEditor as any).element;
 
         if (value !== mdEditor.value()) {
           mdEditor.value(value as string);
