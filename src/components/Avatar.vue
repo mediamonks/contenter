@@ -1,7 +1,7 @@
 <template>
   <div
     class="avatar"
-    :class="{ 'inverted': isInverted, 'color-inverted': isColorInverted }"
+    :class="{ inverted: isInverted, 'color-inverted': isColorInverted }"
   >
     <img
       :src="image"
@@ -53,48 +53,48 @@ export default defineComponent({
 </script>
 
 <style lang="scss" scoped>
-  @import "~@/assets/scss/variables";
+@import '~@/assets/scss/variables';
 
-  .avatar {
-    display: flex;
-    align-items: center;
-    width: fit-content;
+.avatar {
+  display: flex;
+  align-items: center;
+  width: fit-content;
+
+  img {
+    width: 6rem;
+    height: 6rem;
+    border-radius: 100%;
+    object-fit: cover;
+    margin-right: 1rem;
+    border: $colorGrey100 solid 1px;
+  }
+
+  p {
+    text-transform: capitalize;
+  }
+
+  &.inverted {
+    flex-direction: row-reverse;
+    text-align: right;
 
     img {
-      width: 6rem;
-      height: 6rem;
-      border-radius: 100%;
-      object-fit: cover;
-      margin-right: 1rem;
-      border: $colorGrey100 solid 1px;
+      margin-right: 0;
+      margin-left: 1rem;
+    }
+  }
+
+  &.color-inverted {
+    img {
+      border-color: transparent;
+    }
+
+    h4 {
+      color: $colorGrey050;
     }
 
     p {
-      text-transform: capitalize;
-    }
-
-    &.inverted {
-      flex-direction: row-reverse;
-      text-align: right;
-
-      img {
-        margin-right: 0;
-        margin-left: 1rem;
-      }
-    }
-
-    &.color-inverted {
-      img {
-        border-color: transparent;
-      }
-
-      h4 {
-        color: $colorGrey050;
-      }
-
-      p {
-        color: $colorGrey100;
-      }
+      color: $colorGrey100;
     }
   }
+}
 </style>

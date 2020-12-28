@@ -39,9 +39,7 @@
 </template>
 
 <script lang="ts">
-import {
-  defineComponent, ref, computed,
-} from 'vue';
+import { defineComponent, ref, computed } from 'vue';
 import TextField from '@/components/TextField.vue';
 import { User, userState, fetchAllUsers } from '@/store/user';
 import Avatar from '@/components/Avatar.vue';
@@ -65,7 +63,7 @@ export default defineComponent({
   },
   emits: ['update-users'],
   setup(props, context) {
-    fetchAllUsers().catch((error) => displayError(error));
+    fetchAllUsers().catch((error_) => displayError(error_));
 
     const searchInput = ref('');
     const selectedResults = ref<User[]>([]);
@@ -123,55 +121,55 @@ export default defineComponent({
 </script>
 
 <style lang="scss" scoped>
-  @import '~@/assets/scss/variables';
-  @import "~seng-scss";
+@import '~@/assets/scss/variables';
+@import '~seng-scss';
 
-  .search-selector {
+.search-selector {
+  width: 100%;
+  position: relative;
+  margin-bottom: 10rem;
+
+  .result-wrapper {
+    position: absolute;
     width: 100%;
-    position: relative;
-    margin-bottom: 10rem;
+    z-index: zindex($zLayout, zBoost);
+  }
 
-    .result-wrapper {
-      position: absolute;
-      width: 100%;
-      z-index: zindex($zLayout, zBoost);
-    }
+  .results {
+    padding: 1rem;
+    max-height: 20rem;
+    overflow: auto;
+    list-style: none;
+    border: solid 1px $colorGrey100;
+    border-radius: 0.5rem;
+    background: $colorGrey050;
+    margin-top: 2rem;
 
-    .results {
-      padding: 1rem;
-      max-height: 20rem;
-      overflow: auto;
-      list-style: none;
-      border: solid 1px $colorGrey100;
+    li {
+      padding: 0.5rem;
       border-radius: 0.5rem;
-      background: $colorGrey050;
-      margin-top: 2rem;
+      cursor: pointer;
+      transition: 0.1s ease-out;
 
-      li {
-        padding: 0.5rem;
-        border-radius: 0.5rem;
-        cursor: pointer;
-        transition: 0.1s ease-out;
-
-        &:not(:last-child) {
-          margin-bottom: 1rem;
-        }
-
-        &:hover {
-          background: $colorGrey100;
-        }
+      &:not(:last-child) {
+        margin-bottom: 1rem;
       }
-    }
 
-    .selected-users {
-      list-style: none;
-      display: flex;
-      flex-wrap: wrap;
-      margin-top: 2rem;
-
-      li {
-        cursor: pointer;
+      &:hover {
+        background: $colorGrey100;
       }
     }
   }
+
+  .selected-users {
+    list-style: none;
+    display: flex;
+    flex-wrap: wrap;
+    margin-top: 2rem;
+
+    li {
+      cursor: pointer;
+    }
+  }
+}
 </style>

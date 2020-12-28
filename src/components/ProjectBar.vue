@@ -41,24 +41,24 @@ export default defineComponent({
 </script>
 
 <style lang="scss" scoped>
-  @import '~@/assets/scss/variables';
-  @import "~seng-scss";
+@import '~@/assets/scss/variables';
+@import '~seng-scss';
 
-  .project-bar {
-    position: sticky;
-    top: 0;
-    background: $colorGrey050;
-    z-index: zindex($zLayout, projectBar);
-    height: 13rem;
-    width: 100%;
-    border-bottom: 1px solid $colorGrey500;
-    padding: 4rem;
+.project-bar {
+  position: sticky;
+  top: 0;
+  background: $colorGrey050;
+  z-index: zindex($zLayout, projectBar);
+  height: 13rem;
+  width: 100%;
+  border-bottom: 1px solid $colorGrey500;
+  padding: 4rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+
+  aside {
     display: flex;
-    justify-content: space-between;
-    align-items: center;
-
-    aside {
-      display: flex;
-    }
   }
+}
 </style>

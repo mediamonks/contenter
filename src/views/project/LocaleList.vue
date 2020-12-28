@@ -111,10 +111,15 @@ import Edit from '@/assets/icons/Edit.vue';
 import Copy from '@/assets/icons/Copy.vue';
 import Download from '@/assets/icons/Download.vue';
 import {
-  createNewLocale, downloadData, getCurrentProjectContent, projectsState,
+  createNewLocale,
+  downloadData,
+  getCurrentProjectContent,
+  LocaleCode,
+  projectsState,
 } from '@/store/projects';
 import { displayError } from '@/store/message';
 import router from '@/router';
+import { Json } from '@/types/Json';
 
 export default defineComponent({
   name: 'LocaleList',
@@ -131,13 +136,13 @@ export default defineComponent({
   setup() {
     const modalVisible = ref(false);
     const localeCreationFormData = reactive<{
-      code: string;
+      code: LocaleCode;
       name: string;
-      content: object | any[] | undefined;
+      content: Json | undefined;
       duplicate: boolean;
-      oldLocale: string | null;
+      oldLocale: LocaleCode | null;
     }>({
-      code: '',
+      code: '' as LocaleCode,
       name: '',
       content: undefined,
       duplicate: false,
@@ -145,7 +150,7 @@ export default defineComponent({
     });
 
     function resetLocaleForm() {
-      localeCreationFormData.code = '';
+      localeCreationFormData.code = '' as LocaleCode;
       localeCreationFormData.name = '';
       localeCreationFormData.content = undefined;
       localeCreationFormData.duplicate = false;
@@ -163,14 +168,13 @@ export default defineComponent({
     }
 
     async function handleFormSubmit() {
-      localeCreationFormData.code = localeCreationFormData.code.toUpperCase();
+      localeCreationFormData.code = localeCreationFormData.code.toUpperCase() as LocaleCode;
 
       await createNewLocale(
         localeCreationFormData.code,
         localeCreationFormData.name,
         localeCreationFormData.content,
-      )
-        .catch((error) => displayError(error));
+      ).catch((error) => displayError(error));
 
       resetLocaleForm();
 
@@ -182,7 +186,7 @@ export default defineComponent({
       router.push({ name: 'ProjectContent', params: { projectId, locale } });
     }
 
-    function duplicateLocale(locale: string) {
+    function duplicateLocale(locale: LocaleCode) {
       localeCreationFormData.content = getCurrentProjectContent(locale);
       localeCreationFormData.duplicate = true;
       localeCreationFormData.oldLocale = locale;
@@ -190,7 +194,7 @@ export default defineComponent({
       openCreateLocaleModal();
     }
 
-    function downloadLocale(locale: string) {
+    function downloadLocale(locale: LocaleCode) {
       const content = getCurrentProjectContent(locale);
 
       if (!content) {
@@ -262,7 +266,8 @@ export default defineComponent({
         border-collapse: collapse;
 
         &:not(:last-child) {
-          th, td {
+          th,
+          td {
             border-bottom: solid 1px $colorGrey100;
             padding: 0;
           }

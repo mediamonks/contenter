@@ -35,7 +35,8 @@
         v-else
         class="no-assets"
       >
-        <h1>This project has no assets</h1><Button
+        <h1>This project has no assets</h1>
+        <Button
           :loading="isLoading"
           label-for="asset-uploader"
         >
@@ -74,15 +75,16 @@ export default defineComponent({
   },
   setup() {
     const isLoading = ref(true);
-    if (projectsState.currentProject?.assets
-      && projectsState.currentProject?.assets?.length > 0) {
+    if (projectsState.currentProject?.assets && projectsState.currentProject?.assets?.length > 0) {
       isLoading.value = false;
     }
     getProjectAssets()
       .catch((error) => displayError(error))
-      .then(() => { isLoading.value = false; });
+      .then(() => {
+        isLoading.value = false;
+      });
 
-    const assetInfoPanel = ref<(typeof AssetInfoPanel) | null>(null);
+    const assetInfoPanel = ref<typeof AssetInfoPanel | null>(null);
     function openInfoPanel(index: number) {
       if (!assetInfoPanel.value) return;
       assetInfoPanel.value.openView(projectsState.currentProject?.assets?.[index]);
@@ -98,7 +100,9 @@ export default defineComponent({
       isUploading.value = true;
       return uploadAsset(fileList[0], projectsState.currentProject.metadata.id)
         .catch((error) => displayError(error))
-        .then(() => { isUploading.value = false; });
+        .then(() => {
+          isUploading.value = false;
+        });
     }
 
     return {
@@ -119,7 +123,8 @@ export default defineComponent({
   overflow-y: scroll;
   padding-bottom: 4rem;
 
-  .no-assets, .loading {
+  .no-assets,
+  .loading {
     display: flex;
     height: 100%;
     width: 100%;

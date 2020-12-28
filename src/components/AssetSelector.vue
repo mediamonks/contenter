@@ -99,7 +99,7 @@ export default defineComponent({
 
 <style lang="scss" scoped>
 @import '~@/assets/scss/variables';
-@import "~seng-scss";
+@import '~seng-scss';
 
 .asset-selector {
   position: fixed;

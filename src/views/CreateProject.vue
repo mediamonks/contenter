@@ -27,15 +27,11 @@
 </template>
 
 <script lang="ts">
-import {
-  defineComponent,
-  watch,
-  ref,
-} from 'vue';
+import { defineComponent, watch, ref } from 'vue';
 import Button from '@/components/Button.vue';
 import TextField from '@/components/TextField.vue';
 import SearchSelector from '@/components/SearchSelector.vue';
-import { createNewProject, projectsState, syncProjectsMetadata } from '@/store/projects';
+import { createNewProject, ProjectId, projectsState, syncProjectsMetadata } from '@/store/projects';
 import { User, userState } from '@/store/user';
 import router, { RouteNames } from '@/router';
 import { displayError } from '@/store/message';
@@ -50,7 +46,7 @@ export default defineComponent({
   },
   setup() {
     const name = ref('');
-    const id = ref('');
+    const id = ref<ProjectId>('' as ProjectId);
     const selectedUsers = ref<Array<User>>([]);
 
     const isLoading = ref(false);
@@ -58,7 +54,7 @@ export default defineComponent({
     const idError = ref('');
 
     watch(name, () => {
-      id.value = name.value.toLowerCase().split(' ').join('-');
+      id.value = name.value.toLowerCase().split(' ').join('-') as ProjectId;
     });
 
     watch(id, async () => {
@@ -78,15 +74,16 @@ export default defineComponent({
     function handleFormSubmit() {
       if (!userState.currentUser) throw displayError(new Error('No user defined'));
       isLoading.value = true;
-      return createNewProject(
-        name.value,
-        id.value,
-        userState.currentUser.uid,
-        selectedUsers.value,
-      )
-        .then(() => { router.push({ name: RouteNames.HOME }); })
-        .catch((error) => { displayError(error); })
-        .then(() => { isLoading.value = false; });
+      return createNewProject(name.value, id.value, userState.currentUser.uid, selectedUsers.value)
+        .then(() => {
+          router.push({ name: RouteNames.HOME });
+        })
+        .catch((error) => {
+          displayError(error);
+        })
+        .then(() => {
+          isLoading.value = false;
+        });
     }
 
     function updateSelectedUsers(users: Array<User>) {
@@ -111,24 +108,24 @@ export default defineComponent({
 </script>
 
 <style lang="scss" scoped>
-  .create-project {
-    main {
+.create-project {
+  main {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+
+    form {
       display: flex;
-      justify-content: center;
-      align-items: center;
-      height: 100vh;
+      flex-direction: column;
+      align-items: flex-end;
+      width: 100%;
+      max-width: 60rem;
 
-      form {
-        display: flex;
-        flex-direction: column;
-        align-items: flex-end;
-        width: 100%;
-        max-width: 60rem;
-
-        > * {
-          margin-top: 5rem;
-        }
+      > * {
+        margin-top: 5rem;
       }
     }
   }
+}
 </style>

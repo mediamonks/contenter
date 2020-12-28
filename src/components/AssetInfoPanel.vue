@@ -14,9 +14,7 @@
       >
     </div>
     <div class="aside">
-      <AssetInfo
-        :data="data"
-      />
+      <AssetInfo :data="data" />
       <button
         class="close-button"
         @click="closeView"
@@ -28,9 +26,7 @@
 </template>
 
 <script lang="ts">
-import {
-  defineComponent, ref, onMounted,
-} from 'vue';
+import { defineComponent, ref, onMounted } from 'vue';
 import gsap from 'gsap';
 import { Asset } from '@/store/projects';
 import AssetInfo from '@/components/AssetInfo.vue';
@@ -62,25 +58,35 @@ export default defineComponent({
       });
 
       timeline
-        .fromTo(overlayBox, {
-          autoAlpha: 0,
-          pointerEvents: 'none',
-          duration: 0.1,
-        }, {
-          autoAlpha: 1,
-          pointerEvents: 'all',
-        }, 0)
-        .fromTo(aside, {
-          x: '100%',
-          autoAlpha: 0,
-          ease: 'power3',
-          pointerEvents: 'none',
-          duration: 0.1,
-        }, {
-          x: '0%',
-          autoAlpha: 1,
-          pointerEvents: 'all',
-        }, 0);
+        .fromTo(
+          overlayBox,
+          {
+            autoAlpha: 0,
+            pointerEvents: 'none',
+            duration: 0.1,
+          },
+          {
+            autoAlpha: 1,
+            pointerEvents: 'all',
+          },
+          0,
+        )
+        .fromTo(
+          aside,
+          {
+            x: '100%',
+            autoAlpha: 0,
+            ease: 'power3',
+            pointerEvents: 'none',
+            duration: 0.1,
+          },
+          {
+            x: '0%',
+            autoAlpha: 1,
+            pointerEvents: 'all',
+          },
+          0,
+        );
       return timeline;
     }
 
@@ -93,7 +99,9 @@ export default defineComponent({
 
     function closeView() {
       if (!toggleTimeline) throw displayError(new Error('No timeline defined'));
-      return toggleTimeline.reverse().then(() => { data.value = null; });
+      return toggleTimeline.reverse().then(() => {
+        data.value = null;
+      });
     }
 
     onMounted(() => {
@@ -119,7 +127,7 @@ export default defineComponent({
 
 <style lang="scss" scoped>
 @import '~@/assets/scss/variables';
-@import "~seng-scss";
+@import '~seng-scss';
 
 .asset-info-panel {
   position: fixed;
@@ -172,7 +180,7 @@ export default defineComponent({
 
     .icon {
       height: 2rem;
-      color: $colorGrey050
+      color: $colorGrey050;
     }
 
     &:hover {

@@ -17,12 +17,7 @@
         "title": "Course",
         "description": "An explanation about the purpose of this instance.",
         "default": {},
-        "required": [
-          "title",
-          "headingImage",
-          "id",
-          "articles"
-        ],
+        "required": ["title", "headingImage", "id", "articles"],
         "properties": {
           "title": {
             "id": "#/items/anyOf/0/properties/title",
@@ -30,9 +25,7 @@
             "title": "Title",
             "description": "An explanation about the purpose of this instance.",
             "default": "",
-            "examples": [
-              "Critical Design"
-            ]
+            "examples": ["Critical Design"]
           },
           "headingImage": {
             "id": "#/items/anyOf/0/properties/headingImage",
@@ -40,9 +33,7 @@
             "title": "Heading Image",
             "description": "An explanation about the purpose of this instance.",
             "default": "",
-            "examples": [
-              "./img/courseImages/trash.jpg"
-            ]
+            "examples": ["./img/courseImages/trash.jpg"]
           },
           "id": {
             "id": "#/items/anyOf/0/properties/id",
@@ -50,9 +41,7 @@
             "title": "ID",
             "description": "An explanation about the purpose of this instance.",
             "default": "",
-            "examples": [
-              "critical-design"
-            ]
+            "examples": ["critical-design"]
           },
           "articles": {
             "id": "#/items/anyOf/0/properties/articles",
@@ -72,12 +61,7 @@
                   "title": "Articles",
                   "description": "An explanation about the purpose of this instance.",
                   "default": {},
-                  "required": [
-                    "title",
-                    "subtitle",
-                    "headingImage",
-                    "content"
-                  ],
+                  "required": ["title", "subtitle", "headingImage", "content"],
                   "properties": {
                     "title": {
                       "id": "#/items/anyOf/0/properties/articles/items/anyOf/0/properties/title",
@@ -85,9 +69,7 @@
                       "title": "Title",
                       "description": "An explanation about the purpose of this instance.",
                       "default": "",
-                      "examples": [
-                        "Manifesto and personal project concept"
-                      ]
+                      "examples": ["Manifesto and personal project concept"]
                     },
                     "subtitle": {
                       "id": "#/items/anyOf/0/properties/articles/items/anyOf/0/properties/subtitle",
@@ -95,9 +77,7 @@
                       "title": "Subtitle",
                       "description": "An explanation about the purpose of this instance.",
                       "default": "",
-                      "examples": [
-                        "Critical Design Project"
-                      ]
+                      "examples": ["Critical Design Project"]
                     },
                     "headingImage": {
                       "id": "#/items/anyOf/0/properties/articles/items/anyOf/0/properties/headingImage",
@@ -105,9 +85,7 @@
                       "title": "Heading Image",
                       "description": "An explanation about the purpose of this instance.",
                       "default": "",
-                      "examples": [
-                        "./img/courseImages/trash.jpg"
-                      ]
+                      "examples": ["./img/courseImages/trash.jpg"]
                     },
                     "content": {
                       "id": "#/items/anyOf/0/properties/articles/items/anyOf/0/properties/content",

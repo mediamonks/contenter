@@ -61,53 +61,54 @@ export default defineComponent({
 </script>
 
 <style lang="scss" scoped>
-  @import '~@/assets/scss/variables';
+@import '~@/assets/scss/variables';
 
-  .home {
-    height: 100vh;
-    padding: 6rem 0;
-    overflow-y: auto;
+.home {
+  height: 100vh;
+  padding: 6rem 0;
+  overflow-y: auto;
 
-    main {
-      max-width: 166rem;
-      margin: 0 auto;
-      padding: 0 3rem;
+  main {
+    max-width: 166rem;
+    margin: 0 auto;
+    padding: 0 3rem;
 
-      ul {
-        margin-top: 3rem;
-        display: grid;
-        grid-template-columns: 1fr 1fr 1fr;
-        grid-gap: 2rem;
-        list-style: none;
+    ul {
+      margin-top: 3rem;
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr;
+      grid-gap: 2rem;
+      list-style: none;
 
-        a {
-          color: initial;
-          text-decoration: none;
+      a {
+        color: initial;
+        text-decoration: none;
+      }
+
+      .add-project {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        text-align: center;
+        height: 30rem;
+        width: 100%;
+        border: dashed 2px $colorGrey100;
+        border-radius: 1rem;
+        background: none;
+        cursor: pointer;
+        transition: 0.2s ease-out;
+
+        h2 {
+          color: $colorBlue400;
         }
 
-        .add-project {
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          text-align: center;
-          height: 30rem;
-          width: 100%;
-          border: dashed 2px $colorGrey100;
-          border-radius: 1rem;
-          background: none;
-          cursor: pointer;
-          transition: 0.2s ease-out;
-
-          h2 {
-            color: $colorBlue400;
-          }
-
-          &:hover, &:focus {
-            outline: none;
-            border-color: $colorBlue400;
-          }
+        &:hover,
+        &:focus {
+          outline: none;
+          border-color: $colorBlue400;
         }
       }
     }
   }
+}
 </style>

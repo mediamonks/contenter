@@ -54,29 +54,29 @@ export default defineComponent({
 </script>
 
 <style lang="scss" scoped>
-  @import "~@/assets/scss/variables";
+@import '~@/assets/scss/variables';
 
-  .sign-in {
+.sign-in {
+  display: flex;
+  min-height: 100vh;
+  justify-content: center;
+  align-items: center;
+
+  main {
     display: flex;
-    min-height: 100vh;
-    justify-content: center;
+    flex-direction: column;
     align-items: center;
+    padding: 8rem;
+    border-radius: 1rem;
+    border: 1px solid $colorGrey100;
 
-    main {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      padding: 8rem;
-      border-radius: 1rem;
-      border: 1px solid $colorGrey100;
+    .button {
+      margin-top: 5rem;
+    }
 
-      .button {
-        margin-top: 5rem;
-      }
-
-      .error {
-        margin-top: 3rem;
-      }
+    .error {
+      margin-top: 3rem;
     }
   }
+}
 </style>

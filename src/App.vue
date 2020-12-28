@@ -164,7 +164,10 @@ code {
   }
 }
 
-button, input, textarea, select {
+button,
+input,
+textarea,
+select {
   font-family: Montserrat, sans-serif;
 }
 
@@ -178,7 +181,9 @@ img {
   display: block;
 }
 
-input, select, textarea {
+input,
+select,
+textarea {
   font-size: 2rem;
   padding: 1rem;
   border: solid 1px $colorGrey100;

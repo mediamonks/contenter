@@ -1,14 +1,14 @@
 import { reactive } from 'vue';
 
-interface MessageState {
-  currentMessage: DisplayMessage | null;
-  readonly errorLog: Array<Error>;
-}
-
 interface DisplayMessage {
   message: string;
   time: Date;
   isError: boolean;
+}
+
+interface MessageState {
+  currentMessage: DisplayMessage | null;
+  readonly errorLog: Array<Error>;
 }
 
 const messageState = reactive<MessageState>({
@@ -16,7 +16,7 @@ const messageState = reactive<MessageState>({
   errorLog: [],
 });
 
-function displayMessage(message: string, error?: Error, delay = 5000) {
+function displayMessage(message: string, error?: Error, delay = 5000): void {
   if (messageState.currentMessage) return;
   messageState.currentMessage = {
     message,
@@ -33,13 +33,8 @@ function displayMessage(message: string, error?: Error, delay = 5000) {
   }, delay);
 }
 
-function displayError(error: Error, delay = 5000) {
+function displayError(error: Error, delay = 5000): void {
   displayMessage(error.message, error, delay);
 }
 
-export {
-  messageState,
-  displayError,
-  displayMessage,
-  DisplayMessage,
-};
+export { messageState, displayError, displayMessage, DisplayMessage };

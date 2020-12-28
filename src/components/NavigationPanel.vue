@@ -156,18 +156,41 @@ export default defineComponent({
 </script>
 
 <style lang="scss" scoped>
-  @import "~@/assets/scss/variables";
-  @import "~seng-scss";
+@import '~@/assets/scss/variables';
+@import '~seng-scss';
 
-  .navigation-panel {
-    max-width: 38rem;
+.navigation-panel {
+  max-width: 38rem;
+  width: 100%;
+  height: 100vh;
+  background: $colorGrey700;
+  color: $colorGrey050;
+  display: grid;
+  grid-template-rows: 13rem auto 15rem 12rem;
+  z-index: zindex($zLayout, navigation);
+
+  > * {
     width: 100%;
-    height: 100vh;
-    background: $colorGrey700;
-    color: $colorGrey050;
-    display: grid;
-    grid-template-rows: 13rem auto 15rem 12rem;
-    z-index: zindex($zLayout, navigation);
+    height: fit-content;
+
+    &:not(:last-child) {
+      border-bottom: solid 1px $colorGrey500;
+    }
+  }
+
+  header {
+    padding: 3rem;
+    height: 13rem;
+    display: flex;
+    align-items: center;
+
+    h3 {
+      color: inherit;
+    }
+  }
+
+  main {
+    flex-basis: 100%;
 
     > * {
       width: 100%;
@@ -177,148 +200,125 @@ export default defineComponent({
         border-bottom: solid 1px $colorGrey500;
       }
     }
+  }
 
-    header {
-      padding: 3rem;
-      height: 13rem;
-      display: flex;
-      align-items: center;
-
-      h3 {
-        color: inherit;
-      }
-    }
-
-    main {
-      flex-basis: 100%;
-
-      > * {
-        width: 100%;
-        height: fit-content;
-
-        &:not(:last-child) {
-          border-bottom: solid 1px $colorGrey500;
-        }
-      }
-    }
-
-    nav {
-      h3 {
-        padding: 0 3rem;
-        margin: 3rem 0 1rem;
-        color: $colorGrey050;
-      }
-
-      ul {
-        list-style: none;
-        padding: 0 0 3rem;
-
-        li {
-          width: 100%;
-        }
-
-        a {
-          color: $colorGrey100;
-          text-decoration: none;
-          font-weight: 600;
-          font-size: 2.25rem;
-          line-height: 1em;
-          width: 100%;
-          transition: background-color 0.1s ease-out;
-          padding: 1rem 3rem;
-          display: flex;
-          align-items: center;
-          height: calc(1em + 2 * 1.5rem);
-
-          .icon {
-            height: 1em;
-            width: 1.25em;
-            margin-right: 2rem;
-          }
-
-          &:hover {
-            background: $colorGrey600;
-          }
-
-          &.router-link-exact-active {
-            color: $colorBlue400;
-          }
-        }
-      }
-    }
-
-    footer {
-      display: flex;
-      justify-content: space-between;
-      padding: 3rem;
-      height: 100%;
-
-      .options {
-        display: flex;
-        align-items: center;
-
-        .sign-out-icon {
-          width: 3rem;
-          color: $colorGrey100;
-          transition: color 0.1s ease-out;
-          cursor: pointer;
-          position: relative;
-          height: fit-content;
-
-          &:before {
-            content: 'Sign Out';
-            position: absolute;
-            left: 5rem;
-            font-size: 1.75rem;
-            white-space: nowrap;
-            background: $colorGrey900;
-            padding: 0.75rem;
-            color: $colorGrey050;
-            border-radius: 0.5rem;
-            box-shadow: 0 1rem 2rem rgba(black, 0.15), 0 0 2rem rgba(black, 0.15);
-            opacity: 0;
-            visibility: hidden;
-            transition: opacity 0.2s ease;
-            line-height: 1em;
-          }
-
-          &:hover {
-            color: $colorGrey050;
-
-            &:before {
-              opacity: 1;
-              visibility: visible;
-            }
-          }
-        }
-      }
-    }
-
-    .issue-reporter-bar {
+  nav {
+    h3 {
       padding: 0 3rem;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      height: 100%;
+      margin: 3rem 0 1rem;
+      color: $colorGrey050;
+    }
 
-      h5 {
-        color: $colorGrey050;
-      }
+    ul {
+      list-style: none;
+      padding: 0 0 3rem;
 
-      p {
-        color: $colorGrey400;
+      li {
+        width: 100%;
       }
 
       a {
-        display: block;
-        width: 3rem;
-        color: $colorGrey400;
-        transition: 0.2s ease-out;
+        color: $colorGrey100;
+        text-decoration: none;
+        font-weight: 600;
+        font-size: 2.25rem;
+        line-height: 1em;
+        width: 100%;
+        transition: background-color 0.1s ease-out;
+        padding: 1rem 3rem;
+        display: flex;
+        align-items: center;
+        height: calc(1em + 2 * 1.5rem);
+
+        .icon {
+          height: 1em;
+          width: 1.25em;
+          margin-right: 2rem;
+        }
 
         &:hover {
-          color: $colorGrey200;
+          background: $colorGrey600;
+        }
+
+        &.router-link-exact-active {
+          color: $colorBlue400;
         }
       }
     }
   }
+
+  footer {
+    display: flex;
+    justify-content: space-between;
+    padding: 3rem;
+    height: 100%;
+
+    .options {
+      display: flex;
+      align-items: center;
+
+      .sign-out-icon {
+        width: 3rem;
+        color: $colorGrey100;
+        transition: color 0.1s ease-out;
+        cursor: pointer;
+        position: relative;
+        height: fit-content;
+
+        &:before {
+          content: 'Sign Out';
+          position: absolute;
+          left: 5rem;
+          font-size: 1.75rem;
+          white-space: nowrap;
+          background: $colorGrey900;
+          padding: 0.75rem;
+          color: $colorGrey050;
+          border-radius: 0.5rem;
+          box-shadow: 0 1rem 2rem rgba(black, 0.15), 0 0 2rem rgba(black, 0.15);
+          opacity: 0;
+          visibility: hidden;
+          transition: opacity 0.2s ease;
+          line-height: 1em;
+        }
+
+        &:hover {
+          color: $colorGrey050;
+
+          &:before {
+            opacity: 1;
+            visibility: visible;
+          }
+        }
+      }
+    }
+  }
+
+  .issue-reporter-bar {
+    padding: 0 3rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    height: 100%;
+
+    h5 {
+      color: $colorGrey050;
+    }
+
+    p {
+      color: $colorGrey400;
+    }
+
+    a {
+      display: block;
+      width: 3rem;
+      color: $colorGrey400;
+      transition: 0.2s ease-out;
+
+      &:hover {
+        color: $colorGrey200;
+      }
+    }
+  }
+}
 </style>

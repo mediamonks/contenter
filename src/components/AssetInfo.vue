@@ -34,8 +34,8 @@
               v-if="data.size >= fileSizeWarning"
               class="warn body-small"
             >
-              The size of this file is over {{ parseUnitSize(fileSizeWarning, 'B', 0) }},
-              please consider optimizing this file.
+              The size of this file is over {{ parseUnitSize(fileSizeWarning, 'B', 0) }}, please
+              consider optimizing this file.
             </p>
           </li>
         </ul>
@@ -54,10 +54,7 @@
 
 <script lang="ts">
 import {
-  defineComponent,
-  toRef,
-  computed,
-  PropType,
+  defineComponent, toRef, computed, PropType,
 } from 'vue';
 import Button from '@/components/Button.vue';
 import { copyValueToClipboard, downloadFile, parseUnitSize } from '@/util';

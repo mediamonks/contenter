@@ -1,4 +1,4 @@
-export function downloadFile(url: string, name: string) {
+export function downloadFile(url: string, name: string): void {
   const anchorNode = document.createElement('a');
   anchorNode.setAttribute('style', 'display: hidden;');
   anchorNode.setAttribute('href', url);
