@@ -45,14 +45,14 @@ export async function setUser(properties: User): Promise<User> {
   return snapshot.val();
 }
 
-export async function createNewUser(properties: User) {
+export async function createNewUser(properties: User): Promise<void> {
   await (await loadFirebaseDatabase()).ref(`users/${properties.uid}`).set({
     ...properties,
     role: 'editor',
   } as User);
 }
 
-export async function parseUser(authUser: firebase.User, isNewUser = false) {
+export async function parseUser(authUser: firebase.User, isNewUser = false): Promise<User> {
   const perfTrace = (await loadFirebasePerformance()).trace('parseUser');
   perfTrace.start();
 
@@ -88,7 +88,7 @@ export async function parseUser(authUser: firebase.User, isNewUser = false) {
   return user;
 }
 
-export async function signIn() {
+export async function signIn(): Promise<User> {
   const provider = new firebase.auth.GoogleAuthProvider();
   const authUser = await (await loadFirebaseAuth()).signInWithPopup(provider);
   if (!authUser.user || !authUser.additionalUserInfo) throw new Error('No user defined');
@@ -96,7 +96,7 @@ export async function signIn() {
   return parseUser(authUser.user, authUser.additionalUserInfo.isNewUser);
 }
 
-export async function signOut() {
+export async function signOut(): Promise<void> {
   const auth = await loadFirebaseAuth();
   if (!auth.currentUser) throw new Error('No user defined');
   await auth.signOut();
@@ -108,7 +108,7 @@ export async function signOut() {
   projectsState.userProjects = [];
 }
 
-export async function checkIfUserIsSignedIn() {
+export async function checkIfUserIsSignedIn(): Promise<User> {
   const auth = await loadFirebaseAuth();
   return new Promise<User>((resolve, reject) => {
     auth.onAuthStateChanged((state) => {
@@ -127,7 +127,7 @@ export async function checkIfUserIsSignedIn() {
   });
 }
 
-export async function updateUser(user: User) {
+export async function updateUser(user: User): Promise<User> {
   await (await loadFirebaseDatabase()).ref(`users/${user.uid}`).update(user);
   if (userState.currentUser && userState.currentUser.uid === user.uid) {
     await setUser(user);

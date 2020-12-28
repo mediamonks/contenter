@@ -91,6 +91,7 @@ import { displayError } from '@/store/message';
 import { loadFirebaseAnalytics } from '@/firebase';
 import { User } from '@/store/user';
 import AssetSelector from '@/components/AssetSelector.vue';
+import { Json } from '@/types/Json';
 
 export default defineComponent({
   name: 'Content',
@@ -109,12 +110,12 @@ export default defineComponent({
   },
   setup(props: { locale: string }) {
     const jsonEditor = ref<HTMLDivElement | null>(null);
-    const contentData = ref<Record<string, any> | null>(null);
+    const contentData = ref<Json | null>(null);
     // Necessary any because the JSON editor doesn't support TS properly
     let editor: any = null;
     let mdEditors: EasyMDE[] = [];
 
-    const projectData = computed<Record<string, any> | any[] | undefined>(() => getCurrentProjectContent(props.locale));
+    const projectData = computed<Json | undefined>(() => getCurrentProjectContent(props.locale));
 
     const localeName = computed<string | undefined>(
       () => projectsState.currentProject?.locales?.[props.locale].name,

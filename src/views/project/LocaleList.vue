@@ -114,10 +114,12 @@ import {
   createNewLocale,
   downloadData,
   getCurrentProjectContent,
+  LocaleCode,
   projectsState,
 } from '@/store/projects';
 import { displayError } from '@/store/message';
 import router from '@/router';
+import { Json } from '@/types/Json';
 
 export default defineComponent({
   name: 'LocaleList',
@@ -134,11 +136,11 @@ export default defineComponent({
   setup() {
     const modalVisible = ref(false);
     const localeCreationFormData = reactive<{
-      code: string;
+      code: LocaleCode;
       name: string;
-      content: Record<string, any> | any[] | undefined;
+      content: Json | undefined;
       duplicate: boolean;
-      oldLocale: string | null;
+      oldLocale: LocaleCode | null;
     }>({
       code: '',
       name: '',

@@ -16,7 +16,7 @@ const messageState = reactive<MessageState>({
   errorLog: [],
 });
 
-function displayMessage(message: string, error?: Error, delay = 5000) {
+function displayMessage(message: string, error?: Error, delay = 5000): void {
   if (messageState.currentMessage) return;
   messageState.currentMessage = {
     message,
@@ -33,7 +33,7 @@ function displayMessage(message: string, error?: Error, delay = 5000) {
   }, delay);
 }
 
-function displayError(error: Error, delay = 5000) {
+function displayError(error: Error, delay = 5000): void {
   displayMessage(error.message, error, delay);
 }
 
