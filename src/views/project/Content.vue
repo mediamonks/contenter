@@ -78,6 +78,7 @@ import { debounce, get } from 'lodash';
 import {
   downloadData,
   getCurrentProjectContent,
+  LocaleCode,
   onProjectUpdate,
   ProjectMetadata,
   projectsState,
@@ -115,7 +116,7 @@ export default defineComponent({
     let editor: any = null;
     let mdEditors: EasyMDE[] = [];
 
-    const projectData = computed<Json | undefined>(() => getCurrentProjectContent(props.locale));
+    const projectData = computed<Json | undefined>(() => getCurrentProjectContent(props.locale as LocaleCode));
 
     const localeName = computed<string | undefined>(
       () => projectsState.currentProject?.locales?.[props.locale].name,
@@ -270,7 +271,7 @@ export default defineComponent({
       });
     }
 
-    const referenceLocale = ref<string | null>(null);
+    const referenceLocale = ref<LocaleCode | null>(null);
 
     watch(referenceLocale, (value) => {
       if (!jsonEditor.value) return;

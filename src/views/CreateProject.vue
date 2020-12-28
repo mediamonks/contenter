@@ -31,7 +31,7 @@ import { defineComponent, watch, ref } from 'vue';
 import Button from '@/components/Button.vue';
 import TextField from '@/components/TextField.vue';
 import SearchSelector from '@/components/SearchSelector.vue';
-import { createNewProject, projectsState, syncProjectsMetadata } from '@/store/projects';
+import { createNewProject, ProjectId, projectsState, syncProjectsMetadata } from '@/store/projects';
 import { User, userState } from '@/store/user';
 import router, { RouteNames } from '@/router';
 import { displayError } from '@/store/message';
@@ -46,7 +46,7 @@ export default defineComponent({
   },
   setup() {
     const name = ref('');
-    const id = ref('');
+    const id = ref<ProjectId>('' as ProjectId);
     const selectedUsers = ref<Array<User>>([]);
 
     const isLoading = ref(false);
@@ -54,7 +54,7 @@ export default defineComponent({
     const idError = ref('');
 
     watch(name, () => {
-      id.value = name.value.toLowerCase().split(' ').join('-');
+      id.value = name.value.toLowerCase().split(' ').join('-') as ProjectId;
     });
 
     watch(id, async () => {

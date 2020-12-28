@@ -142,7 +142,7 @@ export default defineComponent({
       duplicate: boolean;
       oldLocale: LocaleCode | null;
     }>({
-      code: '',
+      code: '' as LocaleCode,
       name: '',
       content: undefined,
       duplicate: false,
@@ -150,7 +150,7 @@ export default defineComponent({
     });
 
     function resetLocaleForm() {
-      localeCreationFormData.code = '';
+      localeCreationFormData.code = '' as LocaleCode;
       localeCreationFormData.name = '';
       localeCreationFormData.content = undefined;
       localeCreationFormData.duplicate = false;
@@ -168,7 +168,7 @@ export default defineComponent({
     }
 
     async function handleFormSubmit() {
-      localeCreationFormData.code = localeCreationFormData.code.toUpperCase();
+      localeCreationFormData.code = localeCreationFormData.code.toUpperCase() as LocaleCode;
 
       await createNewLocale(
         localeCreationFormData.code,
@@ -186,7 +186,7 @@ export default defineComponent({
       router.push({ name: 'ProjectContent', params: { projectId, locale } });
     }
 
-    function duplicateLocale(locale: string) {
+    function duplicateLocale(locale: LocaleCode) {
       localeCreationFormData.content = getCurrentProjectContent(locale);
       localeCreationFormData.duplicate = true;
       localeCreationFormData.oldLocale = locale;
@@ -194,7 +194,7 @@ export default defineComponent({
       openCreateLocaleModal();
     }
 
-    function downloadLocale(locale: string) {
+    function downloadLocale(locale: LocaleCode) {
       const content = getCurrentProjectContent(locale);
 
       if (!content) {
