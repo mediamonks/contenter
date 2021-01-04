@@ -3,7 +3,7 @@
     <ProjectBar>
       <Button
         class="button"
-        :loading="loading"
+        :is-loading="loading"
         label-for="schema-file-selector"
         flat
       >
@@ -11,7 +11,7 @@
       </Button>
     </ProjectBar>
     <main>
-      <div v-if="currentProject.schemaURL">
+      <div v-if="currentProject.schemaUrl">
         <h1>Schema</h1>
         <pre><code>{{ currentProjectSchema }}</code></pre>
       </div>
@@ -51,9 +51,7 @@ export default defineComponent({
     const loading = ref(false);
 
     function handleSchemaUpload(event: InputEvent) {
-      // eslint-disable-next-line @typescript-eslint/ban-ts-ignore
-      // @ts-ignore
-      const [file]: File = event.target.files;
+      const file: File | undefined = (event.target as HTMLInputElement).files?.[0];
 
       if (!file || !projectsState.currentProject) return;
       loading.value = true;
@@ -85,39 +83,39 @@ export default defineComponent({
 </script>
 
 <style lang="scss" scoped>
-  @import '~@/assets/scss/variables';
+@import '~@/assets/scss/variables';
 
-  .schema {
-    height: 100%;
+.schema {
+  height: 100%;
 
-    main {
-      height: calc(100% - 13rem);
-      width: calc(100vw - 38rem);
-      padding: 4rem;
+  main {
+    height: calc(100% - 13rem);
+    width: calc(100vw - 38rem);
+    padding: 4rem;
 
-      pre {
-        padding: 2rem;
-        background: $colorGrey800;
-        color: $colorGrey050;
-        border-radius: 1rem;
-        overflow-y: auto;
-        overflow-x: auto;
-        max-height: 70vh;
-      }
-    }
-
-    .upload-input {
-      display: none;
-    }
-
-    .no-schema {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-
-      .button {
-        margin-top: 2rem;
-      }
+    pre {
+      padding: 2rem;
+      background: $colorGrey800;
+      color: $colorGrey050;
+      border-radius: 1rem;
+      overflow-y: auto;
+      overflow-x: auto;
+      max-height: 70vh;
     }
   }
+
+  .upload-input {
+    display: none;
+  }
+
+  .no-schema {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+
+    .button {
+      margin-top: 2rem;
+    }
+  }
+}
 </style>

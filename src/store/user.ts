@@ -6,28 +6,36 @@ import {
   loadFirebaseDatabase,
   loadFirebasePerformance,
 } from '@/firebase';
-import { projectsState } from '@/store/projects';
+// TODO: Fix this
+// eslint-disable-next-line import/no-cycle
+import { ProjectId, projectsState } from '@/store/projects';
+import { Brand } from '@/types/Brand';
+import { Uri } from '@/types/Uri';
+import { Email } from '@/types/Email';
 
-interface User {
-  uid: string;
+export type UserId = Brand<'UserId', string>;
+export type Role = 'editor' | 'developer' | 'admin';
+
+export interface User {
+  uid: UserId;
   displayName: string;
-  email: string;
-  photoURL: string;
-  projects?: string[];
+  email: Email;
+  photoUrl: Uri;
+  projectIds?: Array<ProjectId>;
   role?: 'editor' | 'developer' | 'admin';
 }
 
-interface UserState {
+export interface UserState {
   currentUser: User | null;
-  users: User[];
+  users: Array<User>;
 }
 
-const userState = reactive<UserState>({
+export const userState = reactive<UserState>({
   currentUser: null,
   users: [],
 });
 
-async function setUser(properties: User): Promise<User> {
+export async function setUser(properties: User): Promise<User> {
   const snapshot = await (await loadFirebaseDatabase())
     .ref(`users/${properties.uid}`)
     .once('value');
@@ -37,25 +45,19 @@ async function setUser(properties: User): Promise<User> {
   return snapshot.val();
 }
 
-async function createNewUser(properties: User) {
-  await (await loadFirebaseDatabase())
-    .ref(`users/${properties.uid}`)
-    .set({
-      ...properties,
-      role: 'editor',
-    } as User);
+export async function createNewUser(properties: User): Promise<void> {
+  await (await loadFirebaseDatabase()).ref(`users/${properties.uid}`).set({
+    ...properties,
+    role: 'editor',
+  } as User);
 }
 
-async function parseUser(authUser: firebase.User, isNewUser = false) {
+export async function parseUser(authUser: firebase.User, isNewUser = false): Promise<User> {
   const perfTrace = (await loadFirebasePerformance()).trace('parseUser');
   perfTrace.start();
 
-  const {
-    displayName,
-    email,
-    photoURL,
-    uid,
-  } = authUser;
+  // eslint-disable-next-line @typescript-eslint/naming-convention
+  const { displayName, email, photoURL, uid } = authUser;
 
   if (!displayName || !email || !photoURL) {
     await (await loadFirebaseAuth()).signOut();
@@ -64,9 +66,9 @@ async function parseUser(authUser: firebase.User, isNewUser = false) {
 
   const userData: User = {
     displayName,
-    email,
-    photoURL,
-    uid,
+    email: email as Email,
+    photoUrl: photoURL as Uri,
+    uid: uid as UserId,
   };
 
   if (isNewUser) {
@@ -86,16 +88,15 @@ async function parseUser(authUser: firebase.User, isNewUser = false) {
   return user;
 }
 
-async function signIn() {
+export async function signIn(): Promise<User> {
   const provider = new firebase.auth.GoogleAuthProvider();
-  const authUser = await (await loadFirebaseAuth())
-    .signInWithPopup(provider);
+  const authUser = await (await loadFirebaseAuth()).signInWithPopup(provider);
   if (!authUser.user || !authUser.additionalUserInfo) throw new Error('No user defined');
 
   return parseUser(authUser.user, authUser.additionalUserInfo.isNewUser);
 }
 
-async function signOut() {
+export async function signOut(): Promise<void> {
   const auth = await loadFirebaseAuth();
   if (!auth.currentUser) throw new Error('No user defined');
   await auth.signOut();
@@ -107,62 +108,44 @@ async function signOut() {
   projectsState.userProjects = [];
 }
 
-async function checkIfUserIsSignedIn() {
+export async function checkIfUserIsSignedIn(): Promise<User> {
   const auth = await loadFirebaseAuth();
-  return new Promise<User>(((resolve, reject) => {
+  return new Promise<User>((resolve, reject) => {
     auth.onAuthStateChanged((state) => {
       if (state) {
         if (!userState.currentUser) {
           parseUser(state)
             .then((result) => resolve(result))
-            .catch((err) => reject(err));
-          return;
+            .catch((error) => reject(error));
+        } else {
+          resolve(userState.currentUser);
         }
-        resolve(userState.currentUser);
       } else {
         reject(new Error('Not allowed: not signed in'));
       }
     });
-  }));
+  });
 }
 
-async function updateUser(properties: User) {
-  await (await loadFirebaseDatabase())
-    .ref(`users/${properties.uid}`)
-    .update(properties);
-  if (userState.currentUser && userState.currentUser.uid === properties.uid) {
-    await setUser(properties);
+export async function updateUser(user: User): Promise<User> {
+  await (await loadFirebaseDatabase()).ref(`users/${user.uid}`).update(user);
+  if (userState.currentUser && userState.currentUser.uid === user.uid) {
+    await setUser(user);
   }
 
-  return properties;
+  return user;
 }
 
-async function fetchAllUsers() {
-  const snapshot = await (await loadFirebaseDatabase())
-    .ref('users')
-    .once('value');
+export async function fetchAllUsers(): Promise<Array<User>> {
+  const snapshot = await (await loadFirebaseDatabase()).ref('users').once('value');
 
   if (!snapshot.val()) {
     return [];
   }
 
-  const data: {
-    [key: string]: User;
-  } = snapshot.val();
-
-  const users: User[] = Object.keys(data).map((key) => data[key]);
+  const data: Record<string, User> = snapshot.val();
+  const users: Array<User> = Object.values(data);
 
   userState.users = users;
   return users;
 }
-
-export {
-  userState,
-  signOut,
-  signIn,
-  checkIfUserIsSignedIn,
-  updateUser,
-  fetchAllUsers,
-  User,
-  UserState,
-};

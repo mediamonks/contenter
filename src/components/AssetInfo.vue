@@ -34,15 +34,15 @@
               v-if="data.size >= fileSizeWarning"
               class="warn body-small"
             >
-              The size of this file is over {{ parseUnitSize(fileSizeWarning, 'B', 0) }},
-              please consider optimizing this file.
+              The size of this file is over {{ parseUnitSize(fileSizeWarning, 'B', 0) }}, please
+              consider optimizing this file.
             </p>
           </li>
         </ul>
       </main>
       <footer>
         <Button
-          flat
+          is-flat
           @click="handleAssetDownload"
         >
           Download Asset
@@ -54,10 +54,7 @@
 
 <script lang="ts">
 import {
-  defineComponent,
-  toRef,
-  computed,
-  PropType,
+  defineComponent, toRef, computed, PropType,
 } from 'vue';
 import Button from '@/components/Button.vue';
 import { copyValueToClipboard, downloadFile, parseUnitSize } from '@/util';
@@ -89,7 +86,7 @@ export default defineComponent({
 
     function handleAssetDownload() {
       if (!data.value) return;
-      downloadFile(data.value.remoteURL, data.value.name);
+      downloadFile(data.value.remoteUrl, data.value.name);
     }
 
     const basePath = computed<string>(() => {
@@ -98,7 +95,7 @@ export default defineComponent({
     });
 
     function copyValue(value: string) {
-      copyValueToClipboard(value)
+      return copyValueToClipboard(value)
         .then(() => displayMessage('Copied value to clipboard', undefined, 1500))
         .catch(displayError);
     }

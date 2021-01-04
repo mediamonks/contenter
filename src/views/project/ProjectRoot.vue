@@ -15,7 +15,7 @@
 <script lang="ts">
 import { defineComponent, onUnmounted } from 'vue';
 import { setCurrentProject, projectsState, resetCurrentProjectState } from '@/store/projects';
-import router from '@/router';
+import router, { RouteNames } from '@/router';
 import { displayError } from '@/store/message';
 
 export default defineComponent({
@@ -27,11 +27,10 @@ export default defineComponent({
     },
   },
   setup(props) {
-    setCurrentProject(props.projectId)
-      .catch((error) => {
-        router.push('/');
-        displayError(error);
-      });
+    setCurrentProject(props.projectId).catch((error) => {
+      router.push({ name: RouteNames.HOME });
+      displayError(error);
+    });
 
     onUnmounted(async () => {
       await resetCurrentProjectState();
@@ -45,19 +44,19 @@ export default defineComponent({
 </script>
 
 <style lang="scss" scoped>
-  @import "~@/assets/scss/variables";
+@import '~@/assets/scss/variables';
 
-  .project {
+.project {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+
+  .loading {
     display: flex;
-    flex-direction: column;
-    height: 100vh;
-
-    .loading {
-      display: flex;
-      width: 100%;
-      height: 100%;
-      align-items: center;
-      justify-content: center;
-    }
+    width: 100%;
+    height: 100%;
+    align-items: center;
+    justify-content: center;
   }
+}
 </style>

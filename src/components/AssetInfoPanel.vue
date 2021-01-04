@@ -14,9 +14,7 @@
       >
     </div>
     <div class="aside">
-      <AssetInfo
-        :data="data"
-      />
+      <AssetInfo :data="data" />
       <button
         class="close-button"
         @click="closeView"
@@ -28,14 +26,13 @@
 </template>
 
 <script lang="ts">
-import {
-  defineComponent, ref, onMounted,
-} from 'vue';
+import { defineComponent, ref, onMounted } from 'vue';
 import gsap from 'gsap';
 import { Asset } from '@/store/projects';
 import AssetInfo from '@/components/AssetInfo.vue';
 import { downloadFile } from '@/util';
 import CloseIcon from '@/assets/icons/CloseIcon.vue';
+import { displayError } from '@/store/message';
 
 export default defineComponent({
   name: 'AssetInfoPanel',
@@ -61,38 +58,50 @@ export default defineComponent({
       });
 
       timeline
-        .fromTo(overlayBox, {
-          autoAlpha: 0,
-          pointerEvents: 'none',
-          duration: 0.1,
-        }, {
-          autoAlpha: 1,
-          pointerEvents: 'all',
-        }, 0)
-        .fromTo(aside, {
-          x: '100%',
-          autoAlpha: 0,
-          ease: 'power3',
-          pointerEvents: 'none',
-          duration: 0.1,
-        }, {
-          x: '0%',
-          autoAlpha: 1,
-          pointerEvents: 'all',
-        }, 0);
+        .fromTo(
+          overlayBox,
+          {
+            autoAlpha: 0,
+            pointerEvents: 'none',
+            duration: 0.1,
+          },
+          {
+            autoAlpha: 1,
+            pointerEvents: 'all',
+          },
+          0,
+        )
+        .fromTo(
+          aside,
+          {
+            x: '100%',
+            autoAlpha: 0,
+            ease: 'power3',
+            pointerEvents: 'none',
+            duration: 0.1,
+          },
+          {
+            x: '0%',
+            autoAlpha: 1,
+            pointerEvents: 'all',
+          },
+          0,
+        );
       return timeline;
     }
 
     function openView(asset: Asset) {
-      if (!toggleTimeline) return;
+      if (!toggleTimeline) throw displayError(new Error('No timeline defined'));
       data.value = asset;
 
-      toggleTimeline.play();
+      return toggleTimeline.play();
     }
 
     function closeView() {
-      if (!toggleTimeline) return;
-      toggleTimeline.reverse().then(() => { data.value = null; });
+      if (!toggleTimeline) throw displayError(new Error('No timeline defined'));
+      return toggleTimeline.reverse().then(() => {
+        data.value = null;
+      });
     }
 
     onMounted(() => {
@@ -100,8 +109,8 @@ export default defineComponent({
     });
 
     function handleAssetDownload() {
-      if (!data.value) return;
-      downloadFile(data.value.remoteURL, data.value.name);
+      if (!data.value) throw displayError(new Error('No asset to download'));
+      return downloadFile(data.value.remoteUrl, data.value.name);
     }
 
     return {
@@ -118,6 +127,7 @@ export default defineComponent({
 
 <style lang="scss" scoped>
 @import '~@/assets/scss/variables';
+@import '~seng-scss';
 
 .asset-info-panel {
   position: fixed;
@@ -125,7 +135,7 @@ export default defineComponent({
   left: 0;
   width: 100%;
   height: 100%;
-  z-index: 10;
+  z-index: zindex($zLayout, modal);
   pointer-events: none;
 
   .overlay-box {
@@ -170,7 +180,7 @@ export default defineComponent({
 
     .icon {
       height: 2rem;
-      color: $colorGrey050
+      color: $colorGrey050;
     }
 
     &:hover {

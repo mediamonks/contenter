@@ -18,7 +18,7 @@
           placeholder="Search for a name"
           @update-users="updateSelectedUsers"
         />
-        <Button :loading="isLoading">
+        <Button :is-loading="isLoading">
           Create
         </Button>
       </form>
@@ -27,17 +27,13 @@
 </template>
 
 <script lang="ts">
-import {
-  defineComponent,
-  watch,
-  ref,
-} from 'vue';
+import { defineComponent, watch, ref } from 'vue';
 import Button from '@/components/Button.vue';
 import TextField from '@/components/TextField.vue';
 import SearchSelector from '@/components/SearchSelector.vue';
-import { createNewProject, projectsState, syncProjectsMetadata } from '@/store/projects';
+import { createNewProject, ProjectId, projectsState, syncProjectsMetadata } from '@/store/projects';
 import { User, userState } from '@/store/user';
-import router from '@/router';
+import router, { RouteNames } from '@/router';
 import { displayError } from '@/store/message';
 import { loadFirebaseAnalytics } from '@/firebase';
 
@@ -50,15 +46,15 @@ export default defineComponent({
   },
   setup() {
     const name = ref('');
-    const id = ref('');
-    const selectedUsers = ref<User[]>([]);
+    const id = ref<ProjectId>('' as ProjectId);
+    const selectedUsers = ref<Array<User>>([]);
 
     const isLoading = ref(false);
 
     const idError = ref('');
 
     watch(name, () => {
-      id.value = name.value.toLowerCase().split(' ').join('-');
+      id.value = name.value.toLowerCase().split(' ').join('-') as ProjectId;
     });
 
     watch(id, async () => {
@@ -68,7 +64,7 @@ export default defineComponent({
 
       if (projectsState.projectIds.includes(id.value)) {
         idError.value = 'ID already exists';
-      } else if (id.value.split(' ').length > 1) {
+      } else if (/\s/.test(id.value)) {
         idError.value = 'Spaces are not allowed';
       } else {
         idError.value = '';
@@ -76,25 +72,21 @@ export default defineComponent({
     });
 
     function handleFormSubmit() {
-      if (!userState.currentUser) return;
+      if (!userState.currentUser) throw displayError(new Error('No user defined'));
       isLoading.value = true;
-      createNewProject(
-        name.value,
-        id.value,
-        userState.currentUser.uid,
-        selectedUsers.value,
-      )
+      return createNewProject(name.value, id.value, userState.currentUser.uid, selectedUsers.value)
         .then(() => {
-          router.push('/');
-          isLoading.value = false;
+          router.push({ name: RouteNames.HOME });
         })
         .catch((error) => {
           displayError(error);
+        })
+        .then(() => {
           isLoading.value = false;
         });
     }
 
-    function updateSelectedUsers(users: User[]) {
+    function updateSelectedUsers(users: Array<User>) {
       selectedUsers.value = users;
     }
 
@@ -116,24 +108,24 @@ export default defineComponent({
 </script>
 
 <style lang="scss" scoped>
-  .create-project {
-    main {
+.create-project {
+  main {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+
+    form {
       display: flex;
-      justify-content: center;
-      align-items: center;
-      height: 100vh;
+      flex-direction: column;
+      align-items: flex-end;
+      width: 100%;
+      max-width: 60rem;
 
-      form {
-        display: flex;
-        flex-direction: column;
-        align-items: flex-end;
-        width: 100%;
-        max-width: 60rem;
-
-        > * {
-          margin-top: 5rem;
-        }
+      > * {
+        margin-top: 5rem;
       }
     }
   }
+}
 </style>

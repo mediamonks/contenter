@@ -35,38 +35,36 @@ export default defineComponent({
       default: null,
     },
   },
-  emits: [
-    'update:modelValue',
-  ],
+  emits: ['update:modelValue'],
 });
 </script>
 
 <style lang="scss" scoped>
-  @import '~@/assets/scss/variables';
+@import '~@/assets/scss/variables';
 
-  .text-field {
+.text-field {
+  display: block;
+  width: 100%;
+
+  input {
     display: block;
     width: 100%;
+    padding: 1.5rem;
+    border: solid 1px $colorGrey100;
+    border-radius: 0.5rem;
+    font-size: 2.25rem;
+    line-height: 3rem;
+    transition: border-color 0.2s ease-out;
 
-    input {
-      display: block;
-      width: 100%;
-      padding: 1.5rem;
-      border: solid 1px $colorGrey100;
-      border-radius: 0.5rem;
-      font-size: 2.25rem;
-      line-height: 3rem;
-      transition: border-color 0.2s ease-out;
-
-      &:focus {
-        outline: none;
-        border-color: $colorBlue400;
-      }
-    }
-
-    .error {
-      position: absolute;
-      color: $colorError;
+    &:focus {
+      outline: none;
+      border-color: $colorBlue400;
     }
   }
+
+  .error {
+    position: absolute;
+    color: $colorError;
+  }
+}
 </style>

@@ -9,7 +9,7 @@
       </h2>
       <Button
         class="button"
-        :loading="loading"
+        :is-loading="isLoading"
         @click="handleSignIn"
       >
         Sign in with Google
@@ -20,7 +20,7 @@
 
 <script lang="ts">
 import { defineComponent, ref } from 'vue';
-import router from '@/router';
+import router, { RouteNames } from '@/router';
 import { signIn } from '@/store/user';
 import Button from '@/components/Button.vue';
 import { displayError } from '@/store/message';
@@ -31,52 +31,52 @@ export default defineComponent({
     Button,
   },
   setup() {
-    const loading = ref(false);
+    const isLoading = ref(false);
 
     function handleSignIn() {
-      loading.value = true;
-      signIn()
+      isLoading.value = true;
+      return signIn()
         .then(() => {
-          router.push('/');
+          router.push({ name: RouteNames.HOME });
         })
         .catch((error: Error) => displayError(error))
         .finally(() => {
-          loading.value = false;
+          isLoading.value = false;
         });
     }
 
     return {
       handleSignIn,
-      loading,
+      isLoading,
     };
   },
 });
 </script>
 
 <style lang="scss" scoped>
-  @import "~@/assets/scss/variables";
+@import '~@/assets/scss/variables';
 
-  .sign-in {
+.sign-in {
+  display: flex;
+  min-height: 100vh;
+  justify-content: center;
+  align-items: center;
+
+  main {
     display: flex;
-    min-height: 100vh;
-    justify-content: center;
+    flex-direction: column;
     align-items: center;
+    padding: 8rem;
+    border-radius: 1rem;
+    border: 1px solid $colorGrey100;
 
-    main {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      padding: 8rem;
-      border-radius: 1rem;
-      border: 1px solid $colorGrey100;
+    .button {
+      margin-top: 5rem;
+    }
 
-      .button {
-        margin-top: 5rem;
-      }
-
-      .error {
-        margin-top: 3rem;
-      }
+    .error {
+      margin-top: 3rem;
     }
   }
+}
 </style>

@@ -30,7 +30,7 @@
                 class="user-item"
               >
                 <Avatar
-                  :image="user.photoURL"
+                  :image="user.photoUrl"
                   :name="user.displayName"
                 />
                 <button @click="deleteUserFromProject(user.uid)">
@@ -53,7 +53,7 @@
         />
         <Button
           type="submit"
-          :loading="isLoading"
+          :is-loading="isLoading"
         >
           Save changes
         </Button>
@@ -63,25 +63,22 @@
 </template>
 
 <script lang="ts">
-import {
-  defineComponent,
-  reactive,
-  ref,
-} from 'vue';
+import { defineComponent, reactive, ref } from 'vue';
 import ProjectBar from '@/components/ProjectBar.vue';
 import TextField from '@/components/TextField.vue';
 import Avatar from '@/components/Avatar.vue';
 import Trash from '@/assets/icons/Trash.vue';
 import SearchSelector from '@/components/SearchSelector.vue';
 import Button from '@/components/Button.vue';
-import { projectsState, updateProjectsMetadata } from '@/store/projects';
+import { projectsState, updateProjectsMetadata, ProjectId } from '@/store/projects';
 import { userState, User, updateUser } from '@/store/user';
 import { displayError } from '@/store/message';
+import { Uri } from '@/types/Uri';
 
 interface ProjectSettingsFormState {
   name: string | null;
-  users: User[] | null;
-  assetBasePath: string | null;
+  users: Array<User> | null;
+  assetBasePath: Uri | null;
 }
 
 export default defineComponent({
@@ -123,23 +120,25 @@ export default defineComponent({
       updateProjectsMetadata({
         ...currentMetadata,
         name: formState.name || currentMetadata.name,
-        users:
-          formState.users
-            ? [...new Set([...formState.users, ...currentMetadata.users])]
-            : [...currentMetadata.users],
-        relativeBasePath: formState.assetBasePath || currentMetadata.relativeBasePath,
-      }).then((newMetadata) => Promise.all(newMetadata.users.map((user) => {
-        let projects: string[] = [];
+        users: formState.users
+          ? [...new Set([...formState.users, ...currentMetadata.users])]
+          : [...currentMetadata.users],
+        relativeBasePath: formState.assetBasePath || (currentMetadata.relativeBasePath as Uri),
+      })
+        .then((newMetadata) => Promise.all(
+          newMetadata.users.map((user) => {
+            let projects: Array<ProjectId> = [];
 
-        if (user.projects) {
-          projects = user.projects;
-        }
+            if (user.projectIds) {
+              projects = user.projectIds;
+            }
 
-        return updateUser({
-          ...user,
-          projects: [...new Set([...projects, newMetadata.id])],
-        });
-      })))
+            return updateUser({
+              ...user,
+              projectIds: [...new Set([...projects, newMetadata.id])],
+            });
+          }),
+        ))
         .then(() => {
           isLoading.value = false;
 
@@ -237,7 +236,7 @@ export default defineComponent({
         }
       }
 
-      button[type="submit"] {
+      button[type='submit'] {
         margin-top: 3rem;
       }
     }

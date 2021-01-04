@@ -1,23 +1,27 @@
-$colorGrey900: #01071A;
-$colorGrey800: #1A2030;
+@import "~seng-scss";
+
+$colorGrey900: #01071a;
+$colorGrey800: #1a2030;
 $colorGrey700: #343947;
-$colorGrey600: #4E525E;
-$colorGrey500: #676B76;
-$colorGrey400: #84878F;
-$colorGrey300: #A3A5AB;
-$colorGrey200: #C2C3C7;
-$colorGrey100: #E0E1E3;
-$colorGrey050: #FFF;
+$colorGrey600: #4e525e;
+$colorGrey500: #676b76;
+$colorGrey400: #84878f;
+$colorGrey300: #a3a5ab;
+$colorGrey200: #c2c3c7;
+$colorGrey100: #e0e1e3;
+$colorGrey050: #fff;
 
 $colorBlue900: #011227;
 $colorBlue800: #012755;
-$colorBlue700: #013E86;
-$colorBlue600: #0154B7;
-$colorBlue500: #016BE7;
-$colorBlue400: #1B84FF;
-$colorBlue300: #51A2FF;
-$colorBlue200: #87BFFF;
-$colorBlue100: #BDDDFF;
-$colorBlue050: #F2FAFF;
+$colorBlue700: #013e86;
+$colorBlue600: #0154b7;
+$colorBlue500: #016be7;
+$colorBlue400: #1b84ff;
+$colorBlue300: #51a2ff;
+$colorBlue200: #87bfff;
+$colorBlue100: #bdddff;
+$colorBlue050: #f2faff;
 
-$colorError: #FF1B36;
+$colorError: #ff1b36;
+
+$zLayout: default, zBoost, projectBar, navigation, modal, messageDisplay;
