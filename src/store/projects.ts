@@ -29,7 +29,7 @@ export interface ProjectMetadata<T extends UserId | User> {
   id: ProjectId;
   locales?: Array<Locale>;
   users: Array<T>;
-  relativeBasePath?: Uri;
+  relativeBasePath: Uri;
 }
 
 export interface Asset {
@@ -167,6 +167,7 @@ export async function createNewProject(
       name,
       id,
       users: [uid, ...userIds],
+      relativeBasePath: '/',
     } as ProjectMetadata<UserId>),
     (await loadFirebaseDatabase()).ref(`projectIds/${projectsState.projectIds.length}`).set(id),
     syncProjectsMetadata(),
