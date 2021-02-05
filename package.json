@@ -11,7 +11,7 @@
   "dependencies": {
     "@json-editor/json-editor": "^2.5.1",
     "convert-units": "^2.3.4",
-    "core-js": "^3.6.5",
+    "core-js": "^3.8.3",
     "easymde": "^2.12.1",
     "firebase": "^8.2.1",
     "gsap": "^3.6.0",
