@@ -39,7 +39,7 @@
     "@vue/compiler-sfc": "^3.0.0-0",
     "@vue/eslint-config-airbnb": "^5.3.0",
     "@vue/eslint-config-typescript": "7.0.0",
-    "eslint": "7.0.0",
+    "eslint": "7.19.0",
     "eslint-config-prettier": "^7.1.0",
     "eslint-friendly-formatter": "^4.0.0",
     "eslint-import-resolver-webpack": "^0.13.0",
