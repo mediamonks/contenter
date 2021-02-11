@@ -93,7 +93,7 @@
         </p>
       </div>
       <a
-        href="https://github.com/MickJasker/MM-Content-Manager/issues"
+        href="https://github.com/mediamonks/contenter"
         target="_blank"
         referrerpolicy="no-referrer"
         @click="handleGithubClick"
