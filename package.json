@@ -1,0 +1,12 @@
+{
+  "name": "contenter",
+  "version": "1.0.0",
+  "description": "## Project setup ``` yarn install ```",
+  "author": "",
+  "license": "MIT",
+  "scripts": {
+    "build:frontend": "cd ./frontend && yarn build --modern",
+    "build:backend": "cd ./backend && yarn build",
+    "build": "yarn build:frontend && yarn build:backend"
+  }
+}
