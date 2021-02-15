@@ -8,7 +8,7 @@ on:
       - 'release/**'
       - 'dependabot/**'
 jobs:
-  "Verify frontend":
+  build_frontend:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repository
@@ -30,7 +30,7 @@ jobs:
       - name: Build package
         run: yarn build --modern
         working-directory: frontend
-  "Verify backend":
+  build_backend:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repository

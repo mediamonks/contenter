@@ -4,7 +4,7 @@ on:
     branches:
       - 'develop'
 jobs:
-  "Build frontend":
+  build_frontend:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
@@ -30,7 +30,7 @@ jobs:
       - run: firebase deploy --only hosting:develop  --token=$FIREBASE_TOKEN --project mm-content-manager --non-interactive
         working-directory: frontend
         name: Deploy to firebase hosting
-  "Build backend":
+  build_backend:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
