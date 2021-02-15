@@ -4,17 +4,62 @@ on:
     branches:
       - 'develop'
 jobs:
-  build_release:
+  "Build frontend":
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
+        name: Checkout repository
+
       - uses: actions/setup-node@v2.1.4
+        name: Setup Node v14
+        with:
+          node-version: 14
+
+      - run: yarn
+        working-directory: frontend
+        name: Install dependencies
+
+      - run: npm install -g firebase-tools
+        name: Install Firebase tools
+        working-directory: frontend
+
+      - run: yarn build --modern
+        working-directory: frontend
+        name: Build project
+
+      - run: firebase deploy --only hosting:develop  --token=$FIREBASE_TOKEN --project mm-content-manager --non-interactive
+        working-directory: frontend
+        name: Deploy to firebase hosting
+  "Build backend":
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+        name: Checkout repository
+
+      - uses: actions/setup-node@v2.1.4
+        name: Setup Node v10
         with:
           node-version: 10
+
       - run: yarn
+        working-directory: backend
+        name: Install dependencies
+
       - run: npm install -g firebase-tools
-      - run: yarn build --modern
-      - run: firebase deploy --only hosting:develop  --token=$FIREBASE_TOKEN --project mm-content-manager --non-interactive
+        name: Install Firebase tools
+        working-directory: backend
+
+      - run: yarn lint
+        working-directory: backend
+        name: Lint code
+
+      - run: yarn build
+        working-directory: backend
+        name: Build project
+
+      - run: firebase deploy --only functions --token=$FIREBASE_TOKEN --project mm-content-manager --non-interactive
+        working-directory: frontend
+        name: Deploy to firebase hosting
     env:
       CI: true
       FIREBASE_TOKEN: ${{ secrets.FIREBASE_TOKEN }}
