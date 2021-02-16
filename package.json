@@ -21,7 +21,7 @@
     "seng-scss": "^1.2.5",
     "vue": "^3.0.4",
     "vue-router": "^4.0.2",
-    "vuex": "^4.0.0-0"
+    "vuex": "^4.0.0"
   },
   "devDependencies": {
     "@mediamonks/eslint-config": "^1.2.3",
