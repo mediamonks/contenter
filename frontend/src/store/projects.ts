@@ -1,7 +1,7 @@
 import { reactive } from 'vue';
 // TODO: Fix this
 // eslint-disable-next-line import/no-cycle
-import { fetchAllUsers, updateUser, User, UserId, userState } from '@/store/user';
+import { fetchAllUsers, User, userState } from '@/store/user';
 import {
   loadFirebaseAnalytics,
   loadFirebaseDatabase,
@@ -15,6 +15,8 @@ import { Uri } from '@/types/Uri';
 import { Json } from '@/types/Json';
 import { JsonSchema } from '@/types/JsonSchema';
 import { Brand } from '@/types/Brand';
+import { Uid } from '@/types/Uid';
+import { createProject } from '@/api';
 
 export type ProjectId = Brand<'ProjectId', string>;
 export type LocaleCode = Brand<'LocaleCode', string>;
@@ -24,7 +26,7 @@ export interface Locale {
   code: LocaleCode;
 }
 
-export interface ProjectMetadata<T extends UserId | User> {
+export interface ProjectMetadata<T extends Uid | User> {
   name: string;
   id: ProjectId;
   locales?: Array<Locale>;
@@ -87,9 +89,7 @@ export const projectsState = reactive<ProjectState>({
 
 const projectEventElement = document.createElement('div');
 
-export async function getRawUserProjects(
-  ids: Array<string>,
-): Promise<Array<ProjectMetadata<UserId>>> {
+export async function getRawUserProjects(ids: Array<string>): Promise<Array<ProjectMetadata<Uid>>> {
   const database = await loadFirebaseDatabase();
 
   const projectsDataSnapshots = await Promise.all<firebase.database.DataSnapshot>(
@@ -147,49 +147,23 @@ export async function syncProjectsMetadata(): Promise<Array<ProjectMetadata<User
 export async function createNewProject(
   name: string,
   id: ProjectId,
-  uid: string,
+  user: User,
   users: Array<User> = [],
 ): Promise<void> {
-  if (!userState.currentUser) throw new Error('User is not defined');
   const perfTrace = (await loadFirebasePerformance()).trace('createProject');
   perfTrace.start();
 
-  const projectRef = (await loadFirebaseDatabase()).ref(`projectMetadata/${id}`);
-  let currentUserProjects: Array<ProjectId> = [];
-  if (userState.currentUser.projectIds) {
-    currentUserProjects = userState.currentUser.projectIds;
-  }
+  await createProject({
+    name,
+    id,
+    user,
+    users,
+  });
 
-  const userIds = users.map((user) => user.uid);
-
-  await Promise.all<void>([
-    projectRef.set({
-      name,
-      id,
-      users: [uid, ...userIds],
-      relativeBasePath: '/',
-    } as ProjectMetadata<UserId>),
-    (await loadFirebaseDatabase()).ref(`projectIds/${projectsState.projectIds.length}`).set(id),
-    syncProjectsMetadata(),
-    updateUser({
-      ...userState.currentUser,
-      projectIds: [...currentUserProjects, id],
-    }),
-    ...users.map((user) => {
-      let currentProjects = user.projectIds;
-      if (!currentProjects) {
-        currentProjects = [];
-      }
-
-      return updateUser({
-        ...user,
-        projectIds: [...currentProjects, id],
-      });
-    }),
-  ]);
+  await Promise.all([fetchAllUsers(), syncProjectsMetadata()]);
 
   (await loadFirebaseAnalytics()).logEvent('create_project', {
-    userAmount: userIds.length + 1,
+    userAmount: users.length + 1,
   });
 
   perfTrace.stop();

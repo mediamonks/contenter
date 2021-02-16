@@ -9,15 +9,14 @@ import {
 // TODO: Fix this
 // eslint-disable-next-line import/no-cycle
 import { ProjectId, projectsState } from '@/store/projects';
-import { Brand } from '@/types/Brand';
+import { Uid } from '@/types/Uid';
 import { Uri } from '@/types/Uri';
 import { Email } from '@/types/Email';
 
-export type UserId = Brand<'UserId', string>;
 export type Role = 'editor' | 'developer' | 'admin';
 
 export interface User {
-  uid: UserId;
+  uid: Uid;
   displayName: string;
   email: Email;
   photoUrl: Uri;
@@ -68,7 +67,7 @@ export async function parseUser(authUser: firebase.User, isNewUser = false): Pro
     displayName,
     email: email as Email,
     photoUrl: photoURL as Uri,
-    uid: uid as UserId,
+    uid: uid as Uid,
   };
 
   if (isNewUser) {
@@ -147,5 +146,7 @@ export async function fetchAllUsers(): Promise<Array<User>> {
   const users: Array<User> = Object.values(data);
 
   userState.users = users;
+  [userState.currentUser] = users.filter((user) => user.uid === userState.currentUser?.uid);
+
   return users;
 }
