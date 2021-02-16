@@ -7,8 +7,9 @@ version: 2
 updates:
   - package-ecosystem: "npm"
     directory: "/"
-    target-branch: "develop"
+    target-branch: "dependancies"
     open-pull-requests-limit: 20
+    versioning-strategy: widen
     schedule:
       interval: "daily"
   - package-ecosystem: "github-actions"
