@@ -1171,10 +1171,10 @@
     cssnano-preset-default "^4.0.0"
     postcss "^7.0.0"
 
-"@json-editor/json-editor@^2.5.1":
-  version "2.5.1"
-  resolved "https://registry.yarnpkg.com/@json-editor/json-editor/-/json-editor-2.5.1.tgz#50b0c3f5bdaacdc01f4c25607dd561a7b951c790"
-  integrity sha512-qxZyTNC1CiHahHMN6LdFAm0Xv6d77mPXk1CpVxGkLbAzv/FaYwkJCkM2NvHaWZeqPY33upAozLd+b4QRGKVohw==
+"@json-editor/json-editor@^2.5.2":
+  version "2.5.2"
+  resolved "https://registry.yarnpkg.com/@json-editor/json-editor/-/json-editor-2.5.2.tgz#d6f348d7e2f5bf9ccf2e3b34f637143674265e7f"
+  integrity sha512-OqrPtRw8FM2mSZbAFFvvxW6j8JvXCoQbhMgSiryhmcoByh3tQk+PuhK+2+bk9K/zn9PAt9KQsAiSc9sv6WIr/A==
   dependencies:
     core-js "^3.6.5"
 

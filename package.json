@@ -9,7 +9,7 @@
     "lint": "vue-cli-service lint --fix"
   },
   "dependencies": {
-    "@json-editor/json-editor": "^2.5.1",
+    "@json-editor/json-editor": "^2.5.2",
     "convert-units": "^2.3.4",
     "core-js": "^3.8.3",
     "easymde": "^2.12.1",
