@@ -2,7 +2,7 @@
   "name": "contenter",
   "version": "1.0.0",
   "description": "## Project setup ``` yarn install ```",
-  "author": "",
+  "author": "Mick Jasker <mick.jasker@mediamonks.com>",
   "license": "MIT",
   "scripts": {
     "build:frontend": "cd ./frontend && yarn build --modern",
