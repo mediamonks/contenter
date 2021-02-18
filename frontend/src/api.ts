@@ -17,7 +17,7 @@ export async function createProject(params: {
   const userToken = await (await loadFirebaseAuth()).currentUser?.getIdToken(true);
   if (!userToken) throw new Error('No user token available');
 
-  const response = await fetch(`${apiUrl}/create-project`, {
+  const response = await fetch(`${apiUrl}/project/create`, {
     method: 'POST',
     body: JSON.stringify({
       name: params.name,

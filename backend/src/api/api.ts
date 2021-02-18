@@ -1,6 +1,6 @@
 import express from 'express';
 import cors from 'cors';
-import { createProject } from './routes/createProject';
+import { createProject } from './routes/project';
 
 const app = express();
 
@@ -20,7 +20,7 @@ app.get('/', (request, response) => {
   response.send('API is working');
 });
 
-app.post('/create-project', createProject);
+app.post('/project/create', createProject);
 
 app.get('*', (request, response) => {
   response.status(404).send('Not Found');

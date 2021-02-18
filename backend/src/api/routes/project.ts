@@ -1,24 +1,20 @@
-// import * as functions from 'firebase-functions';
 import type { Request, Response } from 'express';
 import { firebaseAdmin } from '../../admin';
 import { UserToken } from '../../types/UserToken';
 import { Uid } from '../../types/Uid';
 import { ProjectId } from '../../types/ProjectId';
 import { User } from '../../types/User';
-
-export interface CreateProjectParams {
-  name?: string;
-  id?: ProjectId;
-  uid?: Uid;
-  userToken?: UserToken;
-  users?: Array<User>;
-  currentUserProjectIds?: Array<ProjectId>;
-}
+import { verifyUidToken } from '../../util/verifyUidToken';
 
 export async function createProject(request: Request, response: Response): Promise<void> {
-  const { name, id, uid, userToken, users, currentUserProjectIds } = JSON.parse(
-    request.body
-  ) as CreateProjectParams;
+  const { name, id, uid, userToken, users, currentUserProjectIds } = JSON.parse(request.body) as {
+    name?: string;
+    id?: ProjectId;
+    uid?: Uid;
+    userToken?: UserToken;
+    users?: Array<User>;
+    currentUserProjectIds?: Array<ProjectId>;
+  };
 
   if (
     !name ||
@@ -36,14 +32,7 @@ export async function createProject(request: Request, response: Response): Promi
   }
 
   try {
-    const decodedToken = await firebaseAdmin.auth().verifyIdToken(userToken);
-    if (decodedToken.uid !== uid) {
-      response.status(403).send({
-        success: false,
-        message: `Token doesn't match UID`,
-      });
-      return;
-    }
+    await verifyUidToken(userToken, uid);
   } catch (error) {
     response.status(403).send({
       success: false,
@@ -56,12 +45,20 @@ export async function createProject(request: Request, response: Response): Promi
 
   try {
     const projectIds: Array<ProjectId> = (await database.ref('projectIds').get()).val();
+    const userRoles: Record<string, 'owner' | 'editor'> = {
+      [uid]: 'owner',
+    };
+
+    users.forEach((user) => {
+      userRoles[user.uid] = 'editor';
+    });
 
     await Promise.all<void>([
       database.ref(`projectMetadata/${id}`).set({
         name,
         id,
         users: [uid, users],
+        userRoles,
         relativeBasePath: '/',
       }),
       database.ref(`projectIds/${projectIds.length}`).set(id),
