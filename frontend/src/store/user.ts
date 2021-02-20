@@ -6,6 +6,7 @@ import {
   loadFirebaseDatabase,
   loadFirebasePerformance,
 } from '@/firebase';
+import { getApiUrl, getUserToken } from '@/api';
 // TODO: Fix this
 // eslint-disable-next-line import/no-cycle
 import { ProjectId, projectsState } from '@/store/projects';
@@ -45,10 +46,23 @@ export async function setUser(properties: User): Promise<User> {
 }
 
 export async function createNewUser(properties: User): Promise<void> {
-  await (await loadFirebaseDatabase()).ref(`users/${properties.uid}`).set({
-    ...properties,
-    role: 'editor',
-  } as User);
+  const userToken = await getUserToken();
+
+  const response = await fetch(`${getApiUrl()}/user/create`, {
+    method: 'POST',
+    body: JSON.stringify({
+      ...properties,
+      userToken,
+    }),
+  });
+
+  const result: {
+    success: boolean;
+    message: string;
+    data: User;
+  } = await response.json();
+
+  userState.currentUser = result.data;
 }
 
 export async function parseUser(authUser: firebase.User, isNewUser = false): Promise<User> {

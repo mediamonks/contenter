@@ -1,6 +1,7 @@
 import express from 'express';
 import cors from 'cors';
 import { createProject } from './routes/project';
+import { createUser } from './routes/user';
 
 const app = express();
 
@@ -22,8 +23,13 @@ app.get('/', (request, response) => {
 
 app.post('/project/create', createProject);
 
+app.post('/user/create', createUser);
+
 app.get('*', (request, response) => {
-  response.status(404).send('Not Found');
+  response.status(404).send({
+    success: false,
+    message: 'Not found',
+  });
 });
 
 export { app };

@@ -16,7 +16,7 @@ import { Json } from '@/types/Json';
 import { JsonSchema } from '@/types/JsonSchema';
 import { Brand } from '@/types/Brand';
 import { Uid } from '@/types/Uid';
-import { createProject } from '@/api';
+import { api, getUserToken } from '@/api';
 
 export type ProjectId = Brand<'ProjectId', string>;
 export type LocaleCode = Brand<'LocaleCode', string>;
@@ -152,12 +152,24 @@ export async function createNewProject(
 ): Promise<void> {
   const perfTrace = (await loadFirebasePerformance()).trace('createProject');
   perfTrace.start();
+  const userToken = await getUserToken();
 
-  await createProject({
+  console.log({
     name,
     id,
-    user,
+    uid: user.uid,
+    userToken,
     users,
+    currentUserProjectIds: user.projectIds ?? [],
+  });
+
+  await api.post('/project/create' as Uri, {
+    name,
+    id,
+    uid: user.uid,
+    userToken,
+    users,
+    currentUserProjectIds: user.projectIds ?? [],
   });
 
   await Promise.all([fetchAllUsers(), syncProjectsMetadata()]);

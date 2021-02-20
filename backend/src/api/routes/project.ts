@@ -1,20 +1,29 @@
 import type { Request, Response } from 'express';
 import { firebaseAdmin } from '../../admin';
 import { UserToken } from '../../types/UserToken';
-import { Uid } from '../../types/Uid';
 import { ProjectId } from '../../types/ProjectId';
 import { User } from '../../types/User';
 import { verifyUidToken } from '../../util/verifyUidToken';
+import { Uid } from '../../types/Uid';
+
+interface CreateProjectParams {
+  name: string;
+  id: ProjectId;
+  uid: Uid;
+  userToken: UserToken;
+  currentUserProjectIds: Array<ProjectId>;
+  users: Array<User>;
+}
 
 export async function createProject(request: Request, response: Response): Promise<void> {
-  const { name, id, uid, userToken, users, currentUserProjectIds } = JSON.parse(request.body) as {
-    name?: string;
-    id?: ProjectId;
-    uid?: Uid;
-    userToken?: UserToken;
-    users?: Array<User>;
-    currentUserProjectIds?: Array<ProjectId>;
-  };
+  const {
+    name,
+    id,
+    uid,
+    userToken,
+    users,
+    currentUserProjectIds,
+  }: Partial<CreateProjectParams> = JSON.parse(request.body);
 
   if (
     !name ||
