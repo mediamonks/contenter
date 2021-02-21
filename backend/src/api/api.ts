@@ -1,6 +1,6 @@
 import express from 'express';
 import cors from 'cors';
-import { createProject } from './routes/project';
+import { createProject, updateProjectMetadata } from './routes/project';
 import { createUser } from './routes/user';
 
 const app = express();
@@ -22,6 +22,7 @@ app.get('/', (request, response) => {
 });
 
 app.post('/project/create', createProject);
+app.post('/project/updateMetadata', updateProjectMetadata);
 
 app.post('/user/create', createUser);
 

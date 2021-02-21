@@ -154,15 +154,6 @@ export async function createNewProject(
   perfTrace.start();
   const userToken = await getUserToken();
 
-  console.log({
-    name,
-    id,
-    uid: user.uid,
-    userToken,
-    users,
-    currentUserProjectIds: user.projectIds ?? [],
-  });
-
   await api.post('/project/create' as Uri, {
     name,
     id,
@@ -284,13 +275,12 @@ export async function updateProjectsMetadata(
     ...newMetadata,
     users: [...new Set(userIds)],
   };
-
-  const database = await loadFirebaseDatabase();
-  const ref = database.ref(`projectMetadata/${newMetadata.id}`);
-  await ref.update(metadata);
+  await api.post<ProjectMetadata<Uid>, ProjectMetadata<Uid>>(
+    '/project/updateMetadata' as Uri,
+    metadata,
+  );
 
   projectsState.currentProject.metadata = newMetadata;
-
   perfTrace.stop();
 
   return newMetadata;

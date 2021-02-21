@@ -1,4 +1,5 @@
 import type { Request, Response } from 'express';
+import { ProjectMetadata } from '../../types/ProjectMetadata';
 import { firebaseAdmin } from '../../admin';
 import { UserToken } from '../../types/UserToken';
 import { ProjectId } from '../../types/ProjectId';
@@ -89,4 +90,29 @@ export async function createProject(request: Request, response: Response): Promi
   } catch (error) {
     response.status(400).send(error);
   }
+}
+
+interface UpdateProjectMetadataParams extends ProjectMetadata<Uid> {
+  userToken: UserToken;
+}
+
+export async function updateProjectMetadata(request: Request, response: Response): Promise<void> {
+  const metadata: UpdateProjectMetadataParams = JSON.parse(request.body);
+
+  if (!metadata.name || !metadata.id || !metadata.users || !metadata.relativeBasePath) {
+    response.status(400).send({
+      message: 'Not all params are present',
+      success: false,
+    });
+  }
+
+  await firebaseAdmin.database().ref(`projectMetadata/${metadata.id}`).update(metadata);
+
+  response.send({
+    success: true,
+    message: `Metadata for ${metadata.name} is successfully updated`,
+    data: {
+      metadata,
+    },
+  });
 }
