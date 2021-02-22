@@ -90,35 +90,37 @@ export const projectsState = reactive<ProjectState>({
 
 const projectEventElement = document.createElement('div');
 
-export async function getRawUserProjects(ids: Array<string>): Promise<Array<ProjectMetadata<Uid>>> {
-  const database = await loadFirebaseDatabase();
-
-  const projectsDataSnapshots = await Promise.all<firebase.database.DataSnapshot>(
-    ids.map((projectId) => database.ref(`projectMetadata/${projectId}`).once('value')),
-  );
-
-  return [...projectsDataSnapshots.map((projectSnapshot) => projectSnapshot.val())];
-}
-
-export async function getFormattedProjects(
-  ids: Array<string>,
+export async function getProjects(
+  projectIds?: ReadonlyArray<ProjectId>,
 ): Promise<Array<ProjectMetadata<User>>> {
-  const rawProjects = await getRawUserProjects(ids);
-  const users = await fetchAllUsers();
-
-  return rawProjects.map((rawProject) => {
-    if (!rawProject) throw new Error("Project doesn't exists");
-    const projectsUsers = rawProject.users.map((id) => users.filter((usr) => usr.uid === id)[0]);
+  if (!userState.currentUser) throw new Error('No user defined');
+  const response = await api.get<{
+    data: {
+      projects: ReadonlyArray<ProjectMetadata<Uid>>;
+    };
+  }>('/projects', {
+    params: {
+      uid: userState.currentUser.uid,
+      userToken: await getUserToken(),
+      projectIds,
+    },
+  });
+  const allUsers = await fetchAllUsers();
+  const projects = response.data.data.projects.map((project) => {
+    const users = Object.keys(project.userRoles).map(
+      (uid) => allUsers.filter((item) => item.uid === uid)[0],
+    );
 
     return {
-      name: rawProject.name,
-      id: rawProject.id,
-      users: projectsUsers,
-      locales: rawProject.locales || [],
-      relativeBasePath: rawProject.relativeBasePath,
-      userRoles: rawProject.userRoles,
+      ...project,
+      users,
     };
   });
+
+  if (projectIds) {
+    return projects.filter((project) => projectIds.includes(project.id));
+  }
+  return projects;
 }
 
 export async function getAllProjectIds(): Promise<Array<ProjectId>> {
@@ -139,7 +141,7 @@ export async function syncProjectsMetadata(): Promise<Array<ProjectMetadata<User
   const perfTrace = (await loadFirebasePerformance()).trace('syncAllProjects');
   perfTrace.start();
 
-  const formattedProjects = await getFormattedProjects(userState.currentUser.projectIds);
+  const formattedProjects = await getProjects();
   projectsState.userProjects = formattedProjects;
 
   perfTrace.stop();
@@ -156,7 +158,7 @@ export async function createNewProject(
   perfTrace.start();
   const userToken = await getUserToken();
 
-  await api.patch('/project/create' as Uri, {
+  await api.put('/project' as Uri, {
     name,
     id,
     uid: user.uid,
@@ -194,7 +196,7 @@ export function handleProjectUpdate(): void {
   projectEventElement.dispatchEvent(event);
 }
 
-export async function setCurrentProject(id: string): Promise<void> {
+export async function setCurrentProject(id: ProjectId): Promise<void> {
   const projectRef = (await loadFirebaseDatabase()).ref(`projects/${id}`);
 
   projectRef.on('value', async (snapshot) => {
@@ -203,15 +205,14 @@ export async function setCurrentProject(id: string): Promise<void> {
       locales?: Record<string, ProjectLocale>;
     } = snapshot.val();
 
-    const projectMetadata = await getFormattedProjects([id]);
-
+    const [projectMetadata] = await getProjects([id]);
     const oldSchemaUrl = projectsState.currentProject?.schemaUrl;
     if (oldSchemaUrl !== data?.schemaUrl && data?.schemaUrl) {
       projectsState.currentProjectSchema = await fetchJsonSchema(data?.schemaUrl);
     }
 
     projectsState.currentProject = {
-      metadata: projectMetadata[0],
+      metadata: projectMetadata,
       ...data,
       assets: [],
     };
@@ -270,6 +271,7 @@ export async function updateProjectsMetadata(
   newMetadata: ProjectMetadata<User>,
 ): Promise<ProjectMetadata<User>> {
   if (!projectsState.currentProject) throw new Error('No current project defined');
+  if (!userState.currentUser) throw new Error('No current project defined');
   const perfTrace = (await loadFirebasePerformance()).trace('updateProjectMetadata');
   perfTrace.start();
 
@@ -278,7 +280,12 @@ export async function updateProjectsMetadata(
     ...newMetadata,
     users: [...new Set(userIds)],
   };
-  await api.post('/project/updateMetadata' as Uri, metadata);
+
+  await api.patch('/project' as Uri, {
+    ...metadata,
+    userToken: await getUserToken(),
+    uid: userState.currentUser.uid,
+  });
 
   projectsState.currentProject.metadata = newMetadata;
   perfTrace.stop();

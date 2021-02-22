@@ -8,6 +8,9 @@ export interface User {
   displayName: string;
   email: Email;
   photoUrl: Uri;
+  /**
+   * @deprecated
+   */
   projectIds?: Array<ProjectId>;
   role?: 'editor' | 'developer' | 'admin';
 }

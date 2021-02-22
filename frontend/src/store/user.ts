@@ -141,15 +141,6 @@ export async function checkIfUserIsSignedIn(): Promise<User> {
   });
 }
 
-export async function updateUser(user: User): Promise<User> {
-  await (await loadFirebaseDatabase()).ref(`users/${user.uid}`).update(user);
-  if (userState.currentUser && userState.currentUser.uid === user.uid) {
-    await setUser(user);
-  }
-
-  return user;
-}
-
 export async function fetchAllUsers(): Promise<Array<User>> {
   const snapshot = await (await loadFirebaseDatabase()).ref('users').once('value');
 

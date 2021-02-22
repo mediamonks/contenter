@@ -24,6 +24,7 @@ function displayMessage(message: string, error?: Error, delay = 5000): void {
     isError: !!error,
   };
 
+  // eslint-disable-next-line no-console
   if (error) console.error(error);
   setTimeout(() => {
     messageState.currentMessage = null;

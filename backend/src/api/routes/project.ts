@@ -8,6 +8,77 @@ import { verifyUidToken } from '../../util/verifyUidToken';
 import type { Uid } from '../../types/Uid';
 import { verifyProjectAccess } from '../../util/verifyProjectAccess';
 
+interface GetProjectParams {
+  uid: string;
+  userToken: UserToken;
+  projectIds: Array<ProjectId>;
+}
+
+interface ProjectLocale {
+  code: string;
+  name: string;
+}
+
+interface ProjectMetadataResponse {
+  id: ProjectId;
+  locales?: Record<string, ProjectLocale> | Array<ProjectLocale>;
+  name: string;
+  relativeBasePath: string;
+  userRoles: Record<string, 'owner' | 'editor'>;
+  /**
+   * @deprecated
+   * */
+  users?: Record<string, Uid>;
+}
+
+export async function getProjects(request: Request, response: Response): Promise<void> {
+  const { uid, userToken, projectIds } = request.query as Partial<GetProjectParams>;
+
+  if (!uid || !userToken) {
+    response.status(400).send({
+      message: 'Not all params are present',
+      success: false,
+      data: {
+        params: request.query,
+      },
+    });
+    return;
+  }
+
+  const projectsMetadata = await firebaseAdmin
+    .database()
+    .ref('/projectMetadata')
+    .get()
+    .then((data) => data.toJSON() as Record<string, ProjectMetadataResponse>);
+
+  let projects = [...Object.values(projectsMetadata)];
+
+  projects = projects.filter((project) => {
+    const userIds = Object.keys(project.userRoles) as Array<Uid>;
+
+    if (projectIds?.find((id) => id !== project.id)) return false;
+    if (!userIds.find((id) => id === uid)) return false;
+
+    let locales: Array<ProjectLocale> = [];
+    if (project.locales) {
+      locales = Object.values(project.locales);
+    }
+
+    const parsedProject = project;
+    parsedProject.locales = locales;
+    delete parsedProject.users;
+
+    return parsedProject;
+  });
+
+  response.send({
+    success: true,
+    data: {
+      projects,
+    },
+  });
+}
+
 interface CreateProjectParams {
   name: string;
   id: ProjectId;
@@ -16,7 +87,6 @@ interface CreateProjectParams {
   currentUserProjectIds: Array<ProjectId>;
   users: Array<User>;
 }
-
 export async function createProject(request: Request, response: Response): Promise<void> {
   const {
     name,
@@ -25,7 +95,7 @@ export async function createProject(request: Request, response: Response): Promi
     userToken,
     users,
     currentUserProjectIds,
-  }: Partial<CreateProjectParams> = JSON.parse(request.body);
+  }: Partial<CreateProjectParams> = request.body;
 
   if (
     !name ||
@@ -99,17 +169,28 @@ interface UpdateProjectMetadataParams extends ProjectMetadata<Uid> {
 }
 
 export async function updateProjectMetadata(request: Request, response: Response): Promise<void> {
-  const params: Partial<UpdateProjectMetadataParams> = JSON.parse(request.body);
+  const params: Partial<UpdateProjectMetadataParams> = request.body;
 
-  if (!params.name || !params.id || !params.users || !params.relativeBasePath || !params.uid) {
+  if (
+    !params.name ||
+    !params.id ||
+    !params.users ||
+    !params.relativeBasePath ||
+    !params.uid ||
+    !params.userToken
+  ) {
     response.status(400).send({
       message: 'Not all params are present',
       success: false,
+      data: {
+        params,
+      },
     });
     return;
   }
 
   try {
+    await verifyUidToken(params.userToken, params.uid);
     await verifyProjectAccess(params.uid, params.id);
   } catch (error) {
     response.status(403).send({

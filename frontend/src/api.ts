@@ -21,5 +21,8 @@ export const api = axios.create({
 
 api.interceptors.response.use(
   (response) => response,
-  (response) => new Error(response.data.message),
+  (response) => {
+    if (response.data?.message) return new Error(response.data.message);
+    return new Error('An unexpected error occurred');
+  },
 );

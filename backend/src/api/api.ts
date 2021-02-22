@@ -1,19 +1,13 @@
 import express from 'express';
 import cors from 'cors';
-import { createProject, updateProjectMetadata } from './routes/project';
+import { createProject, getProjects, updateProjectMetadata } from './routes/project';
 import { createUser } from './routes/user';
 
 const app = express();
 
 app.use(
   cors({
-    origin: [
-      'https://mm-content-manager.firebaseapp.com/',
-      'https://mm-content-manager.web.com/',
-      'https://dev-mm-content-manager.firebaseapp.com/',
-      'https://dev-mm-content-manager.web.com/',
-      'localhost',
-    ],
+    origin: '*',
   })
 );
 
@@ -21,8 +15,9 @@ app.get('/', (request, response) => {
   response.send('API is working');
 });
 
-app.post('/project/create', createProject);
-app.post('/project/updateMetadata', updateProjectMetadata);
+app.get('/projects', getProjects);
+app.put('/project', createProject);
+app.patch('/project', updateProjectMetadata);
 
 app.post('/user/create', createUser);
 
