@@ -31,6 +31,7 @@ export interface ProjectMetadata<T extends Uid | User> {
   id: ProjectId;
   locales?: Array<Locale>;
   users: Array<T>;
+  userRoles: Record<string, 'owner' | 'editor'>;
   relativeBasePath: Uri;
 }
 
@@ -115,6 +116,7 @@ export async function getFormattedProjects(
       users: projectsUsers,
       locales: rawProject.locales || [],
       relativeBasePath: rawProject.relativeBasePath,
+      userRoles: rawProject.userRoles,
     };
   });
 }
@@ -154,13 +156,14 @@ export async function createNewProject(
   perfTrace.start();
   const userToken = await getUserToken();
 
-  await api.post('/project/create' as Uri, {
+  await api.patch('/project/create' as Uri, {
     name,
     id,
     uid: user.uid,
     userToken,
     users,
     currentUserProjectIds: user.projectIds ?? [],
+    user,
   });
 
   await Promise.all([fetchAllUsers(), syncProjectsMetadata()]);
@@ -275,10 +278,7 @@ export async function updateProjectsMetadata(
     ...newMetadata,
     users: [...new Set(userIds)],
   };
-  await api.post<ProjectMetadata<Uid>, ProjectMetadata<Uid>>(
-    '/project/updateMetadata' as Uri,
-    metadata,
-  );
+  await api.post('/project/updateMetadata' as Uri, metadata);
 
   projectsState.currentProject.metadata = newMetadata;
   perfTrace.stop();

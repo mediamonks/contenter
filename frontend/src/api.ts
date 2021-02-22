@@ -1,16 +1,11 @@
 import { Uri } from '@/types/Uri';
 import type { UserToken } from '@/types/UserToken';
 import { loadFirebaseAuth } from '@/firebase';
+import axios from 'axios';
 
-export function getApiUrl(): Uri {
-  let apiUrl = 'https://us-central1-mm-content-manager.cloudfunctions.net/api' as Uri;
-
-  if (process.env.NODE_ENV === 'development') {
-    apiUrl = 'http://localhost:5001/mm-content-manager/us-central1/api' as Uri;
-  }
-
-  return apiUrl;
-}
+export const apiUrl = (process.env.NODE_ENV === 'development'
+  ? 'http://localhost:5001/mm-content-manager/us-central1/api'
+  : 'https://us-central1-mm-content-manager.cloudfunctions.net/api') as Uri;
 
 export async function getUserToken(): Promise<UserToken> {
   const userToken = await (await loadFirebaseAuth()).currentUser?.getIdToken(true);
@@ -19,32 +14,12 @@ export async function getUserToken(): Promise<UserToken> {
   return userToken as UserToken;
 }
 
-interface ApiResponse<T> {
-  success: boolean;
-  message: string;
-  data: T;
-}
+export const api = axios.create({
+  // eslint-disable-next-line @typescript-eslint/naming-convention
+  baseURL: apiUrl,
+});
 
-export const api = {
-  get: async <T>(uri: Uri): Promise<ApiResponse<T>> => {
-    const response: ApiResponse<T> = await (
-      await fetch(getApiUrl + uri, {
-        method: 'GET',
-      })
-    ).json();
-
-    if (response.success === false) throw new Error(response.message);
-    return response;
-  },
-  post: async <T, K>(uri: Uri, params: T): Promise<ApiResponse<K>> => {
-    const response: ApiResponse<K> = await (
-      await fetch(getApiUrl() + uri, {
-        method: 'POST',
-        body: JSON.stringify(params),
-      })
-    ).json();
-
-    if (response.success === false) throw new Error(response.message);
-    return response;
-  },
-};
+api.interceptors.response.use(
+  (response) => response,
+  (response) => new Error(response.data.message),
+);

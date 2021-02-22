@@ -1,11 +1,12 @@
 import type { Request, Response } from 'express';
-import { ProjectMetadata } from '../../types/ProjectMetadata';
+import type { ProjectMetadata } from '../../types/ProjectMetadata';
 import { firebaseAdmin } from '../../admin';
-import { UserToken } from '../../types/UserToken';
-import { ProjectId } from '../../types/ProjectId';
-import { User } from '../../types/User';
+import type { UserToken } from '../../types/UserToken';
+import type { ProjectId } from '../../types/ProjectId';
+import type { User } from '../../types/User';
 import { verifyUidToken } from '../../util/verifyUidToken';
-import { Uid } from '../../types/Uid';
+import type { Uid } from '../../types/Uid';
+import { verifyProjectAccess } from '../../util/verifyProjectAccess';
 
 interface CreateProjectParams {
   name: string;
@@ -84,7 +85,7 @@ export async function createProject(request: Request, response: Response): Promi
     ]);
 
     response.send({
-      succes: true,
+      success: true,
       message: `Created new project – ${name} – successfully`,
     });
   } catch (error) {
@@ -94,25 +95,48 @@ export async function createProject(request: Request, response: Response): Promi
 
 interface UpdateProjectMetadataParams extends ProjectMetadata<Uid> {
   userToken: UserToken;
+  uid: Uid;
 }
 
 export async function updateProjectMetadata(request: Request, response: Response): Promise<void> {
-  const metadata: UpdateProjectMetadataParams = JSON.parse(request.body);
+  const params: Partial<UpdateProjectMetadataParams> = JSON.parse(request.body);
 
-  if (!metadata.name || !metadata.id || !metadata.users || !metadata.relativeBasePath) {
+  if (!params.name || !params.id || !params.users || !params.relativeBasePath || !params.uid) {
     response.status(400).send({
       message: 'Not all params are present',
       success: false,
     });
+    return;
   }
 
-  await firebaseAdmin.database().ref(`projectMetadata/${metadata.id}`).update(metadata);
+  try {
+    await verifyProjectAccess(params.uid, params.id);
+  } catch (error) {
+    response.status(403).send({
+      success: false,
+      message: error.message,
+    });
+    return;
+  }
+
+  try {
+    const metadata = params;
+    delete metadata.userToken;
+
+    await firebaseAdmin.database().ref(`projectMetadata/${params.id}`).update(metadata);
+  } catch (error) {
+    response.status(400).send({
+      success: false,
+      message: error.message,
+    });
+    return;
+  }
 
   response.send({
     success: true,
-    message: `Metadata for ${metadata.name} is successfully updated`,
+    message: `Metadata for ${params.name} is successfully updated`,
     data: {
-      metadata,
+      params,
     },
   });
 }

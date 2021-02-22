@@ -6,7 +6,7 @@ import {
   loadFirebaseDatabase,
   loadFirebasePerformance,
 } from '@/firebase';
-import { getApiUrl, getUserToken } from '@/api';
+import { api, getUserToken } from '@/api';
 // TODO: Fix this
 // eslint-disable-next-line import/no-cycle
 import { ProjectId, projectsState } from '@/store/projects';
@@ -21,6 +21,9 @@ export interface User {
   displayName: string;
   email: Email;
   photoUrl: Uri;
+  /**
+   * @deprecated Project IDs are stored on the project, not on the user object
+   */
   projectIds?: Array<ProjectId>;
   role?: 'editor' | 'developer' | 'admin';
 }
@@ -48,21 +51,19 @@ export async function setUser(properties: User): Promise<User> {
 export async function createNewUser(properties: User): Promise<void> {
   const userToken = await getUserToken();
 
-  const response = await fetch(`${getApiUrl()}/user/create`, {
-    method: 'POST',
-    body: JSON.stringify({
-      ...properties,
-      userToken,
-    }),
-  });
-
-  const result: {
+  const response = await api.post<{
     success: boolean;
     message: string;
     data: User;
-  } = await response.json();
+  }>(
+    'user/create',
+    JSON.stringify({
+      ...properties,
+      userToken,
+    }),
+  );
 
-  userState.currentUser = result.data;
+  userState.currentUser = response.data.data;
 }
 
 export async function parseUser(authUser: firebase.User, isNewUser = false): Promise<User> {

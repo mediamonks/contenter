@@ -10,4 +10,5 @@ export interface ProjectMetadata<T extends Uid | User> {
   locales?: Array<Locale>;
   users: Array<T>;
   relativeBasePath: Uri;
+  userRoles: Record<string, 'owner' | 'editor'>;
 }

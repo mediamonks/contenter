@@ -10,6 +10,7 @@
   },
   "dependencies": {
     "@json-editor/json-editor": "^2.5.1",
+    "axios": "^0.21.1",
     "convert-units": "^2.3.4",
     "core-js": "^3.8.3",
     "easymde": "^2.12.1",
@@ -25,6 +26,7 @@
   },
   "devDependencies": {
     "@mediamonks/eslint-config": "^1.2.3",
+    "@types/axios": "^0.14.0",
     "@types/convert-units": "^2.3.3",
     "@types/lodash": "^4.14.166",
     "@typescript-eslint/eslint-plugin": "4.15.0",
