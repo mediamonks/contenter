@@ -36,10 +36,9 @@ export async function getProjects(request: Request, response: Response): Promise
 
   if (!uid || !userToken) {
     response.status(400).send({
-      message: 'Not all params are present',
-      success: false,
-      data: {
-        params: request.query,
+      error: {
+        code: 'error.missing_params',
+        message: 'Not all params are present',
       },
     });
     return;
@@ -72,7 +71,6 @@ export async function getProjects(request: Request, response: Response): Promise
   });
 
   response.send({
-    success: true,
     data: {
       projects,
     },
@@ -180,10 +178,9 @@ export async function updateProjectMetadata(request: Request, response: Response
     !params.userToken
   ) {
     response.status(400).send({
-      message: 'Not all params are present',
-      success: false,
-      data: {
-        params,
+      error: {
+        code: 'error.missing_params',
+        message: 'Not all params are present',
       },
     });
     return;
@@ -214,8 +211,6 @@ export async function updateProjectMetadata(request: Request, response: Response
   }
 
   response.send({
-    success: true,
-    message: `Metadata for ${params.name} is successfully updated`,
     data: {
       params,
     },

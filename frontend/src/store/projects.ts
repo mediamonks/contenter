@@ -287,7 +287,7 @@ export async function updateProjectsMetadata(
     uid: userState.currentUser.uid,
   });
 
-  projectsState.currentProject.metadata = newMetadata;
+  [projectsState.currentProject.metadata] = await getProjects([newMetadata.id]);
   perfTrace.stop();
 
   return newMetadata;

@@ -51,12 +51,8 @@ export async function setUser(properties: User): Promise<User> {
 export async function createNewUser(properties: User): Promise<void> {
   const userToken = await getUserToken();
 
-  const response = await api.post<{
-    success: boolean;
-    message: string;
-    data: User;
-  }>(
-    'user/create',
+  const response = await api.put<{ data: User }>(
+    '/user',
     JSON.stringify({
       ...properties,
       userToken,

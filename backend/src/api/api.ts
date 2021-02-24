@@ -19,7 +19,7 @@ app.get('/projects', getProjects);
 app.put('/project', createProject);
 app.patch('/project', updateProjectMetadata);
 
-app.post('/user/create', createUser);
+app.put('/user', createUser);
 
 app.get('*', (request, response) => {
   response.status(404).send({

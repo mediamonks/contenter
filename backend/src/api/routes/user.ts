@@ -14,8 +14,10 @@ export async function createUser(request: Request, response: Response): Promise<
   );
   if (!displayName || !email || !uid || !userToken || !photoUrl) {
     response.status(400).send({
-      message: 'Not all params are present',
-      success: false,
+      error: {
+        code: 'error.missing_params',
+        message: 'Not all params are present',
+      },
     });
     return;
   }
@@ -24,13 +26,15 @@ export async function createUser(request: Request, response: Response): Promise<
     await verifyUidToken(userToken, uid);
   } catch (error) {
     response.status(403).send({
-      message: `Token is doesn't match provided UID`,
-      success: false,
+      error: {
+        code: 'error.auth',
+        message: `Token is doesn't match provided UID`,
+      },
     });
     return;
   }
 
-  firebaseAdmin.database().ref(`users/${uid}`).set({
+  await firebaseAdmin.database().ref(`users/${uid}`).set({
     displayName,
     email,
     uid,
@@ -38,7 +42,13 @@ export async function createUser(request: Request, response: Response): Promise<
   });
 
   response.send({
-    succes: true,
-    message: 'ok',
+    data: {
+      user: {
+        displayName,
+        email,
+        uid,
+        photoUrl,
+      },
+    },
   });
 }

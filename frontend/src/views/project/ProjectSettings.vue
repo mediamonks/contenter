@@ -63,14 +63,14 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, reactive, ref } from 'vue';
+import { defineComponent, reactive, ref, toRaw } from 'vue';
 import ProjectBar from '@/components/ProjectBar.vue';
 import TextField from '@/components/TextField.vue';
 import Avatar from '@/components/Avatar.vue';
 import Trash from '@/assets/icons/Trash.vue';
 import SearchSelector from '@/components/SearchSelector.vue';
 import Button from '@/components/Button.vue';
-import { projectsState, updateProjectsMetadata } from '@/store/projects';
+import { getProjects, ProjectMetadata, projectsState, updateProjectsMetadata } from '@/store/projects';
 import { userState, User } from '@/store/user';
 import { displayError } from '@/store/message';
 import { Uri } from '@/types/Uri';
@@ -115,16 +115,30 @@ export default defineComponent({
       if (!projectsState.currentProject || !projectsState.currentProject.metadata) throw new Error('No current project defined');
       isLoading.value = true;
 
-      const currentMetadata = projectsState.currentProject.metadata;
+      const currentMetadata: ProjectMetadata<User> = projectsState.currentProject.metadata;
 
-      updateProjectsMetadata({
+      const newMetadata = {
         ...currentMetadata,
         name: formState.name || currentMetadata.name,
-        users: formState.users
-          ? [...new Set([...formState.users, ...currentMetadata.users])]
-          : [...currentMetadata.users],
+        // users: formState.users
+        //   ? [...new Set([...formState.users, ...currentMetadata.users])]
+        //   : [...currentMetadata.users],
         relativeBasePath: formState.assetBasePath || (currentMetadata.relativeBasePath as Uri),
-      })
+      };
+
+      let users = toRaw(formState).users as (Array<User> | null);
+      if (users !== projectsState.currentProject.metadata.users && users) {
+        users = [...users, toRaw(userState.currentUser)] as Array<User>;
+      }
+
+      if (users) {
+        newMetadata.userRoles = {};
+        users.forEach((user) => {
+          newMetadata.userRoles[user.uid] = currentMetadata.userRoles[user.uid] ?? 'editor';
+        });
+      }
+
+      updateProjectsMetadata(newMetadata)
         .then(() => {
           isLoading.value = false;
 
