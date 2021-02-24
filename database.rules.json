@@ -1,20 +1,24 @@
 {
   "rules": {
-    ".read": "auth != null",
+    ".read": false,
     ".write": false,
     "projects": {
-      ".write": "auth != null"
+      "$projectId": {
+        ".read": "root.child('projectMetadata/'+$projectId+'/userRoles/'+auth.uid).exists()",
+        ".write": "root.child('projectMetadata/'+$projectId+'/userRoles/'+auth.uid).exists()"
+      }
     },
     "projectMetadata": {
-      ".write": "auth != null"
+      ".read": "auth != null"
     },
     "users": {
+      ".read": "auth != null",
       "$uid": {
-        ".write": "auth != null"
+        ".write": "auth.uid === $uid"
       }
     },
     "projectIds": {
-      ".write": "auth != null"
+      ".read": "auth != null"
     }
   }
 }
