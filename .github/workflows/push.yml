@@ -8,7 +8,29 @@ on:
       - 'release/**'
       - 'dependabot/**'
 jobs:
-  test_pull_request:
+  build_frontend:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
+
+      - name: Setup Node v14
+        uses: actions/setup-node@v2.1.4
+        with:
+          node-version: 14
+
+      - name: Install dependencies
+        run: yarn
+        working-directory: frontend
+
+      - name: Check code style
+        run: yarn lint
+        working-directory: frontend
+
+      - name: Build package
+        run: yarn build --modern
+        working-directory: frontend
+  build_backend:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repository
@@ -21,11 +43,14 @@ jobs:
 
       - name: Install dependencies
         run: yarn
+        working-directory: backend
 
       - name: Check code style
         run: yarn lint
+        working-directory: backend
 
       - name: Build package
-        run: yarn build --modern
+        run: yarn build
+        working-directory: backend
     env:
       CI: true

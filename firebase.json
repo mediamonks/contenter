@@ -4,7 +4,7 @@
   },
   "hosting": [
     {
-      "public": "./dist",
+      "public": "./frontend/dist",
       "ignore": [
         "firebase.json",
         "**/.*",
@@ -19,7 +19,7 @@
       "target": "testing"
     },
     {
-      "public": "./dist",
+      "public": "./frontend/dist",
       "ignore": [
         "firebase.json",
         "**/.*",
@@ -36,5 +36,35 @@
   ],
   "storage": {
     "rules": "storage.rules"
+  },
+  "functions": {
+    "source": "backend",
+    "predeploy": [
+      "npm --prefix \"$RESOURCE_DIR\" run lint",
+      "npm --prefix \"$RESOURCE_DIR\" run build"
+    ]
+  },
+  "emulators": {
+    "auth": {
+      "port": 9099
+    },
+    "functions": {
+      "port": 5001
+    },
+    "database": {
+      "port": 9000
+    },
+    "hosting": {
+      "port": 5000
+    },
+    "ui": {
+      "enabled": true
+    },
+    "firestore": {
+      "port": 8081
+    },
+    "pubsub": {
+      "port": 8085
+    }
   }
 }

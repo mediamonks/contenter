@@ -113,6 +113,7 @@ export default defineComponent({
     const jsonEditor = ref<HTMLDivElement | null>(null);
     const contentData = ref<Json | null>(null);
     // Necessary any because the JSON editor doesn't support TS properly
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     let editor: any = null;
     let mdEditors: EasyMDE[] = [];
 
@@ -252,6 +253,7 @@ export default defineComponent({
       await initMarkdownEditor();
 
       mdEditors.forEach((mdEditor) => {
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         const { value } = (mdEditor as any).element;
 
         if (value !== mdEditor.value()) {

@@ -6,21 +6,24 @@ import {
   loadFirebaseDatabase,
   loadFirebasePerformance,
 } from '@/firebase';
+import { api, getUserToken } from '@/api';
 // TODO: Fix this
 // eslint-disable-next-line import/no-cycle
 import { ProjectId, projectsState } from '@/store/projects';
-import { Brand } from '@/types/Brand';
+import { Uid } from '@/types/Uid';
 import { Uri } from '@/types/Uri';
 import { Email } from '@/types/Email';
 
-export type UserId = Brand<'UserId', string>;
 export type Role = 'editor' | 'developer' | 'admin';
 
 export interface User {
-  uid: UserId;
+  uid: Uid;
   displayName: string;
   email: Email;
   photoUrl: Uri;
+  /**
+   * @deprecated Project IDs are stored on the project, not on the user object
+   */
   projectIds?: Array<ProjectId>;
   role?: 'editor' | 'developer' | 'admin';
 }
@@ -46,10 +49,17 @@ export async function setUser(properties: User): Promise<User> {
 }
 
 export async function createNewUser(properties: User): Promise<void> {
-  await (await loadFirebaseDatabase()).ref(`users/${properties.uid}`).set({
-    ...properties,
-    role: 'editor',
-  } as User);
+  const userToken = await getUserToken();
+
+  const response = await api.put<{ data: User }>(
+    '/user',
+    JSON.stringify({
+      ...properties,
+      userToken,
+    }),
+  );
+
+  userState.currentUser = response.data.data;
 }
 
 export async function parseUser(authUser: firebase.User, isNewUser = false): Promise<User> {
@@ -68,7 +78,7 @@ export async function parseUser(authUser: firebase.User, isNewUser = false): Pro
     displayName,
     email: email as Email,
     photoUrl: photoURL as Uri,
-    uid: uid as UserId,
+    uid: uid as Uid,
   };
 
   if (isNewUser) {
@@ -127,15 +137,6 @@ export async function checkIfUserIsSignedIn(): Promise<User> {
   });
 }
 
-export async function updateUser(user: User): Promise<User> {
-  await (await loadFirebaseDatabase()).ref(`users/${user.uid}`).update(user);
-  if (userState.currentUser && userState.currentUser.uid === user.uid) {
-    await setUser(user);
-  }
-
-  return user;
-}
-
 export async function fetchAllUsers(): Promise<Array<User>> {
   const snapshot = await (await loadFirebaseDatabase()).ref('users').once('value');
 
@@ -147,5 +148,7 @@ export async function fetchAllUsers(): Promise<Array<User>> {
   const users: Array<User> = Object.values(data);
 
   userState.users = users;
+  [userState.currentUser] = users.filter((user) => user.uid === userState.currentUser?.uid);
+
   return users;
 }
