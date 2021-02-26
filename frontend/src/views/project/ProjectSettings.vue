@@ -70,7 +70,7 @@ import Avatar from '@/components/Avatar.vue';
 import Trash from '@/assets/icons/Trash.vue';
 import SearchSelector from '@/components/SearchSelector.vue';
 import Button from '@/components/Button.vue';
-import { getProjects, ProjectMetadata, projectsState, updateProjectsMetadata } from '@/store/projects';
+import { ProjectMetadata, projectsState, updateProjectsMetadata } from '@/store/projects';
 import { userState, User } from '@/store/user';
 import { displayError } from '@/store/message';
 import { Uri } from '@/types/Uri';
@@ -103,7 +103,7 @@ export default defineComponent({
     if (projectsState.currentProject && projectsState.currentProject.metadata) {
       const { metadata } = projectsState.currentProject;
       formState.name = metadata.name;
-      formState.users = metadata.users;
+      formState.users = metadata.users as Array<User>;
       formState.assetBasePath = metadata.relativeBasePath || null;
     }
 
@@ -120,22 +120,19 @@ export default defineComponent({
       const newMetadata = {
         ...currentMetadata,
         name: formState.name || currentMetadata.name,
-        // users: formState.users
-        //   ? [...new Set([...formState.users, ...currentMetadata.users])]
-        //   : [...currentMetadata.users],
         relativeBasePath: formState.assetBasePath || (currentMetadata.relativeBasePath as Uri),
       };
 
-      let users = toRaw(formState).users as (Array<User> | null);
+      let users = toRaw(formState).users as (ReadonlyArray<User> | null);
       if (users !== projectsState.currentProject.metadata.users && users) {
-        users = [...users, toRaw(userState.currentUser)] as Array<User>;
+        users = [...users, toRaw(userState.currentUser)] as ReadonlyArray<User>;
       }
 
       if (users) {
-        newMetadata.userRoles = {};
-        users.forEach((user) => {
-          newMetadata.userRoles[user.uid] = currentMetadata.userRoles[user.uid] ?? 'editor';
-        });
+        newMetadata.userRoles = users.reduce((accumulator, user) => ({
+          ...accumulator,
+          [user.uid]: currentMetadata.userRoles[user.uid] ?? 'editor',
+        }), {});
       }
 
       updateProjectsMetadata(newMetadata)

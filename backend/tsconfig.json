@@ -8,12 +8,15 @@
     "target": "es2017",
     "esModuleInterop": true,
     "resolveJsonModule": true,
+    "rootDir": "src"
   },
   "compileOnSave": true,
   "include": [
-    "src"
+    "./src/**/*"
   ],
   "exclude": [
-    "node_modules"
+    "node_modules",
+    "types",
+    "backend"
   ]
 }

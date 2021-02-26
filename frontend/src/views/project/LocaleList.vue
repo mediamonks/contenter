@@ -39,7 +39,7 @@
     </form>
     <ProjectBar>
       <Button
-        v-if="currentProject.metadata.locales.length > 0"
+        v-if="currentProject.metadata.locales && currentProject.metadata.locales.length > 0"
         class="button"
         is-flat
         @click="openCreateLocaleModal"
@@ -48,7 +48,7 @@
       </Button>
     </ProjectBar>
     <MainContainer
-      v-if="currentProject.metadata.locales.length > 0"
+      v-if="currentProject.metadata.locales && currentProject.metadata.locales.length > 0"
       class="locales"
     >
       <table>

@@ -12,7 +12,7 @@ export async function verifyProjectAccess(
     .database()
     .ref(`projectMetadata/${projectId}`)
     .get()
-    .then((data) => data.toJSON() as ProjectMetadata<Uid>);
+    .then((data) => data.val() as ProjectMetadata<Uid>);
 
   if (projectMetadata.userRoles[uid] !== requiredAccess)
     throw new Error(`Only ${requiredAccess}s can perform this action`);

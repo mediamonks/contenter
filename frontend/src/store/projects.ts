@@ -29,8 +29,8 @@ export interface Locale {
 export interface ProjectMetadata<T extends Uid | User> {
   name: string;
   id: ProjectId;
-  locales?: Array<Locale>;
-  users: Array<T>;
+  locales?: ReadonlyArray<Locale>;
+  users: ReadonlyArray<T>;
   userRoles: Record<string, 'owner' | 'editor'>;
   relativeBasePath: Uri;
 }

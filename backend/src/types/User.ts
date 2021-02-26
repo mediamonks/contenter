@@ -11,6 +11,6 @@ export interface User {
   /**
    * @deprecated
    */
-  projectIds?: Array<ProjectId>;
+  projectIds?: ReadonlyArray<ProjectId>;
   role?: 'editor' | 'developer' | 'admin';
 }

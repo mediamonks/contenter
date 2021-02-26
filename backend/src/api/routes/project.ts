@@ -1,4 +1,5 @@
 import type { Request, Response } from 'express';
+import * as functions from 'firebase-functions';
 import type { ProjectMetadata } from '../../types/ProjectMetadata';
 import { firebaseAdmin } from '../../admin';
 import type { UserToken } from '../../types/UserToken';
@@ -9,9 +10,9 @@ import type { Uid } from '../../types/Uid';
 import { verifyProjectAccess } from '../../util/verifyProjectAccess';
 
 interface GetProjectParams {
-  uid: string;
+  uid: Uid;
   userToken: UserToken;
-  projectIds: Array<ProjectId>;
+  projectIds: ReadonlyArray<ProjectId>;
 }
 
 interface ProjectLocale {
@@ -21,7 +22,7 @@ interface ProjectLocale {
 
 interface ProjectMetadataResponse {
   id: ProjectId;
-  locales?: Record<string, ProjectLocale> | Array<ProjectLocale>;
+  locales?: Record<string, ProjectLocale> | ReadonlyArray<ProjectLocale>;
   name: string;
   relativeBasePath: string;
   userRoles: Record<string, 'owner' | 'editor'>;
@@ -32,13 +33,17 @@ interface ProjectMetadataResponse {
 }
 
 export async function getProjects(request: Request, response: Response): Promise<void> {
-  const { uid, userToken, projectIds } = request.query as Partial<GetProjectParams>;
+  const keys: ReadonlyArray<keyof GetProjectParams> = ['uid', 'userToken', 'projectIds'];
+  const params = request.query as Partial<GetProjectParams>;
+  const { uid, userToken, projectIds } = params;
 
   if (!uid || !userToken) {
     response.status(400).send({
       error: {
         code: 'error.missing_params',
-        message: 'Not all params are present',
+        message: `The following params are missing: ${keys
+          .filter((key) => !params[key])
+          .join(', ')}`,
       },
     });
     return;
@@ -48,27 +53,20 @@ export async function getProjects(request: Request, response: Response): Promise
     .database()
     .ref('/projectMetadata')
     .get()
-    .then((data) => data.toJSON() as Record<string, ProjectMetadataResponse>);
+    .then((data) => data.val() as Record<string, ProjectMetadataResponse>);
 
-  let projects = [...Object.values(projectsMetadata)];
+  const projects: ReadonlyArray<ProjectMetadataResponse> = Object.values(projectsMetadata).filter(
+    (project) => {
+      const userIds = (Object.keys(
+        project.userRoles
+      ) as ReadonlyArray<string>) as ReadonlyArray<Uid>;
 
-  projects = projects.filter((project) => {
-    const userIds = Object.keys(project.userRoles) as Array<Uid>;
+      if (projectIds?.find((id) => id !== project.id)) return false;
+      if (!userIds.find((id) => id === uid)) return false;
 
-    if (projectIds?.find((id) => id !== project.id)) return false;
-    if (!userIds.find((id) => id === uid)) return false;
-
-    let locales: Array<ProjectLocale> = [];
-    if (project.locales) {
-      locales = Object.values(project.locales);
+      return project;
     }
-
-    const parsedProject = project;
-    parsedProject.locales = locales;
-    delete parsedProject.users;
-
-    return parsedProject;
-  });
+  );
 
   response.send({
     data: {
@@ -82,18 +80,21 @@ interface CreateProjectParams {
   id: ProjectId;
   uid: Uid;
   userToken: UserToken;
-  currentUserProjectIds: Array<ProjectId>;
-  users: Array<User>;
+  currentUserProjectIds: ReadonlyArray<ProjectId>;
+  users: ReadonlyArray<User>;
 }
 export async function createProject(request: Request, response: Response): Promise<void> {
-  const {
-    name,
-    id,
-    uid,
-    userToken,
-    users,
-    currentUserProjectIds,
-  }: Partial<CreateProjectParams> = request.body;
+  const keys: ReadonlyArray<keyof CreateProjectParams> = [
+    'name',
+    'id',
+    'uid',
+    'userToken',
+    'users',
+    'currentUserProjectIds',
+  ];
+  const params: Partial<CreateProjectParams> = request.body;
+
+  const { name, id, uid, userToken, users, currentUserProjectIds } = params;
 
   if (
     !name ||
@@ -104,7 +105,7 @@ export async function createProject(request: Request, response: Response): Promi
     currentUserProjectIds === undefined
   ) {
     response.status(400).send({
-      message: 'Not all params are present',
+      message: `The following params are missing: ${keys.filter((key) => !params[key]).join(', ')}`,
       success: false,
     });
     return;
@@ -123,14 +124,18 @@ export async function createProject(request: Request, response: Response): Promi
   const database = firebaseAdmin.database();
 
   try {
-    const projectIds: Array<ProjectId> = (await database.ref('projectIds').get()).val();
-    const userRoles: Record<string, 'owner' | 'editor'> = {
-      [uid]: 'owner',
-    };
+    const projectIds: ReadonlyArray<ProjectId> = (await database.ref('projectIds').get()).val();
+    const userRoles: Record<string, 'owner' | 'editor'> = users.reduce(
+      (accumulator: Record<string, 'owner' | 'editor'>, user) => ({
+        ...accumulator,
+        [user.uid]: 'editor',
+      }),
+      {
+        [uid]: 'owner',
+      }
+    );
 
-    users.forEach((user) => {
-      userRoles[user.uid] = 'editor';
-    });
+    functions.logger.log({ userRoles });
 
     await Promise.all<void>([
       database.ref(`projectMetadata/${id}`).set({
@@ -167,28 +172,32 @@ interface UpdateProjectMetadataParams extends ProjectMetadata<Uid> {
 }
 
 export async function updateProjectMetadata(request: Request, response: Response): Promise<void> {
+  const keys: ReadonlyArray<keyof UpdateProjectMetadataParams> = [
+    'name',
+    'id',
+    'users',
+    'relativeBasePath',
+    'uid',
+    'userToken',
+  ];
   const params: Partial<UpdateProjectMetadataParams> = request.body;
+  const { name, id, users, relativeBasePath, uid, userToken } = params;
 
-  if (
-    !params.name ||
-    !params.id ||
-    !params.users ||
-    !params.relativeBasePath ||
-    !params.uid ||
-    !params.userToken
-  ) {
+  if (!name || !id || !users || !relativeBasePath || !uid || !userToken) {
     response.status(400).send({
       error: {
         code: 'error.missing_params',
-        message: 'Not all params are present',
+        message: `The following params are missing: ${keys
+          .filter((key) => !params[key])
+          .join(', ')}`,
       },
     });
     return;
   }
 
   try {
-    await verifyUidToken(params.userToken, params.uid);
-    await verifyProjectAccess(params.uid, params.id);
+    await verifyUidToken(userToken, uid);
+    await verifyProjectAccess(uid, id);
   } catch (error) {
     response.status(403).send({
       success: false,
@@ -201,7 +210,7 @@ export async function updateProjectMetadata(request: Request, response: Response
     const metadata = params;
     delete metadata.userToken;
 
-    await firebaseAdmin.database().ref(`projectMetadata/${params.id}`).update(metadata);
+    await firebaseAdmin.database().ref(`projectMetadata/${id}`).update(metadata);
   } catch (error) {
     response.status(400).send({
       success: false,
