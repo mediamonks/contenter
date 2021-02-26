@@ -10,7 +10,7 @@ jobs:
       - uses: actions/checkout@v2
         name: Checkout repository
 
-      - uses: actions/setup-node@v2.1.4
+      - uses: actions/setup-node@v2.1.5
         name: Setup Node v14
         with:
           node-version: 14
@@ -40,7 +40,7 @@ jobs:
       - uses: actions/checkout@v2
         name: Checkout repository
 
-      - uses: actions/setup-node@v2.1.4
+      - uses: actions/setup-node@v2.1.5
         name: Setup Node v10
         with:
           node-version: 10
@@ -73,7 +73,7 @@ jobs:
       - uses: actions/checkout@v2
         name: Checkout repository
 
-      - uses: actions/setup-node@v2.1.4
+      - uses: actions/setup-node@v2.1.5
         name: Setup Node v14
         with:
           node-version: 14
