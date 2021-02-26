@@ -74,7 +74,7 @@ export default defineComponent({
     function handleFormSubmit() {
       if (!userState.currentUser) throw displayError(new Error('No user defined'));
       isLoading.value = true;
-      return createNewProject(name.value, id.value, userState.currentUser.uid, selectedUsers.value)
+      return createNewProject(name.value, id.value, userState.currentUser, selectedUsers.value)
         .then(() => {
           router.push({ name: RouteNames.HOME });
         })
