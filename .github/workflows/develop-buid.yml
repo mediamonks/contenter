@@ -30,6 +30,10 @@ jobs:
       - run: firebase deploy --only hosting:develop  --token=$FIREBASE_TOKEN --project mm-content-manager --non-interactive
         working-directory: frontend
         name: Deploy to firebase hosting
+    env:
+      CI: true
+      FIREBASE_TOKEN: ${{ secrets.FIREBASE_TOKEN }}
+      VUE_APP_BASE_URL: https://mm-content-manager.web.app
   build_backend:
     runs-on: ubuntu-latest
     steps:
@@ -60,6 +64,9 @@ jobs:
       - run: firebase deploy --only functions --token=$FIREBASE_TOKEN --project mm-content-manager --non-interactive
         working-directory: frontend
         name: Deploy to Firebase functions
+    env:
+      CI: true
+      FIREBASE_TOKEN: ${{ secrets.FIREBASE_TOKEN }}
   deploy_rules:
     runs-on: ubuntu-latest
     steps:
@@ -79,5 +86,4 @@ jobs:
     env:
       CI: true
       FIREBASE_TOKEN: ${{ secrets.FIREBASE_TOKEN }}
-      VUE_APP_BASE_URL: https://mm-content-manager.web.app
 
