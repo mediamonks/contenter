@@ -1,21 +1,6 @@
 {
-  "name": "mm-content-manager",
-  "version": "0.1.0",
+  "name": "contenter",
+  "version": "1.0.0",
   "private": true,
   "author": "Mick Jasker <mick.jasker@mediamonks.com>",
-  "scripts": {
-    "serve": "vue-cli-service serve",
-    "build": "vue-cli-service build",
-    "lint": "vue-cli-service lint --fix"
-  },
-  "license": "MIT",
-  "gitHooks": {
-    "pre-commit": "lint-staged"
-  },
-  "lint-staged": {
-    "*.{js,jsx,vue,ts,tsx}": [
-      "vue-cli-service lint --fix",
-      "git add"
-    ]
-  }
 }
