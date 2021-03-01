@@ -7,14 +7,14 @@ version: 2
 updates:
   - package-ecosystem: "npm"
     directory: "/frontend"
-    target-branch: "dependancies"
+    target-branch: "dependencies"
     open-pull-requests-limit: 20
     versioning-strategy: widen
     schedule:
       interval: "daily"
   - package-ecosystem: "npm"
     directory: "/backend"
-    target-branch: "dependancies"
+    target-branch: "dependencies"
     open-pull-requests-limit: 20
     versioning-strategy: widen
     schedule:
